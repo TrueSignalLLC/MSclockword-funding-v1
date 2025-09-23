@@ -260,6 +260,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         // Log for debugging
         if (otpRequired) {
           console.log('Phone requires OTP verification - will show popup on submit');
+          // Automatically open phone validation popup when OTP is required
+          setShowPhoneValidation(true);
         }
         
       } catch (error) {
