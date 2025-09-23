@@ -10,8 +10,53 @@ import { PhoneValidationPopup } from './PhoneValidationPopup';
 
 interface QuizOverlayProps {
   isOpen: boolean;
-  const totalSteps = steps.length + 1; // +1 for contact form
+  onClose: () => void;
 }
+
+export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingStage, setLoadingStage] = useState(0);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showPhoneValidation, setShowPhoneValidation] = useState(false);
+  const [otpAttempts, setOtpAttempts] = useState(0);
+  
+  const [quizData, setQuizData] = useState({
+    funding_amount: '',
+    financing_purpose: [] as string[],
+    monthly_revenue: 50000,
+    credit_score: '',
+    business_age: '',
+    business_industry: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    business_name: '',
+    leadid_token: ''
+  });
+
+  const [validationStates, setValidationStates] = useState<Record<string, any>>({});
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
+  const { getCompliancePayload } = useCompliance();
+
+  // Load session data on mount
+  useEffect(() => {
+    if (isOpen) {
+      const sessionData = getSessionData();
+      if (sessionData.quiz_answers.funding_amount) {
+        setQuizData(prev => ({
+          ...prev,
+          funding_amount: sessionData.quiz_answers.funding_amount
+        }));
+      }
+    }
+  }, [isOpen]);
+
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -27,6 +72,16 @@ interface QuizOverlayProps {
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
+      const currentStepConfig = steps[currentStep];
+      if (currentStep === steps.length - 1) {
+        // Store the final quiz answer before loading
+        const answer = getAnswerForStep(currentStepConfig);
+        storeQuizAnswer(currentStepConfig.id, answer);
+        
+        // Store the final quiz answer before loading
+        const answer = getAnswerForStep(currentStepConfig);
+        storeQuizAnswer(currentStepConfig.id, answer);
+        
         // Start loading screen
         setShowLoadingScreen(true);
         setLoadingProgress(0);
