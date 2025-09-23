@@ -456,15 +456,29 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         });
 
         if (response.ok) {
-          // Success - redirect or show success message
-          window.location.href = '/thank-you';
+          // Parse the response JSON
+          const responseData = await response.json();
+          
+          // Check if the response indicates success and has a redirectURL
+          if (responseData.status === true && responseData.redirectURL) {
+            // Redirect to the URL provided by the webhook
+            window.location.href = responseData.redirectURL;
+          } else if (responseData.status === true) {
+            // Success but no redirectURL - use fallback
+            window.location.href = '/thank-you';
+          } else {
+            // Response indicates failure
+            throw new Error(responseData.message || 'Submission failed');
+          }
         } else {
           throw new Error('Submission failed');
         }
+      } else {
+        throw new Error('No submission endpoint configured');
       }
     } catch (error) {
       console.error('Submission error:', error);
-      alert('There was an error submitting your application. Please try again.');
+      alert(`There was an error submitting your application: ${error instanceof Error ? error.message : 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }
