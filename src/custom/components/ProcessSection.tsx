@@ -80,11 +80,10 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
               <div className="absolute w-64 h-64 rounded-full border-2 border-dotted border-clockwork-orange-400 opacity-10"></div>
             </div>
 
-            {/* Card layout with special handling for card 07 */}
+            {/* Two-column card layout over the dotted background */}
             <div className="relative z-10 max-w-4xl mx-auto">
-              {/* Cards 02-07 in 2-column grid below */}
-              <div className="grid grid-cols-2 gap-8 mb-8">
-                {processSteps.slice(0, 6).map((step, index) => (
+              <div className="grid grid-cols-2 gap-8">
+                {processSteps.map((step, index) => (
                   <div
                     key={index}
                     className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
@@ -107,45 +106,6 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
                   </div>
                 ))}
               </div>
-            {/* Card 01 - Full width with contrasting background */}
-            <div className="mb-8">
-              <div className="bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-slate-700">
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 bg-clockwork-orange-500 rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-lg">
-                    {processSteps[0].icon}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-2xl font-bold text-clockwork-orange-500">{processSteps[0].number}</span>
-                      <h3 className="text-xl font-bold text-white">{processSteps[0].title}</h3>
-                    </div>
-                    <p className="text-gray-300 leading-relaxed">{processSteps[0].description}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Cards 02-07 in 2-column grid */}
-            <div className="grid grid-cols-2 gap-8">
-              {processSteps.slice(1).map((step, index) => (
-                <div
-                  key={index + 1}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center text-clockwork-orange-400 flex-shrink-0 shadow-lg">
-                      {step.icon}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-2xl font-bold text-clockwork-orange-500">{step.number}</span>
-                        <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
-                      </div>
-                      <p className="text-gray-600 leading-relaxed">{step.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
             </div>
           </div>
         </div>
@@ -153,17 +113,18 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
         {/* Mobile Card Layout */}
         <div className="lg:hidden space-y-6">
           {processSteps.map((step, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
-            >
+            <div key={index} className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-clockwork-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
                   {step.number}
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {step.description}
+                  </p>
                 </div>
               </div>
             </div>
