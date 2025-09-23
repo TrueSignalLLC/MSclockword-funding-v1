@@ -39,6 +39,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const steps = useMemo(() => {
     // Skip the first question (already answered on hero page) and add contact form
     const overlaySteps = quizConfig.steps.slice(1).map(step => ({
+    const overlaySteps = quizConfig.steps.slice(1).map(step => ({
+    const overlaySteps = quizConfig.steps.slice(1).map(step => ({
       id: step.id,
       title: step.question,
       helper: step.helper,
@@ -53,11 +55,41 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     
     // Add contact form step
     overlaySteps.push({
+      step: (step as any).step,
+      formatValue: (step as any).formatValue
+    }));
+    
+    // Add contact form step
+    overlaySteps.push({
+      step: (step as any).step,
+      formatValue: (step as any).formatValue
+    }));
+    
+    // Add contact form step
+    overlaySteps.push({
       id: 'contact',
       title: 'Please enter your contact details:',
-      type: 'contact' as const,
+      type: 'contact',
       helper: '',
       options: [],
+      placeholder: undefined,
+      min: undefined,
+      max: undefined,
+      step: undefined,
+      formatValue: undefined
+    });
+    
+    return overlaySteps;
+  }, []);
+      placeholder: undefined,
+      min: undefined,
+      max: undefined,
+      step: undefined,
+      formatValue: undefined
+    });
+    
+    return overlaySteps;
+  }, []);
       placeholder: undefined,
       min: undefined,
       max: undefined,
@@ -97,13 +129,17 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [sendingOTP, setSendingOTP] = useState(false);
 
+
   // Store answers using config IDs
-  const [quizData, setQuizData] = useState({
-    funding_amount: '',
+    monthly_revenue: 50000,
     company_type: '',
     financing_purpose: [] as string[],
     monthly_revenue: 50000,
-    credit_score: '',
+    business_industry: '',
+    business_zip: '',
+    business_age: '',
+    business_industry: '',
+    business_zip: '',
     business_age: '',
     business_industry: '',
     business_zip: '',
@@ -230,6 +266,12 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const handleOptionSelect = (value: string, isMultiSelect = false) => {
     const step = steps[currentStep];
     if (step && step.id !== 'contact') {
+  const handleOptionSelect = (value: string, isMultiSelect = false) => {
+    const step = steps[currentStep];
+    if (step && step.id !== 'contact') {
+  const handleOptionSelect = (value: string, isMultiSelect = false) => {
+    const step = steps[currentStep];
+    if (step && step.id !== 'contact') {
       const configStep = quizConfig.steps.find(s => s.id === step.id);
       if (!configStep) return;
       
@@ -286,23 +328,99 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         ...prev,
         [step.id]: value
       }));
-      
-      // Store quiz answer
-      storeQuizAnswer(step.id, value);
+            : [];
+          
+          const newValues = currentValues.includes(answerValue)
+            ? currentValues.filter(v => v !== answerValue)
+            : [...currentValues, answerValue];
+            
+          return {
+            ...prev,
+            [step.id]: newValues
+          };
+        });
+        
+        // Store multi-select answer
+        const currentValues = Array.isArray(quizData[step.id as keyof typeof quizData])
+          ? quizData[step.id as keyof typeof quizData] as string[]
+          : [];
+        const newValues = currentValues.includes(answerValue)
+          ? currentValues.filter(v => v !== answerValue)
+          : [...currentValues, answerValue];
+        storeQuizAnswer(step.id, newValues);
+      } else {
+        // Handle single select
+        setQuizData(prev => ({
+          ...prev,
+          [step.id]: answerValue
+        }));
+        
+        // Store quiz answer
+        storeQuizAnswer(step.id, answerValue);
+        
+        // Auto-advance for single select questions
+        setTimeout(() => {
+          handleNext();
+        }, 300);
+      }
     }
   };
 
-  const handleInputChange = async (field: string, value: string) => {
-    // Phone number formatting
-    if (field === 'phone') {
-      const cleaned = value.replace(/\D/g, '');
-      if (cleaned.length <= 10) {
-        let formatted: string;
-        if (cleaned.length > 6) {
-          formatted = '(' + cleaned.slice(0, 3) + ') ' + cleaned.slice(3, 6) + '-' + cleaned.slice(6);
-        } else if (cleaned.length > 3) {
-          formatted = '(' + cleaned.slice(0, 3) + ') ' + cleaned.slice(3);
-        } else {
+  const handleSliderChange = (value: number) => {
+    const step = steps[currentStep];
+    if (step && step.id !== 'contact') {
+      setQuizData(prev => ({
+        ...prev,
+        [step.id]: value
+      }));
+            : [];
+          
+          const newValues = currentValues.includes(answerValue)
+            ? currentValues.filter(v => v !== answerValue)
+            : [...currentValues, answerValue];
+            
+          return {
+            ...prev,
+            [step.id]: newValues
+          };
+        });
+        
+        // Store multi-select answer
+        const currentValues = Array.isArray(quizData[step.id as keyof typeof quizData])
+          ? quizData[step.id as keyof typeof quizData] as string[]
+          : [];
+        const newValues = currentValues.includes(answerValue)
+          ? currentValues.filter(v => v !== answerValue)
+          : [...currentValues, answerValue];
+        storeQuizAnswer(step.id, newValues);
+      } else {
+        // Handle single select
+        setQuizData(prev => ({
+          ...prev,
+          [step.id]: answerValue
+        }));
+        
+        // Store quiz answer
+        storeQuizAnswer(step.id, answerValue);
+        
+        // Auto-advance for single select questions
+        setTimeout(() => {
+          handleNext();
+        }, 300);
+      }
+    }
+  };
+
+  const handleSliderChange = (value: number) => {
+    const step = steps[currentStep];
+    if (step && step.id !== 'contact') {
+      setQuizData(prev => ({
+        ...prev,
+        [step.id]: value
+      }));
+      
+      // Store quiz answer
+      storeQuizAnswer(step.id, value);
           formatted = cleaned;
         }
         value = formatted;
@@ -321,15 +439,32 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     } else if (field === 'business_zip') {
       // Store business ZIP as quiz answer
       storeQuizAnswer('business_zip', value);
+    } else if (field === 'business_zip') {
+      // Store business ZIP as quiz answer
+      storeQuizAnswer('business_zip', value);
+    } else if (field === 'business_zip') {
+      // Store business ZIP as quiz answer
+      storeQuizAnswer('business_zip', value);
     }
 
     // Handle business ZIP validation when 5 digits entered
     if (field === 'business_zip' && value.length === 5) {
-      // Get the config and session data
+        validation: {
+      const zipStep = {
+        id: 'business_zip',
+        validation: {
       const zipStep = {
         id: 'business_zip',
         validation: {
           apiEndpoint: config.api.zipValidation,
+          mockDelay: 1500,
+          message: 'Please enter a valid ZIP code'
+        }
+      };
+          mockDelay: 1500,
+          message: 'Please enter a valid ZIP code'
+        }
+      };
           mockDelay: 1500,
           message: 'Please enter a valid ZIP code'
         }
@@ -691,6 +826,30 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
       return Array.isArray(values) && values.length > 0;
     } else if (step.type === 'slider') {
       // Slider always has a value
+             quizData.last_name && 
+             quizData.phone && 
+             quizData.email && 
+             emailValidationState.valid === true &&
+             phoneValidationState.status === 'valid' &&
+             tcpaConsent;
+    } else if (step.type === 'multi-select') {
+      // Multi-select requires at least one selection
+      const values = quizData[step.id as keyof typeof quizData];
+      return Array.isArray(values) && values.length > 0;
+    } else if (step.type === 'slider') {
+      // Slider always has a value
+             quizData.last_name && 
+             quizData.phone && 
+             quizData.email && 
+             emailValidationState.valid === true &&
+             phoneValidationState.status === 'valid' &&
+             tcpaConsent;
+    } else if (step.type === 'multi-select') {
+      // Multi-select requires at least one selection
+      const values = quizData[step.id as keyof typeof quizData];
+      return Array.isArray(values) && values.length > 0;
+    } else if (step.type === 'slider') {
+      // Slider always has a value
       return true;
     } else {
       // Single select questions
@@ -908,7 +1067,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                 <CheckCircle className="w-10 h-10 text-green-600" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Your Funding Application is Complete!
+                Your Security Match is Ready!
               </h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 {getThankYouMessage()}
