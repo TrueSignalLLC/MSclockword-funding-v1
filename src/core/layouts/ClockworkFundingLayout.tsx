@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ClockworkHero } from '../../custom/components/ClockworkHero';
 import { FundingBenefits } from '../../custom/components/FundingBenefits';
 import { OurApproach } from '../../custom/components/OurApproach';
+import { ProcessSection } from '../../custom/components/ProcessSection';
 import { OurProcess } from '../../custom/components/OurProcess';
 import { UltraFlexibleFunding } from '../../custom/components/UltraFlexibleFunding';
 import { NoHiddenFeesMiddlemen } from '../../custom/components/NoHiddenFeesMiddlemen';
@@ -36,6 +37,7 @@ export const ClockworkFundingLayout: React.FC = () => {
       <ClockworkHero onQuizStart={handleQuizStart} />
       <FundingBenefits onQuizStart={handleQuizStart} />
       <OurApproach onQuizStart={handleQuizStart} />
+      <ProcessSection onQuizStart={handleQuizStart} />
       <UltraFlexibleFunding />
       <NoHiddenFeesMiddlemen />
       <FundWhatOthersWont onQuizStart={handleQuizStart} />
