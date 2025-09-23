@@ -26,7 +26,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   
   const [quizData, setQuizData] = useState({
     funding_amount: '',
-    company_type: '',
     financing_purpose: [] as string[],
     monthly_revenue: 50000,
     credit_score: '',
@@ -114,11 +113,9 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           setCurrentStep(prev => prev + 1);
         }, duration + 500);
       } else {
-        // For non-button-group questions, store the answer here
-        if (steps[currentStep].type !== 'button-group') {
-          const answer = getAnswerForStep(currentStepConfig);
-          storeQuizAnswer(currentStepConfig.id, answer);
-        }
+        // Store quiz answer and move to next step
+        const answer = getAnswerForStep(currentStepConfig);
+        storeQuizAnswer(currentStepConfig.id, answer);
         setCurrentStep(prev => prev + 1);
       }
     } else if (showLoadingScreen) {
@@ -487,30 +484,11 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                     Get Your Funding Options
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    Complete your information to receive your personalized funding recommendations.
+                    Complete your information to receive personalized funding recommendations.
                   </p>
                 </div>
 
                 <div className="max-w-2xl mx-auto space-y-4">
-                  {/* Business ZIP */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Business ZIP Code *
-                    </label>
-                    <input
-                      type="text"
-                      value={quizData.business_zip || ''}
-                      onChange={(e) => {
-                        setQuizData(prev => ({ ...prev, business_zip: e.target.value }));
-                        storeFormField('business_zip', e.target.value);
-                      }}
-                      placeholder="ZIP Code"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
-                  {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -523,9 +501,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                           setQuizData(prev => ({ ...prev, first_name: e.target.value }));
                           storeFormField('first_name', e.target.value);
                         }}
-                        placeholder="First Name"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                        required
+                        placeholder="Enter your first name"
                       />
                     </div>
                     <div>
@@ -539,50 +516,12 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                           setQuizData(prev => ({ ...prev, last_name: e.target.value }));
                           storeFormField('last_name', e.target.value);
                         }}
-                        placeholder="Last Name"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                        required
+                        placeholder="Enter your last name"
                       />
                     </div>
                   </div>
 
-                  {/* Email */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      value={quizData.email}
-                      onChange={(e) => {
-                        setQuizData(prev => ({ ...prev, email: e.target.value }));
-                        storeFormField('email', e.target.value);
-                      }}
-                      placeholder="you@example.com"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
-                  {/* Phone */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone *
-                    </label>
-                    <input
-                      type="tel"
-                      value={quizData.phone}
-                      onChange={(e) => {
-                        setQuizData(prev => ({ ...prev, phone: e.target.value }));
-                        storeFormField('phone', e.target.value);
-                      }}
-                      placeholder="(___) ___-____"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
-                  {/* Business Name */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Business Name *
@@ -594,26 +533,41 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                         setQuizData(prev => ({ ...prev, business_name: e.target.value }));
                         storeFormField('business_name', e.target.value);
                       }}
-                      placeholder="Your Business Name"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      required
+                      placeholder="Enter your business name"
                     />
                   </div>
 
-                  {/* Consent */}
-                  <div className="flex items-start gap-3">
-                    <input
-                      type="checkbox"
-                      id="consent"
-                      required
-                      className="mt-1 w-4 h-4 text-clockwork-orange-500 border-gray-300 rounded focus:ring-clockwork-orange-500"
-                    />
-                    <label htmlFor="consent" className="text-sm text-gray-600 leading-relaxed">
-                      By clicking "Get My Funding Options", you expressly consent to be contacted by Clockwork Funding and our lending partners at the number/email provided (including autodialed, prerecorded, and text messages) regarding business funding solutions. You also consent to receive marketing, service notifications, and account updates via SMS messaging. Consent not required to purchase. Message & data rates may apply. Messaging frequency may vary. Reply STOP to opt out of texts. See our{' '}
-                      <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>,{' '}
-                      <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Terms of Service</a>, and{' '}
-                      <a href="/tcpa-disclaimer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">TCPA Disclaimer</a>.
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email Address *
                     </label>
+                    <input
+                      type="email"
+                      value={quizData.email}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, email: e.target.value }));
+                        storeFormField('email', e.target.value);
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                      placeholder="Enter your email address"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      value={quizData.phone}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, phone: e.target.value }));
+                        storeFormField('phone', e.target.value);
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                      placeholder="Enter your phone number"
+                    />
                   </div>
                 </div>
               </div>
@@ -629,52 +583,92 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
               }
             </div>
             
-            {!showLoadingScreen && (
-              <button
-                onClick={handleNext}
-                disabled={!canProceed() || isSubmitting}
-                className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2"
-              >
-                {isSubmitting ? (
-                  'Submitting...'
-                ) : currentStep < steps.length ? (
-                  <>
-                    Next
-                    <ChevronRight className="w-4 h-4" />
-                  </>
-                ) : (
-                  'Get My Funding Options'
-                )}
-              </button>
-            )}
+            <div className="flex gap-3">
+              {!showLoadingScreen && (
+                <button
+                  onClick={handleNext}
+                  disabled={!canProceed() || isSubmitting}
+                  className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                    canProceed() && !isSubmitting
+                      ? 'bg-clockwork-orange-500 text-white hover:bg-clockwork-orange-600'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Submitting...
+                    </div>
+                  ) : currentStep < steps.length ? (
+                    'Continue'
+                  ) : (
+                    'Get My Funding Options'
+                  )}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Exit Confirmation Modal */}
       {showExitModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
-            <h3 className="text-lg font-bold mb-4">Are you sure you want to exit?</h3>
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              Are you sure you want to exit?
+            </h3>
             <p className="text-gray-600 mb-6">
-              Your progress will be saved, but you'll need to start the application process again.
+              Your progress will be lost if you exit now.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-3 justify-end">
               <button
                 onClick={handleExitCancel}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
-                Continue Application
+                Cancel
               </button>
               <button
                 onClick={handleExitConfirm}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
               >
                 Exit
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* OTP Modal */}
+      {showOTPModal && (
+        <OTPModal
+          isOpen={showOTPModal}
+          onClose={() => setShowOTPModal(false)}
+          phoneNumber={quizData.phone}
+          onVerified={() => {
+            setShowOTPModal(false);
+            handleSubmit();
+          }}
+          attempts={otpAttempts}
+          onAttemptsChange={setOtpAttempts}
+        />
+      )}
+
+      {/* Phone Validation Popup */}
+      {showPhoneValidation && (
+        <PhoneValidationPopup
+          isOpen={showPhoneValidation}
+          onClose={() => setShowPhoneValidation(false)}
+          phoneNumber={quizData.phone}
+          onPhoneUpdate={(newPhone) => {
+            setQuizData(prev => ({ ...prev, phone: newPhone }));
+            storeFormField('phone', newPhone);
+          }}
+          onValidated={() => {
+            setShowPhoneValidation(false);
+            setShowOTPModal(true);
+          }}
+        />
       )}
     </>
   );
