@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
-import { ChevronDown, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
+import { quizConfig } from '../../config/quiz.config';
+import { storeQuizAnswer } from '../../core/utils/session';
 
 interface ClockworkHeroProps {
   onQuizStart: () => void;
 }
 
 export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => {
-  const [selectedAmount, setSelectedAmount] = useState('Amount');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const amountOptions = [
-    '$50,000 - $100,000',
-    '$100,000 - $250,000',
-    '$250,000 - $500,000',
-    '$500,000 - $1,000,000',
-    '$1,000,000+'
-  ];
-
-  const handleAmountSelect = (amount: string) => {
-    setSelectedAmount(amount);
-    setIsDropdownOpen(false);
+  const [selectedAmount, setSelectedAmount] = useState<string>('');
+  
+  // Get the first question from quiz config
+  const firstQuestion = quizConfig.steps[0];
+  
+  const handleAmountSelect = (value: string, label: string) => {
+    setSelectedAmount(label);
+    // Store the answer
+    storeQuizAnswer(firstQuestion.id, value);
+    // Open the quiz overlay to continue with remaining questions
+    setTimeout(() => {
+      onQuizStart();
+    }, 300);
   };
 
   return (
@@ -75,37 +76,31 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
           </div>
 
           {/* Form Section */}
-          <div className="max-w-md mx-auto">
-            <div className="relative mb-4">
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="w-full bg-white border-2 border-gray-300 rounded-lg px-6 py-4 text-left text-gray-600 text-lg flex items-center justify-between hover:border-gray-400 transition-colors"
-              >
-                {selectedAmount}
-                <ChevronDown className={`w-5 h-5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
+          <div className="max-w-2xl mx-auto">
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
+                {firstQuestion.question}
+              </h3>
+              <p className="text-gray-600 text-center mb-6">
+                {firstQuestion.helper}
+              </p>
               
-              {isDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 bg-white border-2 border-gray-300 rounded-lg mt-1 shadow-lg z-10">
-                  {amountOptions.map((amount, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleAmountSelect(amount)}
-                      className="w-full px-6 py-3 text-left text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
-                    >
-                      {amount}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {firstQuestion.options?.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleAmountSelect(option.value, option.label)}
+                    className={`p-4 border-2 rounded-lg text-left transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-50 ${
+                      selectedAmount === option.label 
+                        ? 'border-clockwork-orange-500 bg-clockwork-orange-50' 
+                        : 'border-gray-300 bg-white'
+                    }`}
+                  >
+                    <span className="font-semibold text-gray-900">{option.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-
-            <button
-              onClick={onQuizStart}
-              className="w-full bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white font-bold text-xl py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              Get Qualified
-            </button>
           </div>
 
           {/* Disclaimer */}

@@ -3,53 +3,18 @@ import { config } from './environment.config';
 export const quizConfig = {
   steps: [
     {
-      id: 'business_zip',
-      type: 'input' as const,
-      question: 'What is your business ZIP code?',
-      placeholder: 'ZIP code',
-      helper: "We'll check local lending availability.",
-      validation: {
-        pattern: /^\d{5}$/,
-        message: 'Please enter a valid 5-digit ZIP.',
-        apiEndpoint: config.api.zipValidation,
-        mockDelay: 1500,
-      },
-      required: true,
-      sidebar: {
-        title: 'Why we need your ZIP',
-        content: 'We use your location to match you with local lenders and check funding availability in your area.'
-      }
-    },
-    {
-      id: 'business_type',
-      type: 'button-group' as const,
-      question: 'What type of business do you operate?',
-      helper: 'This helps us tailor funding options to your industry.',
-      options: [
-        { value: 'retail', label: 'Retail/E-commerce' },
-        { value: 'service', label: 'Service-based' },
-        { value: 'manufacturing', label: 'Manufacturing' },
-        { value: 'construction', label: 'Construction' },
-        { value: 'restaurant', label: 'Restaurant/Food' },
-        { value: 'other', label: 'Other' }
-      ],
-      required: true,
-      sidebar: {
-        title: 'Business Type Matters',
-        content: 'Different industries have different funding needs and qualification requirements.'
-      }
-    },
-    {
       id: 'funding_amount',
       type: 'button-group' as const,
-      question: 'How much funding are you seeking?',
-      helper: 'Select the range that best fits your needs.',
+      question: 'How much do you need?',
+      helper: 'If you are unsure, 10% of annual revenue is a good place to start',
       options: [
-        { value: '50k-100k', label: '$50,000 - $100,000' },
-        { value: '100k-250k', label: '$100,000 - $250,000' },
-        { value: '250k-500k', label: '$250,000 - $500,000' },
-        { value: '500k-1m', label: '$500,000 - $1,000,000' },
-        { value: '1m+', label: '$1,000,000+' }
+        { value: '5k-49k', label: '$5-49,999' },
+        { value: '50k-99k', label: '$50k-99,999' },
+        { value: '100k-249k', label: '$100k-249,999' },
+        { value: '250k-500k', label: '$250k-500k' },
+        { value: '500k-1m', label: '$500k-1M' },
+        { value: '1m-5m', label: '$1-4.99M' },
+        { value: '5m-15m', label: '$5M-15M' }
       ],
       required: true,
       sidebar: {
@@ -58,39 +23,115 @@ export const quizConfig = {
       }
     },
     {
-      id: 'funding_timeline',
+      id: 'company_type',
       type: 'button-group' as const,
-      question: 'When do you need the funding?',
-      helper: 'This helps us prioritize your application.',
+      question: 'Type of company?',
+      helper: 'Select your business structure.',
       options: [
-        { value: 'asap', label: 'ASAP (24-48 hours)' },
-        { value: 'week', label: 'Within a week' },
-        { value: '2_4w', label: '2-4 weeks' },
-        { value: 'research', label: 'Just researching options' }
+        { value: 'llc', label: 'Limited Liability Company | LLC' },
+        { value: 'sole_proprietorship', label: 'Sole Proprietorship' },
+        { value: 'partnership', label: 'Partnership' },
+        { value: 'c_corp', label: 'C Corporation' },
+        { value: 's_corp', label: 'S Corporation' }
       ],
       required: true,
       sidebar: {
-        title: 'Timeline Matters',
-        content: 'Faster funding may have different terms and requirements. We can accommodate urgent needs.'
+        title: 'Business Structure',
+        content: 'Different business structures have different funding requirements and qualification criteria.'
+      }
+    },
+    {
+      id: 'financing_purpose',
+      type: 'multi-select' as const,
+      question: 'What are you getting the financing for?',
+      helper: 'Select all that apply.',
+      options: [
+        { value: 'mergers_acquisitions', label: 'Mergers and acquisitions' },
+        { value: 'working_capital', label: 'Working Capital / Cash Flow' },
+        { value: 'equipment', label: 'Equipment Purchase' },
+        { value: 'expansion', label: 'Expansion' },
+        { value: 'inventory', label: 'Inventory' },
+        { value: 'payroll', label: 'Payroll' },
+        { value: 'other', label: 'Other' }
+      ],
+      required: true,
+      sidebar: {
+        title: 'Financing Purpose',
+        content: 'Understanding how you plan to use the funds helps us match you with the right financing options.'
+      }
+    },
+    {
+      id: 'monthly_revenue',
+      type: 'slider' as const,
+      question: "What's your average monthly revenue?",
+      helper: 'Move the slider to select your monthly revenue range.',
+      min: 50000,
+      max: 50000000,
+      step: 50000,
+      formatValue: (value: number) => {
+        if (value >= 50000000) return '$50,000,000+';
+        if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+        if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
+        return `$${value.toLocaleString()}`;
+      },
+      required: true,
+      sidebar: {
+        title: 'Monthly Revenue',
+        content: 'Your monthly revenue helps us determine the appropriate funding amount and terms for your business.'
       }
     },
     {
       id: 'credit_score',
       type: 'button-group' as const,
-      question: 'What is your approximate personal credit score?',
+      question: "What's your estimated personal credit score?",
       helper: "We use this to match you with the best funding options.",
       options: [
-        { value: '750+', label: '750+ (Excellent)' },
-        { value: '700-749', label: '700-749 (Good)' },
-        { value: '650-699', label: '650-699 (Fair)' },
-        { value: '600-649', label: '600-649 (Poor)' },
-        { value: 'below-600', label: 'Below 600' },
-        { value: 'unsure', label: 'Not sure' }
+        { value: '720+', label: 'Excellent (720+)' },
+        { value: '680-719', label: 'Good (680 - 719)' },
+        { value: '640-679', label: 'Fair (640 - 679)' },
+        { value: '639-', label: 'Poor (639 or less)' }
       ],
       required: true,
       sidebar: {
         title: 'Credit Score Impact',
-        content: 'Higher credit scores typically qualify for better rates. We also offer revenue-based options that don\'t rely on credit.'
+        content: 'Higher credit scores typically qualify for better rates. We also offer revenue-based options that don\'t rely heavily on credit.'
+      }
+    },
+    {
+      id: 'business_age',
+      type: 'button-group' as const,
+      question: 'When did you start your business?',
+      helper: 'Select how long your business has been operating.',
+      options: [
+        { value: '0-5months', label: '0 - 5 Months' },
+        { value: '6-12months', label: '6 - 12 Months' },
+        { value: '1-2years', label: '1 - 2 Years' },
+        { value: '2-5years', label: '2 - 5 Years' },
+        { value: '5-10years', label: '5 - 10 Years' },
+        { value: '10+years', label: '10+ Years' }
+      ],
+      required: true,
+      sidebar: {
+        title: 'Business Age',
+        content: 'Time in business affects funding options and terms. Newer businesses may have different qualification requirements.'
+      }
+    },
+    {
+      id: 'business_industry',
+      type: 'button-group' as const,
+      question: 'What industry is your business in?',
+      helper: 'Select the industry that best describes your business.',
+      options: [
+        { value: 'construction', label: 'Construction' },
+        { value: 'transportation', label: 'Transportation and Warehousing' },
+        { value: 'hospitality', label: 'Accommodation and Food Services' },
+        { value: 'retail', label: 'Retail Trade' },
+        { value: 'other', label: 'Other' }
+      ],
+      required: true,
+      sidebar: {
+        title: 'Industry Type',
+        content: 'Different industries have different funding needs and qualification requirements.'
       }
     }
   ],
@@ -108,6 +149,7 @@ export const quizConfig = {
   
   submission: {
     fields: [
+      { id: 'business_zip', type: 'text', label: 'Business ZIP Code', placeholder: 'ZIP Code', required: true },
       { id: 'first_name', type: 'text', label: 'First Name', placeholder: 'First Name', required: true },
       { id: 'last_name', type: 'text', label: 'Last Name', placeholder: 'Last Name', required: true },
       { id: 'email', type: 'email', label: 'Email', placeholder: 'you@example.com', required: true },
