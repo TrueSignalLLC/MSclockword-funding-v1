@@ -58,62 +58,29 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
         </div>
 
         {/* Desktop Circular Layout - Hidden on mobile */}
-        <div className="hidden lg:block relative">
-          <div className="relative w-full h-[800px] mx-auto">
-            {/* Central Hub */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-clockwork-orange-500 rounded-full flex items-center justify-center z-10">
-              <div className="text-center">
-                <div className="text-2xl font-bold">FAST</div>
-                <div className="text-sm">FUNDING</div>
-              </div>
-            </div>
-
-            {/* Process Steps in Circle */}
-            {processSteps.map((step, index) => {
-              const angle = (index * 360) / processSteps.length - 90; // Start from top, evenly distribute 360°
-              const radius = 300;
-              const x = Math.cos((angle * Math.PI) / 180) * radius;
-              const y = Math.sin((angle * Math.PI) / 180) * radius;
-
-              return (
-                <div
-                  key={index}
-                  className="absolute transform -translate-x-1/2 -translate-y-1/2 group"
-                  style={{
-                    left: `calc(50% + ${x}px)`,
-                    top: `calc(50% + ${y}px)`,
-                  }}
-                >
-                  {/* Connection Line */}
-                  <div
-                    className="absolute w-24 h-0.5 bg-clockwork-orange-300 opacity-30"
-                    style={{
-                      transform: `rotate(${angle + 90}deg)`,
-                      transformOrigin: 'left center',
-                      left: '50%',
-                      top: '50%',
-                    }}
-                  />
-                  
-                  {/* Step Card */}
-                  <div className="bg-white text-gray-900 rounded-xl p-6 w-64 h-40 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 flex flex-col">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-clockwork-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                        {step.number}
-                      </div>
-                      <div className="flex-1 min-h-0">
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">
-                          {step.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm leading-relaxed overflow-hidden">
-                          {step.description}
-                        </p>
-                      </div>
-                    </div>
+        {/* Desktop Two-Column Layout - Hidden on mobile */}
+        <div className="hidden lg:block">
+          <div className="grid grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {processSteps.map((step, index) => (
+              <div
+                key={index}
+                className="bg-white text-gray-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-clockwork-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                    {step.number}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {step.description}
+                    </p>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
 
