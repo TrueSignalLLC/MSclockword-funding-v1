@@ -36,21 +36,37 @@ interface QuizOverlayProps {
 
 export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => {
   // Build steps from config - MUST be first to avoid initialization errors
-  const steps = useMemo(() => [
-    ...quizConfig.steps.map(step => ({
+  const steps = useMemo(() => {
+    // Skip the first question (already answered on hero page) and add contact form
+    const overlaySteps = quizConfig.steps.slice(1).map(step => ({
       id: step.id,
       title: step.question,
       helper: step.helper,
-      type: step.type === 'button-group' ? 'radio' : step.type,
-      options: step.options,
-      placeholder: step.placeholder
-    })),
-    {
+      type: step.type,
+      options: step.options || [],
+      placeholder: step.placeholder,
+      min: (step as any).min,
+      max: (step as any).max,
+      step: (step as any).step,
+      formatValue: (step as any).formatValue
+    }));
+    
+    // Add contact form step
+    overlaySteps.push({
       id: 'contact',
       title: 'Please enter your contact details:',
-      type: 'contact'
-    }
-  ], []);
+      type: 'contact',
+      helper: '',
+      options: [],
+      placeholder: undefined,
+      min: undefined,
+      max: undefined,
+      step: undefined,
+      formatValue: undefined
+    });
+    
+    return overlaySteps;
+  }, []);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [showThankYou, setShowThankYou] = useState(false);
@@ -83,12 +99,14 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
 
   // Store answers using config IDs
-  const [quizData, setQuizData] = useState({
-    business_zip: '',
-    business_type: '',
     funding_amount: '',
-    funding_timeline: '',
+    company_type: '',
+    financing_purpose: [] as string[],
+    monthly_revenue: 50000,
     credit_score: '',
+    business_age: '',
+    business_industry: '',
+    business_zip: '',
     first_name: '',
     last_name: '',
     phone: '',
@@ -203,33 +221,74 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   };
 
   const getOptions = (stepIndex: number) => {
-    if (stepIndex < quizConfig.steps.length) {
-      return quizConfig.steps[stepIndex].options?.map(opt => opt.label) || [];
+    if (stepIndex < steps.length - 1) { // -1 because last step is contact form
+      return steps[stepIndex].options?.map(opt => opt.label) || [];
     }
     return [];
   };
 
-  const handleOptionSelect = (value: string) => {
-    const configStep = quizConfig.steps[currentStep];
-    if (configStep) {
+  const handleOptionSelect = (value: string, isMultiSelect = false) => {
+    const step = steps[currentStep];
+    if (step && step.id !== 'contact') {
+      const configStep = quizConfig.steps.find(s => s.id === step.id);
+      if (!configStep) return;
+      
       const selectedOption = configStep.options?.find(opt => opt.label === value);
       const answerValue = selectedOption?.value || value;
       
-      // Update local state
+      if (isMultiSelect) {
+        // Handle multi-select
+        setQuizData(prev => {
+          const currentValues = Array.isArray(prev[step.id as keyof typeof prev]) 
+            ? prev[step.id as keyof typeof prev] as string[]
+            : [];
+          
+          const newValues = currentValues.includes(answerValue)
+            ? currentValues.filter(v => v !== answerValue)
+            : [...currentValues, answerValue];
+            
+          return {
+            ...prev,
+            [step.id]: newValues
+          };
+        });
+        
+        // Store multi-select answer
+        const currentValues = Array.isArray(quizData[step.id as keyof typeof quizData])
+          ? quizData[step.id as keyof typeof quizData] as string[]
+          : [];
+        const newValues = currentValues.includes(answerValue)
+          ? currentValues.filter(v => v !== answerValue)
+          : [...currentValues, answerValue];
+        storeQuizAnswer(step.id, newValues);
+      } else {
+        // Handle single select
+        setQuizData(prev => ({
+          ...prev,
+          [step.id]: answerValue
+        }));
+        
+        // Store quiz answer
+        storeQuizAnswer(step.id, answerValue);
+        
+        // Auto-advance for single select questions
+        setTimeout(() => {
+          handleNext();
+        }, 300);
+      }
+    }
+  };
+
+  const handleSliderChange = (value: number) => {
+    const step = steps[currentStep];
+    if (step && step.id !== 'contact') {
       setQuizData(prev => ({
         ...prev,
-        [configStep.id]: answerValue
+        [step.id]: value
       }));
       
       // Store quiz answer
-      storeQuizAnswer(configStep.id, answerValue);
-      
-      // Auto-advance for qualifying questions (radio button questions)
-      if (configStep.type === 'button-group') {
-        setTimeout(() => {
-          handleNext();
-        }, 300); // Small delay for better UX
-      }
+      storeQuizAnswer(step.id, value);
     }
   };
 
@@ -259,23 +318,30 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     // Store form field data
     if (['first_name', 'last_name', 'phone', 'email'].includes(field)) {
       storeFormField(field, value);
+    } else if (field === 'business_zip') {
+      // Store business ZIP as quiz answer
+      storeQuizAnswer('business_zip', value);
     }
 
-    // Handle ZIP validation when 5 digits entered
+    // Handle business ZIP validation when 5 digits entered
     if (field === 'business_zip' && value.length === 5) {
-      // Store user's ZIP answer first
-      storeQuizAnswer('business_zip', value);
-      
       // Set loading immediately
       setValidationState({ loading: true, valid: null, error: null });
       
       // Get the config and session data
-      const configStep = quizConfig.steps[0];
+      const zipStep = {
+        id: 'business_zip',
+        validation: {
+          apiEndpoint: config.api.zipValidation,
+          mockDelay: 1500,
+          message: 'Please enter a valid ZIP code'
+        }
+      };
       const sessionData = getSessionData();
       
       // Execute validation and handle response
       try {
-        const result = await validateField(configStep, value, sessionData);
+        const result = await validateField(zipStep, value, sessionData);
         console.log('QuizOverlay received:', result);
         
         // Update state when response arrives
@@ -609,23 +675,30 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   };
 
   const canProceed = () => {
-    if (currentStep === 0) {
-      return validationState.valid === true;
-    }
+    const step = steps[currentStep];
     
-    if (currentStep < quizConfig.steps.length) {
-      const configStep = quizConfig.steps[currentStep];
-      return quizData[configStep.id as keyof typeof quizData] !== '';
+    if (step.type === 'contact') {
+      // Contact step - require all fields and validations
+      return quizData.business_zip &&
+             validationState.valid === true &&
+             quizData.first_name && 
+             quizData.last_name && 
+             quizData.phone && 
+             quizData.email && 
+             emailValidationState.valid === true &&
+             phoneValidationState.status === 'valid' &&
+             tcpaConsent;
+    } else if (step.type === 'multi-select') {
+      // Multi-select requires at least one selection
+      const values = quizData[step.id as keyof typeof quizData];
+      return Array.isArray(values) && values.length > 0;
+    } else if (step.type === 'slider') {
+      // Slider always has a value
+      return true;
+    } else {
+      // Single select questions
+      return quizData[step.id as keyof typeof quizData] !== '';
     }
-    
-    // Contact step - require BOTH email and phone to be valid
-    return quizData.first_name && 
-           quizData.last_name && 
-           quizData.phone && 
-           quizData.email && 
-           emailValidationState.valid === true && // Email must be validated
-           phoneValidationState.status === 'valid' && // Phone must be validated
-           tcpaConsent;
   };
 
   const runLoadingAnimation = async () => {
@@ -659,7 +732,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   };
 
   const handleNext = async () => {
-    if (currentStep === quizConfig.steps.length - 1) {
+    if (currentStep === steps.length - 2) { // Second to last step (before contact form)
       // After last qualifying question, show loading
       await runLoadingAnimation();
     } else if (currentStep < steps.length - 1) {
@@ -865,36 +938,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                 </p>
               )}
 
-              {/* ZIP Input (Step 0) */}
-              {currentStep === 0 && (
-                <div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder={steps[0].placeholder || "Enter business ZIP code"}
-                      value={quizData.business_zip}
-                      onChange={(e) => handleInputChange('business_zip', e.target.value)}
-                      className="w-full p-4 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-                      maxLength={5}
-                    />
-                    {validationState.loading && (
-                      <Loader2 className="absolute right-4 top-5 w-5 h-5 animate-spin text-blue-500" />
-                    )}
-                    {validationState.valid === true && (
-                      <CheckCircle className="absolute right-4 top-5 w-5 h-5 text-green-500" />
-                    )}
-                    {validationState.valid === false && (
-                      <XCircle className="absolute right-4 top-5 w-5 h-5 text-red-500" />
-                    )}
-                  </div>
-                  {validationState.error && (
-                    <p className="mt-2 text-sm text-red-600">{validationState.error}</p>
-                  )}
-                </div>
-              )}
-
-              {/* Radio Options */}
-              {steps[currentStep].type === 'radio' && currentStep > 0 && (
+              {/* Single Select Options */}
+              {steps[currentStep].type === 'button-group' && (
                 <div className="space-y-3">
                   {getOptions(currentStep).map((option, index) => (
                     <label
@@ -905,13 +950,82 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                         type="radio"
                         name={`step-${currentStep}-${steps[currentStep].id}`}
                         value={option}
-                        checked={quizData[quizConfig.steps[currentStep].id as keyof typeof quizData] === quizConfig.steps[currentStep].options?.find(opt => opt.label === option)?.value}
+                        checked={(() => {
+                          const step = steps[currentStep];
+                          const configStep = quizConfig.steps.find(s => s.id === step.id);
+                          if (!configStep) return false;
+                          const selectedOption = configStep.options?.find(opt => opt.label === option);
+                          return quizData[step.id as keyof typeof quizData] === selectedOption?.value;
+                        })()}
                         onChange={(e) => handleOptionSelect(e.target.value)}
                         className="w-4 h-4 text-blue-600 mr-3"
                       />
                       <span className="text-gray-900">{option}</span>
                     </label>
                   ))}
+                </div>
+              )}
+
+              {/* Multi-Select Options */}
+              {steps[currentStep].type === 'multi-select' && (
+                <div className="space-y-3">
+                  {getOptions(currentStep).map((option, index) => {
+                    const step = steps[currentStep];
+                    const configStep = quizConfig.steps.find(s => s.id === step.id);
+                    const selectedOption = configStep?.options?.find(opt => opt.label === option);
+                    const values = Array.isArray(quizData[step.id as keyof typeof quizData]) 
+                      ? quizData[step.id as keyof typeof quizData] as string[]
+                      : [];
+                    const isSelected = values.includes(selectedOption?.value || option);
+                    
+                    return (
+                      <label
+                        key={index}
+                        className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
+                          isSelected 
+                            ? 'border-blue-500 bg-blue-50' 
+                            : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleOptionSelect(option, true)}
+                          className="w-4 h-4 text-blue-600 mr-3"
+                        />
+                        <span className="text-gray-900">{option}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Slider */}
+              {steps[currentStep].type === 'slider' && (
+                <div>
+                  <div className="mb-6">
+                    <div className="text-center mb-4">
+                      <span className="text-3xl font-bold text-blue-600">
+                        {steps[currentStep].formatValue ? 
+                          steps[currentStep].formatValue!(quizData.monthly_revenue) : 
+                          `$${quizData.monthly_revenue.toLocaleString()}`
+                        }
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={steps[currentStep].min}
+                      max={steps[currentStep].max}
+                      step={quizData.monthly_revenue >= 10000000 ? 500000 : 50000}
+                      value={quizData.monthly_revenue}
+                      onChange={(e) => handleSliderChange(parseInt(e.target.value))}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                    <div className="flex justify-between text-sm text-gray-500 mt-2">
+                      <span>$50k</span>
+                      <span>$50M+</span>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -928,6 +1042,30 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                   }}
                   className="space-y-4"
                 >
+                  <div>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Business ZIP Code"
+                        value={quizData.business_zip}
+                        onChange={(e) => handleInputChange('business_zip', e.target.value)}
+                        className="w-full p-4 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        maxLength={5}
+                      />
+                      {validationState.loading && (
+                        <Loader2 className="absolute right-4 top-4 w-5 h-5 animate-spin text-blue-500" />
+                      )}
+                      {validationState.valid === true && (
+                        <CheckCircle className="absolute right-4 top-4 w-5 h-5 text-green-500" />
+                      )}
+                      {validationState.valid === false && (
+                        <XCircle className="absolute right-4 top-4 w-5 h-5 text-red-500" />
+                      )}
+                    </div>
+                    {validationState.error && (
+                      <p className="mt-2 text-sm text-red-600">{validationState.error}</p>
+                    )}
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input
                       type="text"
@@ -1089,32 +1227,34 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         </div>
 
         {/* Footer */}
-        {!showThankYou && (currentStep === 0 || currentStep === steps.length - 1) && (
+        {!showThankYou && (
           <div className="p-6 border-t border-gray-200 flex justify-between items-center">
             <div className="text-sm text-gray-500">
               {currentStep + 1} of {steps.length}
             </div>
-            <button
-              onClick={(e) => {
-                if (!canProceed()) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  return;
-                }
-                handleNext();
-              }}
-              disabled={!canProceed()}
-              className={`px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 ${
-                canProceed()
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50 pointer-events-none'
-              }`}
-              title={!canProceed() ? 'Please complete and validate all fields' : ''}
-              style={{ pointerEvents: !canProceed() ? 'none' : 'auto' }}
-            >
-              {currentStep === steps.length - 1 ? 'Get My Funding Options' : 'Next'}
-              {currentStep < steps.length - 1 && <ChevronRight className="w-4 h-4" />}
-            </button>
+            {(steps[currentStep].type === 'multi-select' || steps[currentStep].type === 'contact') && (
+              <button
+                onClick={(e) => {
+                  if (!canProceed()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                  }
+                  handleNext();
+                }}
+                disabled={!canProceed()}
+                className={`px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 ${
+                  canProceed()
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50 pointer-events-none'
+                }`}
+                title={!canProceed() ? 'Please complete and validate all fields' : ''}
+                style={{ pointerEvents: !canProceed() ? 'none' : 'auto' }}
+              >
+                {currentStep === steps.length - 1 ? 'Get My Funding Options' : 'Next'}
+                {currentStep < steps.length - 1 && <ChevronRight className="w-4 h-4" />}
+              </button>
+            )}
           </div>
         )}
         </div>
@@ -1126,7 +1266,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           <div className="bg-white rounded-lg p-6 max-w-md shadow-xl">
             <h3 className="text-lg font-bold mb-2">Wait! You're almost done</h3>
             <p className="text-gray-600 mb-4">
-              You're just {steps.length - currentStep} questions away from your personalized security recommendations.
+              You're just {steps.length - currentStep} questions away from your personalized funding options.
             </p>
             <div className="flex gap-3">
               <button 
