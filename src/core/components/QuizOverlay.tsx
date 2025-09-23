@@ -433,6 +433,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     setIsSubmitting(true);
     
     try {
+      console.log('=== FORM SUBMISSION DEBUG ===');
+      
       // Get compliance data
       const complianceData = getCompliancePayload();
       
@@ -446,41 +448,73 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         tcpa_text: tcpaText,
         consent: true
       };
+      
+      console.log('1. Payload prepared:', payload);
+      console.log('2. Webhook endpoint:', config.api.leadSubmit);
 
       // Submit to webhook
       if (config.api.leadSubmit) {
+        console.log('3. Starting fetch request...');
+        
         const response = await fetch(config.api.leadSubmit, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        
+        console.log('4. Fetch completed. Response details:');
+        console.log('   - response.ok:', response.ok);
+        console.log('   - response.status:', response.status);
+        console.log('   - response.statusText:', response.statusText);
+        console.log('   - response.headers:', response.headers);
+        console.log('   - response.url:', response.url);
+        
+        // Get response text first (before JSON parsing)
+        const responseText = await response.text();
+        console.log('5. Raw response text:', responseText);
+        
+        let responseData;
+        try {
+          responseData = JSON.parse(responseText);
+          console.log('6. Parsed JSON response:', responseData);
+        } catch (jsonError) {
+          console.error('7. JSON parsing failed:', jsonError);
+          throw new Error(`Invalid JSON response: ${responseText}`);
+        }
 
         if (response.ok) {
-          // Parse the response JSON
-          const responseData = await response.json();
-          
           // Check if the response indicates success and has a redirectURL
           if (responseData.status === true && responseData.redirectURL) {
+            console.log('8. Success with redirectURL:', responseData.redirectURL);
             // Redirect to the URL provided by the webhook
             window.location.href = responseData.redirectURL;
           } else if (responseData.status === true) {
+            console.log('9. Success but no redirectURL - using fallback');
             // Success but no redirectURL - use fallback
             window.location.href = '/thank-you';
           } else {
+            console.log('10. Response indicates failure:', responseData);
             // Response indicates failure
             throw new Error(responseData.message || 'Submission failed');
           }
         } else {
+          console.log('11. HTTP error response:', response.status, response.statusText);
           throw new Error('Submission failed');
         }
       } else {
+        console.log('12. No submission endpoint configured');
         throw new Error('No submission endpoint configured');
       }
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error('=== SUBMISSION ERROR ===');
+      console.error('Error details:', error);
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       alert(`There was an error submitting your application: ${error instanceof Error ? error.message : 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
+      console.log('=== FORM SUBMISSION END ===');
     }
   };
 
