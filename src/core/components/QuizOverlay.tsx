@@ -59,7 +59,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   }, [isOpen]);
 
   const steps = quizConfig.steps.slice(1); // Skip first question (it's on hero)
-  const totalSteps = steps.length + 2; // +1 for loading screen, +1 for contact form
+  const totalSteps = steps.length + 1; // +1 for contact form (loading screen doesn't count as a step)
   
   // Loading screen configuration
   const loadingStages = [
@@ -258,8 +258,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
               )}
               <h2 className="text-xl font-bold text-gray-900">
                 {showLoadingScreen 
-                  ? `Step ${steps.length + 2} of ${totalSteps + 1}` 
-                  : `Step ${currentStep + 2} of ${totalSteps + 1}`
+                  ? `Step ${steps.length + 1} of ${totalSteps}` 
+                  : `Step ${currentStep + 2} of ${totalSteps}`
                 }
               </h2>
             </div>
@@ -612,8 +612,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           <div className="flex items-center justify-between p-6 border-t border-gray-200">
             <div className="text-sm text-gray-500">
               {showLoadingScreen 
-                ? `Step ${steps.length + 2} of ${totalSteps + 1}` 
-                : `Step ${currentStep + 2} of ${totalSteps + 1}`
+                ? `Step ${steps.length + 1} of ${totalSteps}` 
+                : `Step ${currentStep + 2} of ${totalSteps}`
               }
             </div>
             
