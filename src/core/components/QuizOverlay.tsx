@@ -84,12 +84,13 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const handleNext = async () => {
     if (currentStep < steps.length) {
       const currentStepConfig = steps[currentStep];
-      // Quiz questions
-      const answer = getAnswerForStep(currentStepConfig);
-      storeQuizAnswer(currentStepConfig.id, answer);
       
       // Check if this is the last quiz question (question 7)
       if (currentStep === steps.length - 1) {
+        // Store the final quiz answer before loading
+        const answer = getAnswerForStep(currentStepConfig);
+        storeQuizAnswer(currentStepConfig.id, answer);
+        
         // Start loading screen
         setShowLoadingScreen(true);
         setLoadingProgress(0);
@@ -112,6 +113,9 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           setCurrentStep(prev => prev + 1);
         }, duration + 500);
       } else {
+        // Store quiz answer and move to next step
+        const answer = getAnswerForStep(currentStepConfig);
+        storeQuizAnswer(currentStepConfig.id, answer);
         setCurrentStep(prev => prev + 1);
       }
     } else if (showLoadingScreen) {
@@ -389,8 +393,11 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                             ...prev,
                             [steps[currentStep].id]: option.value
                           }));
-                          // Auto-advance for single select
-                          setTimeout(() => handleNext(), 300);
+                          // Store the answer immediately and auto-advance
+                          storeQuizAnswer(steps[currentStep].id, option.value);
+                          setTimeout(() => {
+                            setCurrentStep(prev => prev + 1);
+                          }, 300);
                         }}
                         className={`p-4 border-2 rounded-lg text-left transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-50 ${
                           getAnswerForStep(steps[currentStep]) === option.value
@@ -460,219 +467,4 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                           className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                         />
                         
-                        <div className="flex justify-between text-sm text-gray-500 mt-2">
-                          <span>$50k</span>
-                          <span>$50M+</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              // Contact Form
-              <div className="space-y-6">
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    Get Your Funding Options
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    Complete your information to receive your personalized funding recommendations.
-                  </p>
-                </div>
-
-                <div className="max-w-2xl mx-auto space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        First Name *
-                      </label>
-                      <input
-                        type="text"
-                        value={quizData.first_name}
-                        onChange={(e) => setQuizData(prev => ({ ...prev, first_name: e.target.value }))}
-                        placeholder="First Name"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Last Name *
-                      </label>
-                      <input
-                        type="text"
-                        value={quizData.last_name}
-                        onChange={(e) => setQuizData(prev => ({ ...prev, last_name: e.target.value }))}
-                        placeholder="Last Name"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      value={quizData.email}
-                      onChange={(e) => setQuizData(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="you@example.com"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone *
-                    </label>
-                    <input
-                      type="tel"
-                      value={quizData.phone}
-                      onChange={(e) => setQuizData(prev => ({ ...prev, phone: e.target.value }))}
-                      placeholder="(___) ___-____"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Business Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={quizData.business_name}
-                      onChange={(e) => setQuizData(prev => ({ ...prev, business_name: e.target.value }))}
-                      placeholder="Your Business Name"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
-                  {/* Consent */}
-                  <div className="text-sm text-gray-600 leading-relaxed">
-                    <p dangerouslySetInnerHTML={{ __html: quizConfig.submission.consent.text }} />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div className="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
-            <div className="text-sm text-gray-500">
-              {showLoadingScreen ? (
-                <span>Analyzing your business profile and finding matches...</span>
-              ) : currentStep < steps.length ? (
-                steps[currentStep].sidebar && (
-                  <span>{steps[currentStep].sidebar.content}</span>
-                )
-              ) : (
-                <span>Complete your information to get your funding options</span>
-              )}
-            </div>
-            
-            {/* Show Next button for multi-select, slider, and contact form */}
-            {!showLoadingScreen && (steps[currentStep]?.type === 'multi-select' || 
-              steps[currentStep]?.type === 'slider' || 
-              currentStep >= steps.length) && (
-              <button
-                onClick={handleNext}
-                disabled={!canProceed() || isSubmitting}
-                className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-6 py-2 rounded-lg transition-colors flex items-center gap-2"
-              >
-                {isSubmitting ? (
-                  'Submitting...'
-                ) : currentStep >= steps.length ? (
-                  'Get My Funding Options'
-                ) : (
-                  <>
-                    Next
-                    <ChevronRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Exit Confirmation Modal */}
-      {showExitModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-bold mb-4">Are you sure you want to exit?</h3>
-            <p className="text-gray-600 mb-6">
-              You have {showLoadingScreen ? 1 : totalSteps - (currentStep + 1)} questions remaining. Your progress will be lost if you exit now.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={handleExitCancel}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-              >
-                Continue
-              </button>
-              <button
-                onClick={handleExitConfirm}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Leave
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* OTP Modal */}
-      <OTPModal
-        isOpen={showOTPModal}
-        phoneNumber={quizData.phone}
-        onVerify={async (code) => {
-          // Handle OTP verification
-          return { success: true };
-        }}
-        onResend={async () => {
-          // Handle OTP resend
-        }}
-        onClose={() => setShowOTPModal(false)}
-      />
-
-      {/* Phone Validation Popup */}
-      <PhoneValidationPopup
-        isOpen={showPhoneValidation}
-        phoneNumber={quizData.phone}
-        onConfirm={() => {
-          setShowPhoneValidation(false);
-          setShowOTPModal(true);
-        }}
-        onCancel={() => setShowPhoneValidation(false)}
-      />
-
-      <style jsx>{`
-        .slider::-webkit-slider-thumb {
-          appearance: none;
-          height: 24px;
-          width: 24px;
-          border-radius: 50%;
-          background: #f97316;
-          cursor: pointer;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .slider::-moz-range-thumb {
-          height: 24px;
-          width: 24px;
-          border-radius: 50%;
-          background: #f97316;
-          cursor: pointer;
-          border: none;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-      `}</style>
-    </>
-  );
-};
+                        <div className="flex justify-between text-sm text-gray-500
