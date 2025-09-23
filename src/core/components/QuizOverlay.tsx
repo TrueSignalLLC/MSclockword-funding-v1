@@ -23,6 +23,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [showPhoneValidation, setShowPhoneValidation] = useState(false);
   const [otpAttempts, setOtpAttempts] = useState(0);
+  const [otpLoading, setOtpLoading] = useState(false);
   
   // Email validation state
   const [emailValidation, setEmailValidation] = useState({
@@ -33,6 +34,19 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   
   // Debounce timeout ref for email validation
   const emailValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Phone validation state
+  const [phoneValidation, setPhoneValidation] = useState({
+    loading: false,
+    valid: null as boolean | null,
+    error: null as string | null,
+    status: null as 'valid' | 'invalid' | 'needs_otp' | 'otp_sent' | null,
+    message: null as string | null,
+    phoneType: null as string | null,
+  });
+  
+  // Debounce timeout ref for phone validation
+  const phoneValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const [quizData, setQuizData] = useState({
     funding_amount: '',
@@ -154,6 +168,115 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     }, 800); // 800ms debounce delay
   };
 
+  // Phone validation handler with debouncing
+  const handlePhoneValidation = async (phone: string) => {
+    // Clear existing timeout
+    if (phoneValidationTimeoutRef.current) {
+      clearTimeout(phoneValidationTimeoutRef.current);
+    }
+    
+    // If phone is empty, reset validation state
+    if (!phone.trim()) {
+      setPhoneValidation({
+        loading: false,
+        valid: null,
+        error: null,
+        status: null,
+        message: null,
+        phoneType: null,
+      });
+      return;
+    }
+    
+    // Set loading state immediately
+    setPhoneValidation(prev => ({
+      ...prev,
+      loading: true,
+      error: null,
+      status: null,
+      message: null,
+    }));
+    
+    // Debounce the validation call
+    phoneValidationTimeoutRef.current = setTimeout(async () => {
+      try {
+        const sessionData = getSessionData();
+        
+        // Find phone field configuration from quiz config
+        const phoneFieldConfig = quizConfig.submission.fields.find(field => field.id === 'phone');
+        
+        if (!phoneFieldConfig) {
+          setPhoneValidation({
+            loading: false,
+            valid: false,
+            error: 'Phone validation not configured',
+            status: 'invalid',
+            message: null,
+            phoneType: null,
+          });
+          return;
+        }
+        
+        // Create a step-like object for validation
+        const phoneStep = {
+          id: 'phone',
+          type: 'tel' as const,
+          validation: {
+            required: true,
+            apiEndpoint: config.api.phoneValidation
+          }
+        };
+        
+        const result = await validateField(phoneStep, phone, sessionData);
+        
+        const validationState = {
+          loading: false,
+          valid: result.valid,
+          error: result.error,
+          status: result.status || (result.valid ? 'valid' : 'invalid'),
+          message: result.message || null,
+          phoneType: result.phoneType || null,
+        };
+        
+        setPhoneValidation(validationState);
+        
+        // Store validation result in session
+        storeValidation('phone', {
+          valid: result.valid,
+          error: result.error,
+          status: result.status,
+          message: result.message,
+          phoneType: result.phoneType,
+          timestamp: new Date().toISOString()
+        });
+        
+        // If phone needs OTP verification, show the phone validation popup
+        if (result.status === 'needs_otp') {
+          // Don't automatically show popup here - let user click submit first
+          console.log('Phone requires OTP verification');
+        }
+        
+      } catch (error) {
+        console.error('Phone validation error:', error);
+        const errorState = {
+          loading: false,
+          valid: false,
+          error: 'Validation failed. Please try again.',
+          status: 'invalid' as const,
+          message: null,
+          phoneType: null,
+        };
+        setPhoneValidation(errorState);
+        
+        storeValidation('phone', {
+          valid: false,
+          error: 'Validation failed',
+          timestamp: new Date().toISOString()
+        });
+      }
+    }, 800); // 800ms debounce delay
+  };
+
   const steps = quizConfig.steps.slice(1); // Skip first question (it's on hero)
   const totalSteps = 8; // Fixed total of 8 steps
   
@@ -222,7 +345,18 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
       return;
     } else {
       // Contact form submission
-      await handleSubmit();
+      // Check if phone needs OTP verification
+      if (phoneValidation.status === 'needs_otp') {
+        setShowPhoneValidation(true);
+        return;
+      }
+      
+      // If phone is valid or doesn't need OTP, proceed with submission
+      if (phoneValidation.valid === true) {
+        await handleSubmit();
+      } else {
+        alert('Please ensure your phone number is valid before proceeding.');
+      }
     }
   };
 
@@ -277,7 +411,11 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
              quizData.phone && 
              quizData.business_name &&
              emailValidation.valid === true &&
-             !emailValidation.loading;
+             !emailValidation.loading &&
+             phoneValidation.valid === true &&
+             !phoneValidation.loading &&
+             !showPhoneValidation &&
+             !showOTPModal;
     }
   };
 
@@ -315,6 +453,108 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Send OTP function
+  const sendOTP = async (): Promise<void> => {
+    setOtpLoading(true);
+    try {
+      if (!config.api.sendOTP) {
+        throw new Error('OTP endpoint not configured');
+      }
+      
+      const response = await fetch(config.api.sendOTP, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          phone: quizData.phone,
+          ...getSessionData()
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to send OTP');
+      }
+      
+      // Close phone validation popup and open OTP modal
+      setShowPhoneValidation(false);
+      setShowOTPModal(true);
+      setOtpAttempts(0);
+      
+      // Update phone validation status
+      setPhoneValidation(prev => ({
+        ...prev,
+        status: 'otp_sent',
+        message: 'OTP sent successfully'
+      }));
+      
+    } catch (error) {
+      console.error('Send OTP error:', error);
+      alert('Failed to send OTP. Please try again.');
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+  
+  // Verify OTP function
+  const verifyOTP = async (code: string): Promise<{ success: boolean; message?: string }> => {
+    try {
+      if (!config.api.verifyOTP) {
+        throw new Error('OTP verification endpoint not configured');
+      }
+      
+      const response = await fetch(config.api.verifyOTP, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          phone: quizData.phone,
+          code: code,
+          ...getSessionData()
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        // Update phone validation to valid
+        setPhoneValidation(prev => ({
+          ...prev,
+          valid: true,
+          status: 'valid',
+          message: 'Phone verified successfully'
+        }));
+        
+        // Store validation result
+        storeValidation('phone', {
+          valid: true,
+          status: 'valid',
+          message: 'Phone verified successfully',
+          timestamp: new Date().toISOString()
+        });
+        
+        // Close OTP modal
+        setShowOTPModal(false);
+        
+        return { success: true };
+      } else {
+        return { 
+          success: false, 
+          message: result.message || 'Invalid verification code' 
+        };
+      }
+      
+    } catch (error) {
+      console.error('Verify OTP error:', error);
+      return { 
+        success: false, 
+        message: 'Verification failed. Please try again.' 
+      };
+    }
+  };
+  
+  // Resend OTP function
+  const resendOTP = async (): Promise<void> => {
+    await sendOTP();
   };
 
   const formatSliderValue = (value: number) => {
@@ -681,11 +921,47 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                       onChange={(e) => {
                         setQuizData(prev => ({ ...prev, phone: e.target.value }));
                         storeFormField('phone', e.target.value);
+                       handlePhoneValidation(e.target.value);
                       }}
                       placeholder="(___) ___-____"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent ${
+                       phoneValidation.valid === true 
+                         ? 'border-green-500' 
+                         : phoneValidation.valid === false 
+                         ? 'border-red-500' 
+                         : 'border-gray-300'
+                     }`}
                       required
                     />
+                   
+                   {/* Phone validation feedback */}
+                   {phoneValidation.loading && (
+                     <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
+                       <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                       <span>Validating phone number...</span>
+                     </div>
+                   )}
+                   
+                   {phoneValidation.error && (
+                     <p className="mt-2 text-sm text-red-600">
+                       {phoneValidation.error}
+                     </p>
+                   )}
+                   
+                   {phoneValidation.valid === true && !phoneValidation.loading && (
+                     <p className="mt-2 text-sm text-green-600">
+                       ✓ Phone number is valid
+                       {phoneValidation.phoneType && (
+                         <span className="ml-2 text-gray-500">({phoneValidation.phoneType})</span>
+                       )}
+                     </p>
+                   )}
+                   
+                   {phoneValidation.status === 'needs_otp' && (
+                     <p className="mt-2 text-sm text-orange-600">
+                       📱 This mobile number will require SMS verification
+                     </p>
+                   )}
                   </div>
 
                   {/* Business Name */}
@@ -786,6 +1062,25 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           </div>
         </div>
       )}
+      
+      {/* Phone Validation Popup */}
+      <PhoneValidationPopup
+        isOpen={showPhoneValidation}
+        phoneNumber={quizData.phone}
+        onConfirm={sendOTP}
+        onCancel={() => setShowPhoneValidation(false)}
+        loading={otpLoading}
+      />
+      
+      {/* OTP Modal */}
+      <OTPModal
+        isOpen={showOTPModal}
+        phoneNumber={quizData.phone}
+        onVerify={verifyOTP}
+        onResend={resendOTP}
+        onClose={() => setShowOTPModal(false)}
+        maxAttempts={3}
+      />
     </>
   );
 };
