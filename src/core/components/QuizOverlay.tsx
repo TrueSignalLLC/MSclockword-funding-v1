@@ -612,8 +612,10 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           <div className="flex items-center justify-between p-6 border-t border-gray-200">
             <div className="text-sm text-gray-500">
               {showLoadingScreen 
-                ? `Step ${steps.length + 1} of ${totalSteps}` 
-                : `Step ${currentStep + 2} of ${totalSteps}`
+                ? `Step ${totalSteps} of ${totalSteps}` 
+                : currentStep < steps.length
+                ? `Step ${currentStep + 2} of ${totalSteps}`
+                : `Step ${totalSteps} of ${totalSteps}`
               }
             </div>
             
