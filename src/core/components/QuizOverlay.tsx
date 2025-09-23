@@ -36,14 +36,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     email: '',
     phone: '',
     business_name: '',
-    leadid_token: ''
-  });
-
-  const [validationStates, setValidationStates] = useState<Record<string, any>>({});
-  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
-
-  const { getCompliancePayload } = useCompliance();
-
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -59,8 +51,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
-        // Store the final quiz answer before loading
-        const answer = getAnswerForStep(currentStepConfig);
         storeQuizAnswer(currentStepConfig.id, answer);
         
         // Store the final quiz answer before loading
