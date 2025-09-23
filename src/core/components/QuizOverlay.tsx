@@ -20,29 +20,29 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const [loadingStage, setLoadingStage] = useState(0);
   const [showExitModal, setShowExitModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [showPhoneValidation, setShowPhoneValidation] = useState(false);
-  const [otpAttempts, setOtpAttempts] = useState(0);
-  const { getCompliancePayload } = useCompliance();
-  const steps = quizConfig.steps;
-  const loadingStages = quizConfig.loadingStep?.stages || [];
-  const totalSteps = steps.length + 1; // +1 for contact form
-  
   const [quizData, setQuizData] = useState({
-    funding_amount: '',
-    financing_purpose: [] as string[],
+    company_type: '',
+    financing_purpose: [],
     monthly_revenue: 50000,
     credit_score: '',
     business_age: '',
     business_industry: '',
-    company_type: '',
+    business_zip: '',
     first_name: '',
     last_name: '',
     email: '',
     phone: '',
-    business_name: '',
-    business_zip: '',
+    business_name: ''
   });
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showPhoneValidation, setShowPhoneValidation] = useState(false);
+  const [otpAttempts, setOtpAttempts] = useState(0);
+  
+  const { getCompliancePayload } = useCompliance();
+  
+  const steps = quizConfig.steps || [];
+  const totalSteps = steps.length + 2;
+  const loadingStages = quizConfig.loadingStep?.stages || [];
 
   const handleClose = () => {
     setShowExitModal(true);
@@ -60,10 +60,9 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const handleNext = async () => {
     if (currentStep < steps.length) {
       const currentStepConfig = steps[currentStep];
+      const answer = getAnswerForStep(currentStepConfig);
       
       if (currentStepConfig.id === 'monthly_revenue') {
-        // Store the final quiz answer before loading
-        const answer = getAnswerForStep(currentStepConfig);
         storeQuizAnswer(currentStepConfig.id, answer);
         
         // Start loading screen
@@ -194,8 +193,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const formatSliderValue = (value: number) => {
     if (value >= 50000000) return '$50,000,000+';
-    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-    if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
     return `$${value.toLocaleString()}`;
   };
 
