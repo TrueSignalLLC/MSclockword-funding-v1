@@ -26,6 +26,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   
   const [quizData, setQuizData] = useState({
     funding_amount: '',
+    company_type: '',
     financing_purpose: [] as string[],
     monthly_revenue: 50000,
     credit_score: '',
@@ -113,9 +114,11 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           setCurrentStep(prev => prev + 1);
         }, duration + 500);
       } else {
-        // Store quiz answer and move to next step
-        const answer = getAnswerForStep(currentStepConfig);
-        storeQuizAnswer(currentStepConfig.id, answer);
+        // For non-button-group questions, store the answer here
+        if (steps[currentStep].type !== 'button-group') {
+          const answer = getAnswerForStep(currentStepConfig);
+          storeQuizAnswer(currentStepConfig.id, answer);
+        }
         setCurrentStep(prev => prev + 1);
       }
     } else if (showLoadingScreen) {
@@ -467,4 +470,212 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                           className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                         />
                         
-                        <div className="flex justify-between text-sm text-gray-500
+                        <div className="flex justify-between text-sm text-gray-500 mt-2">
+                          <span>$50k</span>
+                          <span>$50M+</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              // Contact Form
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    Get Your Funding Options
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Complete your information to receive your personalized funding recommendations.
+                  </p>
+                </div>
+
+                <div className="max-w-2xl mx-auto space-y-4">
+                  {/* Business ZIP */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Business ZIP Code *
+                    </label>
+                    <input
+                      type="text"
+                      value={quizData.business_zip || ''}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, business_zip: e.target.value }));
+                        storeFormField('business_zip', e.target.value);
+                      }}
+                      placeholder="ZIP Code"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  {/* Name Fields */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        First Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={quizData.first_name}
+                        onChange={(e) => {
+                          setQuizData(prev => ({ ...prev, first_name: e.target.value }));
+                          storeFormField('first_name', e.target.value);
+                        }}
+                        placeholder="First Name"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Last Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={quizData.last_name}
+                        onChange={(e) => {
+                          setQuizData(prev => ({ ...prev, last_name: e.target.value }));
+                          storeFormField('last_name', e.target.value);
+                        }}
+                        placeholder="Last Name"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      value={quizData.email}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, email: e.target.value }));
+                        storeFormField('email', e.target.value);
+                      }}
+                      placeholder="you@example.com"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone *
+                    </label>
+                    <input
+                      type="tel"
+                      value={quizData.phone}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, phone: e.target.value }));
+                        storeFormField('phone', e.target.value);
+                      }}
+                      placeholder="(___) ___-____"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  {/* Business Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Business Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={quizData.business_name}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, business_name: e.target.value }));
+                        storeFormField('business_name', e.target.value);
+                      }}
+                      placeholder="Your Business Name"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  {/* Consent */}
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      id="consent"
+                      required
+                      className="mt-1 w-4 h-4 text-clockwork-orange-500 border-gray-300 rounded focus:ring-clockwork-orange-500"
+                    />
+                    <label htmlFor="consent" className="text-sm text-gray-600 leading-relaxed">
+                      By clicking "Get My Funding Options", you expressly consent to be contacted by Clockwork Funding and our lending partners at the number/email provided (including autodialed, prerecorded, and text messages) regarding business funding solutions. You also consent to receive marketing, service notifications, and account updates via SMS messaging. Consent not required to purchase. Message & data rates may apply. Messaging frequency may vary. Reply STOP to opt out of texts. See our{' '}
+                      <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>,{' '}
+                      <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Terms of Service</a>, and{' '}
+                      <a href="/tcpa-disclaimer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">TCPA Disclaimer</a>.
+                    </label>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center justify-between p-6 border-t border-gray-200">
+            <div className="text-sm text-gray-500">
+              {showLoadingScreen 
+                ? `Step ${steps.length + 2} of ${totalSteps + 1}` 
+                : `Step ${currentStep + 2} of ${totalSteps + 1}`
+              }
+            </div>
+            
+            {!showLoadingScreen && (
+              <button
+                onClick={handleNext}
+                disabled={!canProceed() || isSubmitting}
+                className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  'Submitting...'
+                ) : currentStep < steps.length ? (
+                  <>
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </>
+                ) : (
+                  'Get My Funding Options'
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Exit Confirmation Modal */}
+      {showExitModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
+            <h3 className="text-lg font-bold mb-4">Are you sure you want to exit?</h3>
+            <p className="text-gray-600 mb-6">
+              Your progress will be saved, but you'll need to start the application process again.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleExitCancel}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Continue Application
+              </button>
+              <button
+                onClick={handleExitConfirm}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Exit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
