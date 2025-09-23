@@ -53,7 +53,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     funding_amount: '',
     company_type: '',
     financing_purpose: [] as string[],
-    monthly_revenue: 50000,
+    annual_revenue: 50000,
     credit_score: '',
     business_age: '',
     business_industry: '',
@@ -385,8 +385,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         return quizData.company_type;
       case 'financing_purpose':
         return quizData.financing_purpose;
-      case 'monthly_revenue':
-        return formatSliderValue(quizData.monthly_revenue);
+      case 'annual_revenue':
+        return formatSliderValue(quizData.annual_revenue);
       case 'credit_score':
         return quizData.credit_score;
       case 'business_age':
@@ -811,7 +811,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                     <div className="mb-8">
                       <div className="text-center mb-6">
                         <div className="text-4xl font-bold text-clockwork-orange-500 mb-2">
-                          {formatSliderValue(quizData.monthly_revenue)}
+                          {formatSliderValue(quizData.annual_revenue)}
                         </div>
                       </div>
                       
@@ -820,12 +820,12 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                           type="range"
                           min={50000}
                           max={50000000}
-                          step={getSliderStep(quizData.monthly_revenue)}
-                          value={quizData.monthly_revenue}
+                          step={getSliderStep(quizData.annual_revenue)}
+                          value={quizData.annual_revenue}
                           onChange={(e) => {
                             setQuizData(prev => ({
                               ...prev,
-                              monthly_revenue: parseInt(e.target.value)
+                              annual_revenue: parseInt(e.target.value)
                             }));
                           }}
                           className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"

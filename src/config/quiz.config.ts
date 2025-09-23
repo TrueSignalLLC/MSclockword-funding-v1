@@ -61,10 +61,10 @@ export const quizConfig = {
       }
     },
     {
-      id: 'monthly_revenue',
+      id: 'annual_revenue',
       type: 'slider' as const,
-      question: "What's your average monthly revenue?",
-      helper: 'Move the slider to select your monthly revenue range.',
+      question: "What's your average annual revenue?",
+      helper: 'Move the slider to select your annual revenue range.',
       min: 50000,
       max: 50000000,
       step: 50000,
@@ -76,8 +76,8 @@ export const quizConfig = {
       },
       required: true,
       sidebar: {
-        title: 'Monthly Revenue',
-        content: 'Your monthly revenue helps us determine the appropriate funding amount and terms for your business.'
+        title: 'Annual Revenue',
+        content: 'Your annual revenue helps us determine the appropriate funding amount and terms for your business.'
       }
     },
     {
