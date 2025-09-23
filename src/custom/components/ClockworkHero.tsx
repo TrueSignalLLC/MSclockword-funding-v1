@@ -77,7 +77,7 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
 
           {/* Form Section */}
           <div className="max-w-2xl mx-auto">
-            <div className="mb-8">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200 mb-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
                 {firstQuestion.question}
               </h3>
