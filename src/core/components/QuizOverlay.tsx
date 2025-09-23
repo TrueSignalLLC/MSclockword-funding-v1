@@ -181,6 +181,12 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
              quizData.email && 
              quizData.phone && 
              quizData.business_name;
+      // Contact form validation
+      return quizData.first_name && 
+             quizData.last_name && 
+             quizData.email && 
+             quizData.phone && 
+             quizData.business_name;
     }
   };
 
@@ -492,24 +498,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                 </div>
 
                 <div className="max-w-2xl mx-auto space-y-4">
-                  {/* Business ZIP */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Business ZIP Code *
-                    </label>
-                    <input
-                      type="text"
-                      value={quizData.business_zip || ''}
-                      onChange={(e) => {
-                        setQuizData(prev => ({ ...prev, business_zip: e.target.value }));
-                        storeFormField('business_zip', e.target.value);
-                      }}
-                      placeholder="ZIP Code"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
                   {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
