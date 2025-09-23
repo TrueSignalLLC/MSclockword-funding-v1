@@ -122,11 +122,11 @@ export const quizConfig = {
       question: 'What industry is your business in?',
       helper: 'Select the industry that best describes your business.',
       options: [
-        { value: 'construction', label: 'Construction' },
-        { value: 'transportation', label: 'Transportation and Warehousing' },
-        { value: 'hospitality', label: 'Accommodation and Food Services' },
-        { value: 'retail', label: 'Retail Trade' },
-        { value: 'other', label: 'Other' }
+        { value: 'Construction', label: 'Construction' },
+        { value: 'Transportation and Warehousing', label: 'Transportation and Warehousing' },
+        { value: 'Accommodation and Food Services', label: 'Accommodation and Food Services' },
+        { value: 'Retail Trade', label: 'Retail Trade' },
+        { value: 'Other', label: 'Other' }
       ],
       required: true,
       sidebar: {
