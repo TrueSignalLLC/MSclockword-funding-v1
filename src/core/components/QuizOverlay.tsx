@@ -15,6 +15,9 @@ interface QuizOverlayProps {
 
 export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingStage, setLoadingStage] = useState(0);
   const [showExitModal, setShowExitModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
@@ -57,7 +60,15 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   }, [isOpen]);
 
   const steps = quizConfig.steps.slice(1); // Skip first question (it's on hero)
-  const totalSteps = steps.length + 1; // +1 for contact form
+  const totalSteps = steps.length + 2; // +1 for loading screen, +1 for contact form
+  
+  // Loading screen configuration
+  const loadingStages = [
+    { progress: 25, message: 'Analyzing your business profile...' },
+    { progress: 50, message: 'Checking funding availability...' },
+    { progress: 75, message: 'Matching with lenders...' },
+    { progress: 100, message: 'Funding options found!' }
+  ];
 
   const handleClose = () => {
     if (currentStep > 0) {
@@ -77,13 +88,41 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   };
 
   const handleNext = async () => {
-    const currentStepConfig = steps[currentStep];
-    
     if (currentStep < steps.length) {
+      const currentStepConfig = steps[currentStep];
       // Quiz questions
       const answer = getAnswerForStep(currentStepConfig);
       storeQuizAnswer(currentStepConfig.id, answer);
-      setCurrentStep(prev => prev + 1);
+      
+      // Check if this is the last quiz question (question 7)
+      if (currentStep === steps.length - 1) {
+        // Start loading screen
+        setShowLoadingScreen(true);
+        setLoadingProgress(0);
+        setLoadingStage(0);
+        
+        // Animate through loading stages
+        const duration = quizConfig.loadingStep?.duration || 3000;
+        const stageInterval = duration / loadingStages.length;
+        
+        loadingStages.forEach((stage, index) => {
+          setTimeout(() => {
+            setLoadingProgress(stage.progress);
+            setLoadingStage(index);
+          }, stageInterval * (index + 1));
+        });
+        
+        // After loading completes, show contact form
+        setTimeout(() => {
+          setShowLoadingScreen(false);
+          setCurrentStep(prev => prev + 1);
+        }, duration + 500);
+      } else {
+        setCurrentStep(prev => prev + 1);
+      }
+    } else if (showLoadingScreen) {
+      // Skip loading if user somehow clicks next during loading
+      return;
     } else {
       // Contact form submission
       await handleSubmit();
@@ -91,7 +130,11 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   };
 
   const handleBack = () => {
-    if (currentStep > 0) {
+    if (showLoadingScreen) {
+      // Go back to last quiz question
+      setShowLoadingScreen(false);
+      setCurrentStep(steps.length - 1);
+    } else if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
   };
@@ -116,6 +159,10 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   };
 
   const canProceed = () => {
+    if (showLoadingScreen) {
+      return false; // No proceeding during loading
+    }
+    
     if (currentStep < steps.length) {
       const currentStepConfig = steps[currentStep];
       const answer = getAnswerForStep(currentStepConfig);
@@ -193,16 +240,20 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div className="flex items-center gap-4">
-              {currentStep > 0 && (
+              {(currentStep > 0 || showLoadingScreen) && (
                 <button
                   onClick={handleBack}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  disabled={showLoadingScreen && loadingProgress < 100}
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
               )}
               <h2 className="text-xl font-bold text-gray-900">
-                Step {currentStep + 2} of {totalSteps + 1}
+                {showLoadingScreen 
+                  ? `Step ${steps.length + 2} of ${totalSteps + 1}` 
+                  : `Step ${currentStep + 2} of ${totalSteps + 1}`
+                }
               </h2>
             </div>
             <button
@@ -218,14 +269,108 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
                 className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+                style={{ 
+                  width: showLoadingScreen 
+                    ? `${((steps.length + 1) / totalSteps) * 100}%`
+                    : `${((currentStep + 1) / totalSteps) * 100}%` 
+                }}
               />
             </div>
           </div>
 
           {/* Content */}
           <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
-            {currentStep < steps.length ? (
+            {showLoadingScreen ? (
+              // Loading Screen
+              <div className="space-y-8">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    Finding Your Perfect Funding Match
+                  </h3>
+                  <p className="text-gray-600 mb-8">
+                    Please wait while we analyze your information and match you with the best funding options.
+                  </p>
+                </div>
+
+                {/* Loading Animation */}
+                <div className="flex justify-center mb-8">
+                  <div className="relative">
+                    {/* Outer spinning ring */}
+                    <div className="w-24 h-24 border-4 border-gray-200 rounded-full animate-spin-slow">
+                      <div className="absolute top-0 left-0 w-full h-full border-4 border-transparent border-t-clockwork-orange-500 rounded-full animate-spin"></div>
+                    </div>
+                    
+                    {/* Inner spinning ring */}
+                    <div className="absolute top-3 left-3 w-18 h-18 border-4 border-gray-100 rounded-full animate-spin-reverse-slow">
+                      <div className="absolute top-0 left-0 w-full h-full border-4 border-transparent border-t-clockwork-blue-600 rounded-full animate-spin"></div>
+                    </div>
+                    
+                    {/* Center dot */}
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-clockwork-orange-500 rounded-full"></div>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="max-w-md mx-auto">
+                  <div className="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Progress</span>
+                    <span>{loadingProgress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3">
+                    <div
+                      className="bg-gradient-to-r from-clockwork-orange-500 to-clockwork-blue-600 h-3 rounded-full transition-all duration-500 ease-out"
+                      style={{ width: `${loadingProgress}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Current Stage Message */}
+                <div className="text-center">
+                  <p className="text-lg font-medium text-gray-800 animate-pulse">
+                    {loadingStages[loadingStage]?.message}
+                  </p>
+                </div>
+
+                {/* Loading Steps */}
+                <div className="max-w-md mx-auto space-y-3">
+                  {loadingStages.map((stage, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ${
+                        index <= loadingStage
+                          ? 'bg-green-50 border border-green-200'
+                          : 'bg-gray-50 border border-gray-200'
+                      }`}
+                    >
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
+                          index < loadingStage
+                            ? 'bg-green-500 text-white'
+                            : index === loadingStage
+                            ? 'bg-clockwork-orange-500 text-white animate-pulse'
+                            : 'bg-gray-300 text-gray-500'
+                        }`}
+                      >
+                        {index < loadingStage ? (
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        ) : (
+                          <span className="text-sm font-bold">{index + 1}</span>
+                        )}
+                      </div>
+                      <span
+                        className={`text-sm font-medium transition-all duration-300 ${
+                          index <= loadingStage ? 'text-gray-800' : 'text-gray-500'
+                        }`}
+                      >
+                        {stage.message}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : currentStep < steps.length ? (
               // Quiz Questions
               <div className="space-y-6">
                 <div className="text-center">
@@ -440,7 +585,9 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           {/* Footer */}
           <div className="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
             <div className="text-sm text-gray-500">
-              {currentStep < steps.length ? (
+              {showLoadingScreen ? (
+                <span>Analyzing your business profile and finding matches...</span>
+              ) : currentStep < steps.length ? (
                 steps[currentStep].sidebar && (
                   <span>{steps[currentStep].sidebar.content}</span>
                 )
@@ -450,7 +597,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
             </div>
             
             {/* Show Next button for multi-select, slider, and contact form */}
-            {(steps[currentStep]?.type === 'multi-select' || 
+            {!showLoadingScreen && (steps[currentStep]?.type === 'multi-select' || 
               steps[currentStep]?.type === 'slider' || 
               currentStep >= steps.length) && (
               <button
