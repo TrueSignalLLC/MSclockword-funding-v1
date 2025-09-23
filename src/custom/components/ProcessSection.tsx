@@ -106,6 +106,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
                     </div>
                   </div>
                 ))}
+              </div>
             {/* Card 01 - Full width with contrasting background */}
             <div className="mb-8">
               <div className="bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-slate-700">
@@ -122,9 +123,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
                   </div>
                 </div>
               </div>
-        {/* Mobile Card Layout */}
-        <div className="lg:hidden space-y-6">
-                <div className="w-12 h-12 bg-clockwork-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+            </div>
             {/* Cards 02-07 in 2-column grid */}
             <div className="grid grid-cols-2 gap-8">
               {processSteps.slice(1).map((step, index) => (
@@ -146,6 +145,27 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
                   </div>
                 </div>
               ))}
+            </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Card Layout */}
+        <div className="lg:hidden space-y-6">
+          {processSteps.map((step, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-clockwork-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                  {step.number}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
