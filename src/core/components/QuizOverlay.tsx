@@ -2,72 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { quizConfig } from '../../config/quiz.config';
 import { validateField } from '../utils/validation';
-import { getSessionData, storeQuizAnswer, storeFormField, getFinalSubmissionPayload } from '../utils/session';
+
+const QuizModal = ({ isOpen, onClose, steps, quizData, setQuizData, storeQuizAnswer, storeFormField, showExitModal, setShowExitModal, showLoadingScreen, setShowLoadingScreen, currentStep, setCurrentStep, loadingProgress, setLoadingProgress, loadingStage, setLoadingStage, loadingStages, isSubmitting, setIsSubmitting, getCompliancePayload, getFinalSubmissionPayload, showOTPModal, setShowOTPModal, otpAttempts, setOtpAttempts, showPhoneValidation, setShowPhoneValidation, OTPModal, PhoneValidationPopup }) => {
+  const totalSteps = steps.length + 1; // +1 for contact form
 import { config } from '../../config/environment.config';
-import { useCompliance } from '../hooks/useCompliance';
-import { OTPModal } from './OTPModal';
-import { PhoneValidationPopup } from './PhoneValidationPopup';
-
-interface QuizOverlayProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingStage, setLoadingStage] = useState(0);
-  const [showExitModal, setShowExitModal] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [showPhoneValidation, setShowPhoneValidation] = useState(false);
-  const [otpAttempts, setOtpAttempts] = useState(0);
-  
-  const [quizData, setQuizData] = useState({
-    funding_amount: '',
-    financing_purpose: [] as string[],
-    monthly_revenue: 50000,
-    credit_score: '',
-    business_age: '',
-    business_industry: '',
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone: '',
-    business_name: '',
-    leadid_token: ''
-  });
-
-  const [validationStates, setValidationStates] = useState<Record<string, any>>({});
-  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
-
-  const { getCompliancePayload } = useCompliance();
-
-  // Load session data on mount
-  useEffect(() => {
-    if (isOpen) {
-      const sessionData = getSessionData();
-      if (sessionData.quiz_answers.funding_amount) {
-        setQuizData(prev => ({
-          ...prev,
-          funding_amount: sessionData.quiz_answers.funding_amount
-        }));
-      }
-    }
-  }, [isOpen]);
-
-  const steps = quizConfig.steps.slice(1); // Skip first question (it's on hero)
-  const totalSteps = steps.length + 2; // +1 for loading screen, +1 for contact form
-  
-  // Loading screen configuration
-  const loadingStages = [
-    { progress: 25, message: 'Analyzing your business profile...' },
-    { progress: 50, message: 'Checking funding availability...' },
-    { progress: 75, message: 'Matching with lenders...' },
-    { progress: 100, message: 'Funding options found!' }
-  ];
-
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -83,15 +21,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
-      const currentStepConfig = steps[currentStep];
-      
-      // Check if this is the last quiz question (question 7)
       if (currentStep === steps.length - 1) {
-        // Store the final quiz answer before loading
-        const answer = getAnswerForStep(currentStepConfig);
-        storeQuizAnswer(currentStepConfig.id, answer);
-        
-        // Start loading screen
+        // Last quiz question - show loading screen
         setShowLoadingScreen(true);
         setLoadingProgress(0);
         setLoadingStage(0);
@@ -137,7 +68,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     }
   };
 
-  const getAnswerForStep = (step: any) => {
+  const getAnswerForStep = (step) => {
     switch (step.id) {
       case 'company_type':
         return quizData.company_type;
@@ -217,14 +148,14 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     }
   };
 
-  const formatSliderValue = (value: number) => {
+  const formatSliderValue = (value) => {
     if (value >= 50000000) return '$50,000,000+';
     if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
     if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
     return `$${value.toLocaleString()}`;
   };
 
-  const getSliderStep = (value: number) => {
+  const getSliderStep = (value) => {
     if (value >= 10000000) return 500000; // 500k increments above 10M
     return 50000; // 50k increments below 10M
   };
@@ -249,8 +180,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
               )}
               <h2 className="text-xl font-bold text-gray-900">
                 {showLoadingScreen 
-                  ? `Step ${steps.length + 2} of ${totalSteps + 1}` 
-                  : `Step ${currentStep + 2} of ${totalSteps + 1}`
+                  ? `Step ${steps.length + 2} of ${totalSteps}` 
+                  : `Step ${currentStep + 2} of ${totalSteps}`
                 }
               </h2>
             </div>
@@ -269,7 +200,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                 className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
                 style={{ 
                   width: showLoadingScreen 
-                    ? `${((steps.length + 1) / totalSteps) * 100}%`
+                    ? `${((steps.length + 2) / totalSteps) * 100}%`
                     : `${((currentStep + 1) / totalSteps) * 100}%` 
                 }}
               />
@@ -385,7 +316,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                 {/* Question Content */}
                 {steps[currentStep].type === 'button-group' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-                    {steps[currentStep].options?.map((option: any, index: number) => (
+                    {steps[currentStep].options?.map((option, index) => (
                       <button
                         key={index}
                         onClick={() => {
@@ -413,7 +344,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
                 {steps[currentStep].type === 'multi-select' && (
                   <div className="max-w-2xl mx-auto space-y-3">
-                    {steps[currentStep].options?.map((option: any, index: number) => (
+                    {steps[currentStep].options?.map((option, index) => (
                       <label
                         key={index}
                         className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-50 transition-all duration-200"
@@ -578,8 +509,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
           <div className="flex items-center justify-between p-6 border-t border-gray-200">
             <div className="text-sm text-gray-500">
               {showLoadingScreen 
-                ? `Step ${steps.length + 2} of ${totalSteps + 1}` 
-                : `Step ${currentStep + 2} of ${totalSteps + 1}`
+                ? `Step ${steps.length + 2} of ${totalSteps}` 
+                : `Step ${currentStep + 2} of ${totalSteps}`
               }
             </div>
             
@@ -673,3 +604,5 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     </>
   );
 };
+
+export default QuizModal;
