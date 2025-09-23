@@ -52,14 +52,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         setQuizData(prev => ({
           ...prev,
           funding_amount: sessionData.quiz_answers.funding_amount
-        }));
-      }
-    }
-  }, [isOpen]);
-
-  const steps = quizConfig.steps.slice(1); // Skip first question (it's on hero)
-  const totalSteps = steps.length + 1; // +1 for contact form
-  
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -108,8 +100,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         }, duration + 500);
       } else {
         // Store quiz answer and move to next step
-        const answer = getAnswerForStep(currentStepConfig);
-        storeQuizAnswer(currentStepConfig.id, answer);
         const answer = getAnswerForStep(currentStepConfig);
         storeQuizAnswer(currentStepConfig.id, answer);
         setCurrentStep(prev => prev + 1);
