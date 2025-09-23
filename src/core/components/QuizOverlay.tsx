@@ -135,6 +135,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const getAnswerForStep = (step: any) => {
     switch (step.id) {
+      case 'company_type':
+        return quizData.company_type;
       case 'financing_purpose':
         return quizData.financing_purpose;
       case 'monthly_revenue':
