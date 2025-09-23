@@ -20,14 +20,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const [loadingStage, setLoadingStage] = useState(0);
   const [showExitModal, setShowExitModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [showPhoneValidation, setShowPhoneValidation] = useState(false);
-  const totalSteps = steps.length + 1; // +1 for contact form
-  
-  const [quizData, setQuizData] = useState({
-    funding_amount: '',
-    financing_purpose: [] as string[],
-    monthly_revenue: 50000,
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -43,8 +35,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
-        // Store the final quiz answer before loading
-        const answer = getAnswerForStep(currentStepConfig);
         storeQuizAnswer(currentStepConfig.id, answer);
         
         // Start loading screen
