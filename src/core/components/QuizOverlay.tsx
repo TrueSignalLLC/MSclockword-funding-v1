@@ -418,7 +418,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
              quizData.business_name &&
              emailValidation.valid === true &&
              !emailValidation.loading &&
-             phoneValidation.valid === true &&
+             (phoneValidation.valid === true || phoneValidation.status === 'needs_otp') &&
              !phoneValidation.loading &&
              !showPhoneValidation &&
              !showOTPModal;
