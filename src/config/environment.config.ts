@@ -31,7 +31,7 @@ const getConfig = (): EnvironmentConfig => {
       
       // OTP endpoints
       sendOTP: import.meta.env.VITE_SEND_OTP_ENDPOINT || '',
-      verifyOTP: import.meta.env.VITE_VERIFY_OTP || '',
+      verifyOTP: import.meta.env.VITE_VERIFY_OTP_ENDPOINT || '',
       
       // Qualification
       qualification: import.meta.env.VITE_QUALIFICATION_API || '',
