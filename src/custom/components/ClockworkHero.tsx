@@ -58,13 +58,13 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
 
           {/* Description */}
           <div className="max-w-4xl mx-auto mb-8">
-            <p className="text-lg md:text-xl text-gray-700 mb-6">
+            <p className="text-base md:text-xl text-gray-700 mb-6">
               That's right! There is <span className="font-bold text-gray-900">NO CAP</span> to the competitively low-interest
               funding you can qualify for if you have a 640+ credit score, at least
               1 year in business, and a profitable track record.
             </p>
             
-            <div className="flex items-start justify-center gap-3 text-base md:text-lg text-gray-800 mb-8">
+            <div className="flex items-start justify-center gap-3 text-sm md:text-lg text-gray-800 mb-8">
               <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0 mt-1">
                 <span className="text-white text-sm font-bold">✓</span>
               </div>
@@ -78,7 +78,7 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
           {/* Form Section */}
           <div className="max-w-2xl mx-auto">
             <div className="bg-clockwork-orange-100 rounded-2xl shadow-xl p-8 border border-gray-200 mb-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
                 {firstQuestion.question}
               </h3>
               <p className="text-gray-700 text-center mb-6">
