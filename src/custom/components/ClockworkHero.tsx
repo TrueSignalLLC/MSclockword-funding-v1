@@ -17,12 +17,39 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
     setSelectedAmount(label);
     // Store the answer
     storeQuizAnswer(firstQuestion.id, value);
-    // Open the quiz overlay to continue with remaining questions
-    setTimeout(() => {
-      onQuizStart();
-    }, 300);
+    // Open the quiz overlay immediately to continue with remaining questions
+    onQuizStart();
   };
 
+  // Scroll to Q1 section
+  const scrollToQ1 = () => {
+    const q1Element = document.getElementById('q1-section');
+    if (q1Element) {
+      q1Element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  };
+
+  // Handle CTA clicks from other components
+  const handleCTAClick = () => {
+    if (selectedAmount) {
+      // If Q1 is already selected, open quiz overlay
+      onQuizStart();
+    } else {
+      // If Q1 is not selected, scroll to Q1
+      scrollToQ1();
+    }
+  };
+
+  // Expose the handler to parent component
+  React.useEffect(() => {
+    (window as any).handleCTAClick = handleCTAClick;
+    return () => {
+      delete (window as any).handleCTAClick;
+    };
+  }, [selectedAmount, onQuizStart]);
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center py-20">
       <div className="max-w-6xl mx-auto px-6">
@@ -76,7 +103,7 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
           </div>
 
           {/* Form Section */}
-          <div className="max-w-2xl mx-auto">
+          <div id="q1-section" className="max-w-2xl mx-auto">
             <div className="mb-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
                 {firstQuestion.question}
