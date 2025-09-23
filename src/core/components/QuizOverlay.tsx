@@ -22,7 +22,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [showPhoneValidation, setShowPhoneValidation] = useState(false);
-  const [otpAttempts, setOtpAttempts] = useState(0);
+  const totalSteps = steps.length + 1; // +1 for contact form
   
   const [quizData, setQuizData] = useState({
     funding_amount: '',
@@ -44,14 +44,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const { getCompliancePayload } = useCompliance();
 
-  // Load session data on mount
-  useEffect(() => {
-    if (isOpen) {
-      const sessionData = getSessionData();
-      if (sessionData.quiz_answers.funding_amount) {
-        setQuizData(prev => ({
-          ...prev,
-          funding_amount: sessionData.quiz_answers.funding_amount
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -67,8 +59,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
-      const currentStepConfig = steps[currentStep];
-      if (currentStep === steps.length - 1) {
         // Store the final quiz answer before loading
         const answer = getAnswerForStep(currentStepConfig);
         storeQuizAnswer(currentStepConfig.id, answer);
