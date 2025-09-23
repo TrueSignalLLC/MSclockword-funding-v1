@@ -619,11 +619,11 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
       {/* Exit Confirmation Modal */}
       {showExitModal && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-bold mb-4">Are you sure you want to exit?</h3>
             <p className="text-gray-600 mb-6">
-              You have {totalSteps - currentStep} questions remaining. Your progress will be lost if you exit now.
+              You have {showLoadingScreen ? 1 : totalSteps - (currentStep + 1)} questions remaining. Your progress will be lost if you exit now.
             </p>
             <div className="flex gap-3">
               <button
