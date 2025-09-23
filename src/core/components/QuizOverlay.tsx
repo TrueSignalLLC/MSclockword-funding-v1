@@ -2,10 +2,73 @@ import React, { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { quizConfig } from '../../config/quiz.config';
 import { validateField } from '../utils/validation';
-
-const QuizModal = ({ isOpen, onClose, steps, quizData, setQuizData, storeQuizAnswer, storeFormField, showExitModal, setShowExitModal, showLoadingScreen, setShowLoadingScreen, currentStep, setCurrentStep, loadingProgress, setLoadingProgress, loadingStage, setLoadingStage, loadingStages, isSubmitting, setIsSubmitting, getCompliancePayload, getFinalSubmissionPayload, showOTPModal, setShowOTPModal, otpAttempts, setOtpAttempts, showPhoneValidation, setShowPhoneValidation, OTPModal, PhoneValidationPopup }) => {
-  const totalSteps = steps.length + 1; // +1 for contact form
+import { getSessionData, storeQuizAnswer, storeFormField, getFinalSubmissionPayload } from '../utils/session';
 import { config } from '../../config/environment.config';
+import { useCompliance } from '../hooks/useCompliance';
+import { OTPModal } from './OTPModal';
+import { PhoneValidationPopup } from './PhoneValidationPopup';
+
+interface QuizOverlayProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingStage, setLoadingStage] = useState(0);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showPhoneValidation, setShowPhoneValidation] = useState(false);
+  const [otpAttempts, setOtpAttempts] = useState(0);
+  
+  const [quizData, setQuizData] = useState({
+    funding_amount: '',
+    company_type: '',
+    financing_purpose: [] as string[],
+    monthly_revenue: 50000,
+    credit_score: '',
+    business_age: '',
+    business_industry: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    business_name: '',
+    leadid_token: ''
+  });
+
+  const [validationStates, setValidationStates] = useState<Record<string, any>>({});
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
+  const { getCompliancePayload } = useCompliance();
+
+  // Load session data on mount
+  useEffect(() => {
+    if (isOpen) {
+      const sessionData = getSessionData();
+      if (sessionData.quiz_answers.funding_amount) {
+        setQuizData(prev => ({
+          ...prev,
+          funding_amount: sessionData.quiz_answers.funding_amount
+        }));
+      }
+    }
+  }, [isOpen]);
+
+  const steps = quizConfig.steps.slice(1); // Skip first question (it's on hero)
+  const totalSteps = steps.length + 2; // +1 for loading screen, +1 for contact form
+  
+  // Loading screen configuration
+  const loadingStages = [
+    { progress: 25, message: 'Analyzing your business profile...' },
+    { progress: 50, message: 'Checking funding availability...' },
+    { progress: 75, message: 'Matching with lenders...' },
+    { progress: 100, message: 'Funding options found!' }
+  ];
+
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -21,8 +84,15 @@ import { config } from '../../config/environment.config';
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
+      const currentStepConfig = steps[currentStep];
+      
+      // Check if this is the last quiz question (question 7)
       if (currentStep === steps.length - 1) {
-        // Last quiz question - show loading screen
+        // Store the final quiz answer before loading
+        const answer = getAnswerForStep(currentStepConfig);
+        storeQuizAnswer(currentStepConfig.id, answer);
+        
+        // Start loading screen
         setShowLoadingScreen(true);
         setLoadingProgress(0);
         setLoadingStage(0);
@@ -44,9 +114,11 @@ import { config } from '../../config/environment.config';
           setCurrentStep(prev => prev + 1);
         }, duration + 500);
       } else {
-        // Store quiz answer and move to next step
-        const answer = getAnswerForStep(currentStepConfig);
-        storeQuizAnswer(currentStepConfig.id, answer);
+        // For non-button-group questions, store the answer here
+        if (steps[currentStep].type !== 'button-group') {
+          const answer = getAnswerForStep(currentStepConfig);
+          storeQuizAnswer(currentStepConfig.id, answer);
+        }
         setCurrentStep(prev => prev + 1);
       }
     } else if (showLoadingScreen) {
@@ -68,7 +140,7 @@ import { config } from '../../config/environment.config';
     }
   };
 
-  const getAnswerForStep = (step) => {
+  const getAnswerForStep = (step: any) => {
     switch (step.id) {
       case 'company_type':
         return quizData.company_type;
@@ -148,14 +220,14 @@ import { config } from '../../config/environment.config';
     }
   };
 
-  const formatSliderValue = (value) => {
+  const formatSliderValue = (value: number) => {
     if (value >= 50000000) return '$50,000,000+';
     if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
     if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
     return `$${value.toLocaleString()}`;
   };
 
-  const getSliderStep = (value) => {
+  const getSliderStep = (value: number) => {
     if (value >= 10000000) return 500000; // 500k increments above 10M
     return 50000; // 50k increments below 10M
   };
@@ -180,8 +252,8 @@ import { config } from '../../config/environment.config';
               )}
               <h2 className="text-xl font-bold text-gray-900">
                 {showLoadingScreen 
-                  ? `Step ${steps.length + 2} of ${totalSteps}` 
-                  : `Step ${currentStep + 2} of ${totalSteps}`
+                  ? `Step ${steps.length + 2} of ${totalSteps + 1}` 
+                  : `Step ${currentStep + 2} of ${totalSteps + 1}`
                 }
               </h2>
             </div>
@@ -200,7 +272,7 @@ import { config } from '../../config/environment.config';
                 className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
                 style={{ 
                   width: showLoadingScreen 
-                    ? `${((steps.length + 2) / totalSteps) * 100}%`
+                    ? `${((steps.length + 1) / totalSteps) * 100}%`
                     : `${((currentStep + 1) / totalSteps) * 100}%` 
                 }}
               />
@@ -316,7 +388,7 @@ import { config } from '../../config/environment.config';
                 {/* Question Content */}
                 {steps[currentStep].type === 'button-group' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-                    {steps[currentStep].options?.map((option, index) => (
+                    {steps[currentStep].options?.map((option: any, index: number) => (
                       <button
                         key={index}
                         onClick={() => {
@@ -344,7 +416,7 @@ import { config } from '../../config/environment.config';
 
                 {steps[currentStep].type === 'multi-select' && (
                   <div className="max-w-2xl mx-auto space-y-3">
-                    {steps[currentStep].options?.map((option, index) => (
+                    {steps[currentStep].options?.map((option: any, index: number) => (
                       <label
                         key={index}
                         className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-50 transition-all duration-200"
@@ -415,11 +487,30 @@ import { config } from '../../config/environment.config';
                     Get Your Funding Options
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    Complete your information to receive personalized funding recommendations.
+                    Complete your information to receive your personalized funding recommendations.
                   </p>
                 </div>
 
                 <div className="max-w-2xl mx-auto space-y-4">
+                  {/* Business ZIP */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Business ZIP Code *
+                    </label>
+                    <input
+                      type="text"
+                      value={quizData.business_zip || ''}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, business_zip: e.target.value }));
+                        storeFormField('business_zip', e.target.value);
+                      }}
+                      placeholder="ZIP Code"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -432,8 +523,9 @@ import { config } from '../../config/environment.config';
                           setQuizData(prev => ({ ...prev, first_name: e.target.value }));
                           storeFormField('first_name', e.target.value);
                         }}
+                        placeholder="First Name"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                        placeholder="Enter your first name"
+                        required
                       />
                     </div>
                     <div>
@@ -447,12 +539,50 @@ import { config } from '../../config/environment.config';
                           setQuizData(prev => ({ ...prev, last_name: e.target.value }));
                           storeFormField('last_name', e.target.value);
                         }}
+                        placeholder="Last Name"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                        placeholder="Enter your last name"
+                        required
                       />
                     </div>
                   </div>
 
+                  {/* Email */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      value={quizData.email}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, email: e.target.value }));
+                        storeFormField('email', e.target.value);
+                      }}
+                      placeholder="you@example.com"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone *
+                    </label>
+                    <input
+                      type="tel"
+                      value={quizData.phone}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, phone: e.target.value }));
+                        storeFormField('phone', e.target.value);
+                      }}
+                      placeholder="(___) ___-____"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  {/* Business Name */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Business Name *
@@ -464,41 +594,26 @@ import { config } from '../../config/environment.config';
                         setQuizData(prev => ({ ...prev, business_name: e.target.value }));
                         storeFormField('business_name', e.target.value);
                       }}
+                      placeholder="Your Business Name"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      placeholder="Enter your business name"
+                      required
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address *
-                    </label>
+                  {/* Consent */}
+                  <div className="flex items-start gap-3">
                     <input
-                      type="email"
-                      value={quizData.email}
-                      onChange={(e) => {
-                        setQuizData(prev => ({ ...prev, email: e.target.value }));
-                        storeFormField('email', e.target.value);
-                      }}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      placeholder="Enter your email address"
+                      type="checkbox"
+                      id="consent"
+                      required
+                      className="mt-1 w-4 h-4 text-clockwork-orange-500 border-gray-300 rounded focus:ring-clockwork-orange-500"
                     />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number *
+                    <label htmlFor="consent" className="text-sm text-gray-600 leading-relaxed">
+                      By clicking "Get My Funding Options", you expressly consent to be contacted by Clockwork Funding and our lending partners at the number/email provided (including autodialed, prerecorded, and text messages) regarding business funding solutions. You also consent to receive marketing, service notifications, and account updates via SMS messaging. Consent not required to purchase. Message & data rates may apply. Messaging frequency may vary. Reply STOP to opt out of texts. See our{' '}
+                      <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>,{' '}
+                      <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Terms of Service</a>, and{' '}
+                      <a href="/tcpa-disclaimer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">TCPA Disclaimer</a>.
                     </label>
-                    <input
-                      type="tel"
-                      value={quizData.phone}
-                      onChange={(e) => {
-                        setQuizData(prev => ({ ...prev, phone: e.target.value }));
-                        storeFormField('phone', e.target.value);
-                      }}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      placeholder="Enter your phone number"
-                    />
                   </div>
                 </div>
               </div>
@@ -509,59 +624,51 @@ import { config } from '../../config/environment.config';
           <div className="flex items-center justify-between p-6 border-t border-gray-200">
             <div className="text-sm text-gray-500">
               {showLoadingScreen 
-                ? `Step ${steps.length + 2} of ${totalSteps}` 
-                : `Step ${currentStep + 2} of ${totalSteps}`
+                ? `Step ${steps.length + 2} of ${totalSteps + 1}` 
+                : `Step ${currentStep + 2} of ${totalSteps + 1}`
               }
             </div>
             
-            <div className="flex gap-3">
-              {!showLoadingScreen && (
-                <button
-                  onClick={handleNext}
-                  disabled={!canProceed() || isSubmitting}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                    canProceed() && !isSubmitting
-                      ? 'bg-clockwork-orange-500 text-white hover:bg-clockwork-orange-600'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Submitting...
-                    </div>
-                  ) : currentStep < steps.length ? (
-                    'Continue'
-                  ) : (
-                    'Get My Funding Options'
-                  )}
-                </button>
-              )}
-            </div>
+            {!showLoadingScreen && (
+              <button
+                onClick={handleNext}
+                disabled={!canProceed() || isSubmitting}
+                className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  'Submitting...'
+                ) : currentStep < steps.length ? (
+                  <>
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </>
+                ) : (
+                  'Get My Funding Options'
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       {/* Exit Confirmation Modal */}
       {showExitModal && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">
-              Are you sure you want to exit?
-            </h3>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
+            <h3 className="text-lg font-bold mb-4">Are you sure you want to exit?</h3>
             <p className="text-gray-600 mb-6">
-              Your progress will be lost if you exit now.
+              Your progress will be saved, but you'll need to start the application process again.
             </p>
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3">
               <button
                 onClick={handleExitCancel}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                Cancel
+                Continue Application
               </button>
               <button
                 onClick={handleExitConfirm}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
                 Exit
               </button>
@@ -569,40 +676,6 @@ import { config } from '../../config/environment.config';
           </div>
         </div>
       )}
-
-      {/* OTP Modal */}
-      {showOTPModal && (
-        <OTPModal
-          isOpen={showOTPModal}
-          onClose={() => setShowOTPModal(false)}
-          phoneNumber={quizData.phone}
-          onVerified={() => {
-            setShowOTPModal(false);
-            handleSubmit();
-          }}
-          attempts={otpAttempts}
-          onAttemptsChange={setOtpAttempts}
-        />
-      )}
-
-      {/* Phone Validation Popup */}
-      {showPhoneValidation && (
-        <PhoneValidationPopup
-          isOpen={showPhoneValidation}
-          onClose={() => setShowPhoneValidation(false)}
-          phoneNumber={quizData.phone}
-          onPhoneUpdate={(newPhone) => {
-            setQuizData(prev => ({ ...prev, phone: newPhone }));
-            storeFormField('phone', newPhone);
-          }}
-          onValidated={() => {
-            setShowPhoneValidation(false);
-            setShowOTPModal(true);
-          }}
-        />
-      )}
     </>
   );
 };
-
-export default QuizModal;
