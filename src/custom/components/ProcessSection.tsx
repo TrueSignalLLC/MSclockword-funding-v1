@@ -106,44 +106,46 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
                     </div>
                   </div>
                 ))}
-              </div>
-              
-              {/* Card 07 - Full width with contrasting background */}
+            {/* Card 01 - Full width with contrasting background */}
+            <div className="mb-8">
               <div className="bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-slate-700">
                 <div className="flex items-start gap-4">
                   <div className="w-16 h-16 bg-clockwork-orange-500 rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-lg">
-                    {processSteps[6].icon}
+                    {processSteps[0].icon}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-2xl font-bold text-clockwork-orange-500">{processSteps[6].number}</span>
-                      <h3 className="text-xl font-bold text-white">{processSteps[6].title}</h3>
+                      <span className="text-2xl font-bold text-clockwork-orange-500">{processSteps[0].number}</span>
+                      <h3 className="text-xl font-bold text-white">{processSteps[0].title}</h3>
                     </div>
-                    <p className="text-gray-300 leading-relaxed">{processSteps[6].description}</p>
+                    <p className="text-gray-300 leading-relaxed">{processSteps[0].description}</p>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
         {/* Mobile Card Layout */}
         <div className="lg:hidden space-y-6">
-          {processSteps.map((step, index) => (
-            <div key={index} className="bg-white rounded-xl p-6 shadow-lg">
-              <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-clockwork-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                  {step.number}
+            {/* Cards 02-07 in 2-column grid */}
+            <div className="grid grid-cols-2 gap-8">
+              {processSteps.slice(1).map((step, index) => (
+                <div
+                  key={index + 1}
+                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center text-clockwork-orange-400 flex-shrink-0 shadow-lg">
+                      {step.icon}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-2xl font-bold text-clockwork-orange-500">{step.number}</span>
+                        <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
+                      </div>
+                      <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           ))}
         </div>
