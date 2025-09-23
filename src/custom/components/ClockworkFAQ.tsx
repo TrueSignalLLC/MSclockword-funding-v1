@@ -45,6 +45,8 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
 
   // Expose the handler to parent component
   React.useEffect(() => {
+  }, []);
+
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center py-20">
       <div className="max-w-6xl mx-auto px-6">
