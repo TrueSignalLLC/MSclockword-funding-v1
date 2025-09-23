@@ -71,11 +71,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   ];
 
   const handleClose = () => {
-    if (currentStep > 0) {
-      setShowExitModal(true);
-    } else {
-      onClose();
-    }
+    setShowExitModal(true);
   };
 
   const handleExitConfirm = () => {
@@ -634,13 +630,13 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                 onClick={handleExitCancel}
                 className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
-                Continue Quiz
+                Continue
               </button>
               <button
                 onClick={handleExitConfirm}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
-                Exit Quiz
+                Leave
               </button>
             </div>
           </div>
