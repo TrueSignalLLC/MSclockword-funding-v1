@@ -32,7 +32,7 @@ export const ClockworkFundingLayout: React.FC = () => {
     <div className="min-h-screen bg-white">
       <ComplianceScripts />
       <ClockworkHero onQuizStart={handleQuizStart} />
-      <FundingBenefits />
+      <FundingBenefits onQuizStart={handleQuizStart} />
       <OurApproach onQuizStart={handleQuizStart} />
       <OurProcess />
       <NoHiddenFees />
