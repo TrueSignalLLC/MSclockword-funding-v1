@@ -70,7 +70,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
 
             {/* Process Steps in Circle */}
             {processSteps.map((step, index) => {
-              const angle = (index * 360) / processSteps.length - 90; // Start from top
+              const angle = (index * 360) / processSteps.length - 90; // Start from top, evenly distribute 360°
               const radius = 300;
               const x = Math.cos((angle * Math.PI) / 180) * radius;
               const y = Math.sin((angle * Math.PI) / 180) * radius;
@@ -96,16 +96,16 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
                   />
                   
                   {/* Step Card */}
-                  <div className="bg-white text-gray-900 rounded-xl p-6 w-64 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <div className="bg-white text-gray-900 rounded-xl p-6 w-64 h-40 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 flex flex-col">
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-clockwork-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
                         {step.number}
                       </div>
-                      <div>
+                      <div className="flex-1 min-h-0">
                         <h3 className="text-lg font-bold text-gray-900 mb-2">
                           {step.title}
                         </h3>
-                        <p className="text-gray-600 text-sm leading-relaxed">
+                        <p className="text-gray-600 text-sm leading-relaxed overflow-hidden">
                           {step.description}
                         </p>
                       </div>
