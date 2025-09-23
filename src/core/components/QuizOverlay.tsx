@@ -26,13 +26,11 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   
   const [quizData, setQuizData] = useState({
     funding_amount: '',
-    company_type: '',
     financing_purpose: [] as string[],
     monthly_revenue: 50000,
     credit_score: '',
     business_age: '',
     business_industry: '',
-    business_zip: '',
     first_name: '',
     last_name: '',
     email: '',
@@ -137,12 +135,10 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const getAnswerForStep = (step: any) => {
     switch (step.id) {
-      case 'company_type':
-        return quizData.company_type;
       case 'financing_purpose':
         return quizData.financing_purpose;
       case 'monthly_revenue':
-        return quizData.monthly_revenue;
+        return formatSliderValue(quizData.monthly_revenue);
       case 'credit_score':
         return quizData.credit_score;
       case 'business_age':
@@ -217,8 +213,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const formatSliderValue = (value: number) => {
     if (value >= 50000000) return '$50,000,000+';
-    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-    if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
     return `$${value.toLocaleString()}`;
   };
 
@@ -473,8 +469,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
               </div>
             ) : (
               // Contact Form
-              <div className="space-y-6">
-                <div className="text-center">
+              return quizData.first_name && 
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">
                     Get Your Funding Options
                   </h3>
@@ -484,20 +479,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                 </div>
 
                 <div className="max-w-2xl mx-auto space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Business ZIP Code *
-                    </label>
-                    <input
-                      type="text"
-                      value={quizData.business_zip}
-                      onChange={(e) => setQuizData(prev => ({ ...prev, business_zip: e.target.value }))}
-                      placeholder="ZIP Code"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
