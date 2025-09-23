@@ -37,7 +37,7 @@ export const ClockworkFundingLayout: React.FC = () => {
       <UltraFlexibleFunding />
       <OurApproach onQuizStart={handleQuizStart} />
       <OurProcess />
-      <NoHiddenFees />
+      <UltraFlexibleFunding />
       <FundWhatOthersWont onQuizStart={handleQuizStart} />
       <ClockworkFAQ onQuizStart={handleQuizStart} />
       <Footer />
