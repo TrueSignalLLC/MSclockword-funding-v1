@@ -8,8 +8,8 @@ export const NoHiddenFeesMiddlemen: React.FC = () => {
           {/* Left Column - Image */}
           <div className="order-2 lg:order-1">
             <img 
-              src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              alt="Two men shaking hands smiling"
+              src="https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Two businessmen in suits shaking hands in office"
               className="w-full h-96 object-cover rounded-lg shadow-lg"
             />
           </div>
