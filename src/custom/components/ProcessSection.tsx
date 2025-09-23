@@ -59,7 +59,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
 
         {/* Desktop Circular Layout - Hidden on mobile */}
         <div className="hidden lg:block relative">
-          <div className="relative w-full h-[600px] mx-auto">
+          <div className="relative w-full h-[800px] mx-auto">
             {/* Central Hub */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-clockwork-orange-500 rounded-full flex items-center justify-center z-10">
               <div className="text-center">
@@ -71,7 +71,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
             {/* Process Steps in Circle */}
             {processSteps.map((step, index) => {
               const angle = (index * 360) / processSteps.length - 90; // Start from top
-              const radius = 220;
+              const radius = 300;
               const x = Math.cos((angle * Math.PI) / 180) * radius;
               const y = Math.sin((angle * Math.PI) / 180) * radius;
 
@@ -86,7 +86,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
                 >
                   {/* Connection Line */}
                   <div
-                    className="absolute w-20 h-0.5 bg-clockwork-orange-300 opacity-30"
+                    className="absolute w-24 h-0.5 bg-clockwork-orange-300 opacity-30"
                     style={{
                       transform: `rotate(${angle + 90}deg)`,
                       transformOrigin: 'left center',
