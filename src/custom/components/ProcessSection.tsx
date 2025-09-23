@@ -67,7 +67,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
 
         {/* Desktop Circular Layout */}
         <div className="hidden lg:block">
-          <div className="relative w-full h-[800px] flex items-center justify-center">
+          <div className="relative w-full min-h-[600px] flex items-center justify-center">
             {/* Central dotted pattern - multiple concentric circles */}
             <div className="absolute inset-0 flex items-center justify-center">
               {/* Multiple dotted circles */}
@@ -80,84 +80,33 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
               <div className="absolute w-64 h-64 rounded-full border-2 border-dotted border-clockwork-orange-400 opacity-10"></div>
             </div>
 
-            {/* Process steps in circle */}
-            {processSteps.map((step, index) => {
-              const angle = (index * 360) / processSteps.length - 90; // Start from top
-              const radius = 300;
-              const x = Math.cos((angle * Math.PI) / 180) * radius;
-              const y = Math.sin((angle * Math.PI) / 180) * radius;
-              
-              // Calculate next step position for arrow direction
-              const nextIndex = (index + 1) % processSteps.length;
-              const nextAngle = (nextIndex * 360) / processSteps.length - 90;
-              const nextX = Math.cos((nextAngle * Math.PI) / 180) * 280;
-              const nextY = Math.sin((nextAngle * Math.PI) / 180) * 280;
-              
-              // Calculate arrow rotation
-              const arrowAngle = Math.atan2(nextY - y, nextX - x) * (180 / Math.PI);
-
-              return (
-                <div key={index} className="absolute">
-                  {/* Step content */}
+            {/* Two-column card layout over the dotted background */}
+            <div className="relative z-10 max-w-4xl mx-auto">
+              <div className="grid grid-cols-2 gap-8">
+                {processSteps.map((step, index) => (
                   <div
-                    className="absolute transform -translate-x-1/2 -translate-y-1/2"
-                    style={{
-                      left: `calc(50% + ${x}px)`,
-                      top: `calc(50% + ${y}px)`,
-                    }}
+                    key={index}
+                    className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
                   >
-                    {/* Step number */}
-                    <div className="text-center mb-4">
-                      <div className="text-3xl font-bold text-gray-400 mb-2">{step.number}</div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2 max-w-xs">{step.title}</h3>
-                      <p className="text-sm text-gray-600 leading-relaxed max-w-xs">{step.description}</p>
-                    </div>
-                    
-                    {/* Icon circle */}
-                    <div className="w-20 h-20 bg-slate-700 rounded-full flex items-center justify-center text-clockwork-orange-400 mx-auto shadow-lg">
-                      {step.icon}
+                    <div className="flex items-start gap-4">
+                      {/* Icon circle */}
+                      <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center text-clockwork-orange-400 flex-shrink-0 shadow-lg">
+                        {step.icon}
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-2xl font-bold text-clockwork-orange-500">{step.number}</span>
+                          <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
+                        </div>
+                        <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                      </div>
                     </div>
                   </div>
-
-                  {/* Connection dot to center */}
-                  <div
-                    className="absolute w-3 h-3 bg-gray-400 rounded-full transform -translate-x-1/2 -translate-y-1/2"
-                    style={{
-                      left: `calc(50% + ${Math.cos((angle * Math.PI) / 180) * 200}px)`,
-                      top: `calc(50% + ${Math.sin((angle * Math.PI) / 180) * 200}px)`,
-                    }}
-                  ></div>
-
-                  {/* Curved arrow to next step */}
-                  <div
-                    className="absolute"
-                    style={{
-                      left: `calc(50% + ${Math.cos((angle * Math.PI) / 180) * 260}px)`,
-                      top: `calc(50% + ${Math.sin((angle * Math.PI) / 180) * 260}px)`,
-                    }}
-                  >
-                    {/* Arrow line */}
-                    <div 
-                      className="w-8 h-0.5 bg-gray-600"
-                      style={{
-                        transform: `rotate(${arrowAngle}deg)`,
-                        transformOrigin: 'left center',
-                      }}
-                    ></div>
-                    {/* Arrow head */}
-                    <div 
-                      className="absolute w-0 h-0 border-l-4 border-l-gray-600 border-t-2 border-b-2 border-t-transparent border-b-transparent"
-                      style={{
-                        left: '32px',
-                        top: '-2px',
-                        transform: `rotate(${arrowAngle}deg)`,
-                        transformOrigin: 'left center',
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
