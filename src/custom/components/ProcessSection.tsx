@@ -3,11 +3,11 @@ import { Settings } from 'lucide-react';
 import { quizConfig } from '../../config/quiz.config';
 import { storeQuizAnswer } from '../../core/utils/session';
 
-interface ClockworkHeroProps {
+interface ProcessSectionProps {
   onQuizStart: () => void;
 }
 
-export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => {
+export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) => {
   const [selectedAmount, setSelectedAmount] = useState<string>('');
   
   // Get the first question from quiz config
