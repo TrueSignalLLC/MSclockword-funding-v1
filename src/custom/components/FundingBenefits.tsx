@@ -3,11 +3,11 @@ import { Settings } from 'lucide-react';
 import { quizConfig } from '../../config/quiz.config';
 import { storeQuizAnswer } from '../../core/utils/session';
 
-interface FundingBenefitsProps {
+interface ClockworkHeroProps {
   onQuizStart: () => void;
 }
 
-export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onQuizStart }) => {
+export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => {
   const [selectedAmount, setSelectedAmount] = useState<string>('');
   
   // Get the first question from quiz config
@@ -45,11 +45,8 @@ export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onQuizStart })
 
   // Expose the handler to parent component
   React.useEffect(() => {
-    (window as any).handleCTAClick = handleCTAClick;
-    return () => {
-      delete (window as any).handleCTAClick;
-    };
-  }, [selectedAmount, onQuizStart]);
+  }, []);
+
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center py-20">
       <div className="max-w-6xl mx-auto px-6">
@@ -103,7 +100,7 @@ export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onQuizStart })
           </div>
 
           {/* Form Section */}
-          <div id="q1-section" className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto">
             <div className="mb-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
                 {firstQuestion.question}
