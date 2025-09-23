@@ -723,9 +723,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">
                     {steps[currentStep].question}
                   </h3>
-                  {steps[currentStep].helper && (
-                    <p className="text-gray-600 mb-6">
-                      {steps[currentStep].helper}
                     </p>
                   )}
                 </div>
