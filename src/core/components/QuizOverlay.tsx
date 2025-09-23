@@ -2,8 +2,48 @@ import React, { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { quizConfig } from '../../config/quiz.config';
 import { validateField } from '../utils/validation';
-  const totalSteps = steps.length + 1; // +1 for contact form
+import { getSessionData, storeQuizAnswer, storeFormField, getFinalSubmissionPayload } from '../utils/session';
 import { config } from '../../config/environment.config';
+import { useCompliance } from '../hooks/useCompliance';
+import { OTPModal } from './OTPModal';
+import { PhoneValidationPopup } from './PhoneValidationPopup';
+
+interface QuizOverlayProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingStage, setLoadingStage] = useState(0);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showPhoneValidation, setShowPhoneValidation] = useState(false);
+  const [otpAttempts, setOtpAttempts] = useState(0);
+  const { getCompliancePayload } = useCompliance();
+  const steps = quizConfig.steps;
+  const loadingStages = quizConfig.loadingStep?.stages || [];
+  const totalSteps = steps.length + 1; // +1 for contact form
+  
+  const [quizData, setQuizData] = useState({
+    funding_amount: '',
+    financing_purpose: [] as string[],
+    monthly_revenue: 50000,
+    credit_score: '',
+    business_age: '',
+    business_industry: '',
+    company_type: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    business_name: '',
+    business_zip: '',
+  });
+
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -19,6 +59,15 @@ import { config } from '../../config/environment.config';
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
+      const currentStepConfig = steps[currentStep];
+      
+      if (currentStepConfig.id === 'monthly_revenue') {
+        // Store the final quiz answer before loading
+        const answer = getAnswerForStep(currentStepConfig);
+        storeQuizAnswer(currentStepConfig.id, answer);
+        
+        // Start loading screen
+        setShowLoadingScreen(true);
         setLoadingProgress(0);
         setLoadingStage(0);
         
@@ -145,8 +194,8 @@ import { config } from '../../config/environment.config';
 
   const formatSliderValue = (value: number) => {
     if (value >= 50000000) return '$50,000,000+';
-    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
-    if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
+    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
     return `$${value.toLocaleString()}`;
   };
 
