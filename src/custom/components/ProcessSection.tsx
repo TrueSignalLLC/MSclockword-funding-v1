@@ -296,7 +296,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
             onClick={onQuizStart}
             className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white font-bold text-xl py-4 px-12 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
-            Start Your Application
+            Apply for Funding
           </button>
         </div>
       </div>
