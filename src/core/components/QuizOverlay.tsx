@@ -50,7 +50,12 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   useEffect(() => {
     if (isOpen) {
       const sessionData = getSessionData();
-      // Don't auto-load funding_amount to keep Q1 unselected by default
+      if (sessionData.quiz_answers.funding_amount) {
+        setQuizData(prev => ({
+          ...prev,
+          funding_amount: sessionData.quiz_answers.funding_amount
+        }));
+      }
     }
   }, [isOpen]);
 
