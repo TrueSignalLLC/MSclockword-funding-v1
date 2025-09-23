@@ -30,8 +30,8 @@ export const FundWhatOthersWont: React.FC<FundWhatOthersWontProps> = ({ onQuizSt
           {/* Right Column - Image */}
           <div className="flex justify-center">
             <img 
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              alt="Professional businessman in suit using phone at cafe"
+              src="/vitaly-gariev-NWT8Hya-_WQ-unsplash.jpg"
+              alt="Professional businessman in suit on phone call"
               className="w-full max-w-md h-96 object-cover rounded-lg shadow-lg"
             />
           </div>
