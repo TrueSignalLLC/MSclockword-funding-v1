@@ -1,117 +1,94 @@
-import React, { useState } from 'react';
-import { Settings } from 'lucide-react';
-import { quizConfig } from '../../config/quiz.config';
-import { storeQuizAnswer } from '../../core/utils/session';
+import React from 'react';
+import { CheckCircle } from 'lucide-react';
 
-interface ClockworkHeroProps {
+interface FundingBenefitsProps {
   onQuizStart: () => void;
 }
 
-export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => {
-  const [selectedAmount, setSelectedAmount] = useState<string>('');
-  
-  // Get the first question from quiz config
-  const firstQuestion = quizConfig.steps[0];
-  
-  const handleAmountSelect = (value: string, label: string) => {
-    setSelectedAmount(label);
-    // Store the answer
-    storeQuizAnswer(firstQuestion.id, value);
-    // Open the quiz overlay to continue with remaining questions
-    setTimeout(() => {
-      onQuizStart();
-    }, 300);
-  };
+export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onQuizStart }) => {
+  const benefits = [
+    'Acquire competitors',
+    'Open more locations',
+    'Expand operations',
+    'Purchase inventory',
+    'Upgrade equipment',
+    'Boost marketing efforts',
+    'Or simply cover day-to-day operational expenses'
+  ];
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center py-20">
+    <section className="py-20 bg-clockwork-orange-500">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center">
-          {/* Logo */}
-          <div className="flex items-center justify-center mb-12">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="w-16 h-16 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
-                  <Settings className="w-8 h-8 text-white" />
-                </div>
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-clockwork-blue-600 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-              </div>
-              <div className="text-left">
-                <h1 className="text-4xl font-bold text-clockwork-blue-600 tracking-wide">
-                  CLOCKWORK
-                </h1>
-                <h2 className="text-4xl font-bold text-clockwork-blue-600 tracking-wide -mt-2">
-                  FUNDING
-                </h2>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Headline */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-clockwork-orange-500 mb-8 leading-tight">
-            Unlock Large-Scale Uncapped<br />
-            Business Funding, in Excess of<br />
-            <span className="text-clockwork-orange-600">$1,000,000</span>
-          </h1>
-
-          {/* Description */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <p className="text-base md:text-xl text-gray-700 mb-6">
-              That's right! There is <span className="font-bold text-gray-900">NO CAP</span> to the competitively low-interest
-              funding you can qualify for if you have a 640+ credit score, at least
-              1 year in business, and a profitable track record.
-            </p>
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column - Content */}
+          <div className="text-white">
+            <h2 className="text-4xl md:text-5xl font-bold text-clockwork-blue-600 mb-8">
+              We've Provided Over $70 Million<br />
+              in Business Funding
+            </h2>
             
-            <div className="flex items-start justify-center gap-3 text-sm md:text-lg text-gray-800 mb-8">
-              <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0 mt-1">
-                <span className="text-white text-sm font-bold">✓</span>
-              </div>
-              <p className="text-left">
-                <span className="font-bold">Ask about our no-credit, revenue-based financing option,</span><br />
-                available for high-performing companies!
-              </p>
-            </div>
-          </div>
-
-          {/* Form Section */}
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-clockwork-orange-100 rounded-2xl shadow-xl p-8 border border-gray-200 mb-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
-                {firstQuestion.question}
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold mb-6">
+                And We Can Help You Too<br />
+                So You Can:
               </h3>
-              <p className="text-gray-700 text-center mb-6">
-                {firstQuestion.helper}
-              </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {firstQuestion.options?.map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleAmountSelect(option.value, option.label)}
-                    className={`p-4 border-2 rounded-lg text-left transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-50 ${
-                      selectedAmount === option.label 
-                        ? 'border-clockwork-orange-500 bg-clockwork-orange-50' 
-                        : 'border-gray-300 bg-white'
-                    }`}
-                  >
-                    <span className="font-semibold text-gray-900">{option.label}</span>
-                  </button>
+              <ul className="space-y-4">
+                {benefits.map((benefit, index) => (
+                  <li key={index} className="flex items-center gap-3">
+                    <CheckCircle className="w-6 h-6 text-white flex-shrink-0" />
+                    <span className="text-lg font-medium">{benefit}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </div>
 
-          {/* Disclaimer */}
-          <div className="max-w-3xl mx-auto mt-12">
-            <p className="text-sm text-gray-600 italic leading-relaxed">
-              <strong>Note:</strong> Funding terms, approval amounts, and interest rates vary based on your credit
-              profile, business structure, and timing of application. All funding estimates are based on
-              current lender data and may be adjusted as new offers or documentation become
-              available. Final terms are confirmed after full review and lender approval.
-            </p>
+          {/* Right Column - Visual */}
+          <div className="flex justify-center">
+            <div className="relative">
+              {/* Blue Circle Background */}
+              <div className="w-80 h-80 bg-clockwork-blue-600 rounded-full flex items-center justify-center">
+                {/* Warehouse/Factory Icon */}
+                <div className="text-clockwork-orange-500">
+                  <svg width="200" height="150" viewBox="0 0 200 150" fill="currentColor">
+                    {/* Factory Building */}
+                    <rect x="40" y="60" width="120" height="80" fill="currentColor" />
+                    <rect x="50" y="70" width="20" height="20" fill="#1e3a8a" />
+                    <rect x="80" y="70" width="20" height="20" fill="#1e3a8a" />
+                    <rect x="110" y="70" width="20" height="20" fill="#1e3a8a" />
+                    <rect x="140" y="70" width="20" height="20" fill="#1e3a8a" />
+                    
+                    {/* Roof */}
+                    <polygon points="30,60 100,30 170,60" fill="currentColor" />
+                    
+                    {/* Chimney */}
+                    <rect x="120" y="20" width="15" height="40" fill="currentColor" />
+                    
+                    {/* Forklift */}
+                    <rect x="10" y="100" width="30" height="15" fill="currentColor" />
+                    <rect x="15" y="85" width="8" height="15" fill="currentColor" />
+                    <circle cx="15" cy="120" r="5" fill="#1e3a8a" />
+                    <circle cx="35" cy="120" r="5" fill="#1e3a8a" />
+                    
+                    {/* Loading Dock */}
+                    <rect x="160" y="100" width="30" height="40" fill="currentColor" />
+                    <rect x="165" y="90" width="20" height="10" fill="#1e3a8a" />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* CTA Button */}
+        <div className="text-center mt-12">
+          <button
+            onClick={onQuizStart}
+            className="bg-clockwork-blue-600 hover:bg-clockwork-blue-700 text-white font-bold text-xl py-4 px-12 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+          >
+            Apply For Funding
+          </button>
         </div>
       </div>
     </section>
