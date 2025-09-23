@@ -28,14 +28,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     funding_amount: '',
     financing_purpose: [] as string[],
     monthly_revenue: 50000,
-    credit_score: '',
-    business_age: '',
-    business_industry: '',
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone: '',
-    business_name: '',
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -51,8 +43,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
-        storeQuizAnswer(currentStepConfig.id, answer);
-        
         // Store the final quiz answer before loading
         const answer = getAnswerForStep(currentStepConfig);
         storeQuizAnswer(currentStepConfig.id, answer);
