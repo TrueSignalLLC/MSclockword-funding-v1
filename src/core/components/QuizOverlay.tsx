@@ -229,13 +229,17 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         
         const result = await validateField(phoneStep, phone, sessionData);
         
+        // Check if OTP is required from the API response
+        const otpRequired = result.data?.otp_required === true;
+        const actualStatus = otpRequired ? 'needs_otp' : (result.valid ? 'valid' : 'invalid');
+        
         const validationState = {
           loading: false,
           valid: result.valid,
           error: result.error,
-          status: result.status || (result.valid ? 'valid' : 'invalid'),
+          status: actualStatus,
           message: result.message || null,
-          phoneType: result.phoneType || null,
+          phoneType: result.data?.phone_type || result.phoneType || null,
         };
         
         setPhoneValidation(validationState);
@@ -244,16 +248,18 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         storeValidation('phone', {
           valid: result.valid,
           error: result.error,
-          status: result.status,
+          status: actualStatus,
           message: result.message,
-          phoneType: result.phoneType,
+          phoneType: result.data?.phone_type || result.phoneType,
+          otpRequired: otpRequired,
+          phoneLocation: result.data?.phone_location,
+          validationDate: result.data?.validation_date,
           timestamp: new Date().toISOString()
         });
         
-        // If phone needs OTP verification, show the phone validation popup
-        if (result.status === 'needs_otp') {
-          // Don't automatically show popup here - let user click submit first
-          console.log('Phone requires OTP verification');
+        // Log for debugging
+        if (otpRequired) {
+          console.log('Phone requires OTP verification - will show popup on submit');
         }
         
       } catch (error) {
