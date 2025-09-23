@@ -30,7 +30,7 @@ const getConfig = (): EnvironmentConfig => {
       phoneValidation: import.meta.env.VITE_PHONE_VALIDATOR || '',
       
       // OTP endpoints
-      sendOTP: import.meta.env.VITE_SEND_OTP || '',
+      sendOTP: import.meta.env.VITE_SEND_OTP_ENDPOINT || '',
       verifyOTP: import.meta.env.VITE_VERIFY_OTP || '',
       
       // Qualification
