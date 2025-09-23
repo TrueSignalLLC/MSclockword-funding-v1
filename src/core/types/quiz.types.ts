@@ -20,15 +20,16 @@ export interface QuizOverlayProps {
 }
 
 export interface QuizData {
-  zip: string;
-  home_status: string;
-  install_pref: string;
-  intent_timing: string;
-  existing_system: string;
+  business_zip: string;
+  business_type: string;
+  funding_amount: string;
+  funding_timeline: string;
+  credit_score: string;
   first_name: string;
   last_name: string;
   phone: string;
   email: string;
+  business_name: string;
   leadid_token: string;
 }
 

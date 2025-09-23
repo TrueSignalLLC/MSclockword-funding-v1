@@ -1,19 +1,19 @@
 export const siteConfig = {
   // Client Identity
   client: {
-    name: "YourHomeSecured",
-    legalName: "YourHomeSecured", // For legal documents
-    domain: "yourhomesecured.com",
+    name: "Clockwork Funding",
+    legalName: "Clockwork Funding", // For legal documents
+    domain: "clockworkfunding.com",
     established: "2024"
   },
   
   // Compliance Configuration (Easily changeable per client)
   compliance: {
     contact: {
-      email: "admin@yourhomesecured.com", // Single point of contact
+      email: "admin@clockworkfunding.com", // Single point of contact
     },
     messaging: {
-      companyName: "YourHomeSecured",
+      companyName: "Clockwork Funding",
       replyKeywords: {
         stop: "STOP",
         help: "HELP"
