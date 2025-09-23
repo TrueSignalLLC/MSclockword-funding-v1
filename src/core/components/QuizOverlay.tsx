@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { quizConfig } from '../../config/quiz.config';
 import { validateField } from '../utils/validation';
-import { getSessionData, storeQuizAnswer, storeFormField, getFinalSubmissionPayload } from '../utils/session';
+import { getSessionData, storeQuizAnswer, storeFormField, getFinalSubmissionPayload, storeValidation } from '../utils/session';
 import { config } from '../../config/environment.config';
 import { useCompliance } from '../hooks/useCompliance';
 import { OTPModal } from './OTPModal';
@@ -23,6 +23,16 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [showPhoneValidation, setShowPhoneValidation] = useState(false);
   const [otpAttempts, setOtpAttempts] = useState(0);
+  
+  // Email validation state
+  const [emailValidation, setEmailValidation] = useState({
+    loading: false,
+    valid: null as boolean | null,
+    error: null as string | null
+  });
+  
+  // Debounce timeout ref for email validation
+  const emailValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const [quizData, setQuizData] = useState({
     funding_amount: '',
@@ -57,6 +67,92 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
       }
     }
   }, [isOpen]);
+
+  // Email validation handler with debouncing
+  const handleEmailValidation = async (email: string) => {
+    // Clear existing timeout
+    if (emailValidationTimeoutRef.current) {
+      clearTimeout(emailValidationTimeoutRef.current);
+    }
+    
+    // If email is empty, reset validation state
+    if (!email.trim()) {
+      setEmailValidation({
+        loading: false,
+        valid: null,
+        error: null
+      });
+      return;
+    }
+    
+    // Set loading state immediately
+    setEmailValidation(prev => ({
+      ...prev,
+      loading: true,
+      error: null
+    }));
+    
+    // Debounce the validation call
+    emailValidationTimeoutRef.current = setTimeout(async () => {
+      try {
+        const sessionData = getSessionData();
+        
+        // Find email field configuration from quiz config
+        const emailFieldConfig = quizConfig.submission.fields.find(field => field.id === 'email');
+        
+        if (!emailFieldConfig) {
+          setEmailValidation({
+            loading: false,
+            valid: false,
+            error: 'Email validation not configured'
+          });
+          return;
+        }
+        
+        // Create a step-like object for validation
+        const emailStep = {
+          id: 'email',
+          type: 'email' as const,
+          validation: {
+            required: true,
+            apiEndpoint: config.api.emailValidation
+          }
+        };
+        
+        const result = await validateField(emailStep, email, sessionData);
+        
+        const validationState = {
+          loading: false,
+          valid: result.valid,
+          error: result.error
+        };
+        
+        setEmailValidation(validationState);
+        
+        // Store validation result in session
+        storeValidation('email', {
+          valid: result.valid,
+          error: result.error,
+          timestamp: new Date().toISOString()
+        });
+        
+      } catch (error) {
+        console.error('Email validation error:', error);
+        const errorState = {
+          loading: false,
+          valid: false,
+          error: 'Validation failed. Please try again.'
+        };
+        setEmailValidation(errorState);
+        
+        storeValidation('email', {
+          valid: false,
+          error: 'Validation failed',
+          timestamp: new Date().toISOString()
+        });
+      }
+    }, 800); // 800ms debounce delay
+  };
 
   const steps = quizConfig.steps.slice(1); // Skip first question (it's on hero)
   const totalSteps = 8; // Fixed total of 8 steps
@@ -175,18 +271,13 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
       return answer !== '' && answer !== null && answer !== undefined;
     } else {
       // Contact form validation
-      return quizData.business_zip && 
-             quizData.first_name && 
-             quizData.last_name && 
-             quizData.email && 
-             quizData.phone && 
-             quizData.business_name;
-      // Contact form validation
       return quizData.first_name && 
              quizData.last_name && 
              quizData.email && 
              quizData.phone && 
-             quizData.business_name;
+             quizData.business_name &&
+             emailValidation.valid === true &&
+             !emailValidation.loading;
     }
   };
 
@@ -545,11 +636,38 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                       onChange={(e) => {
                         setQuizData(prev => ({ ...prev, email: e.target.value }));
                         storeFormField('email', e.target.value);
+                       handleEmailValidation(e.target.value);
                       }}
                       placeholder="you@example.com"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent"
+                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent ${
+                       emailValidation.valid === true 
+                         ? 'border-green-500' 
+                         : emailValidation.valid === false 
+                         ? 'border-red-500' 
+                         : 'border-gray-300'
+                     }`}
                       required
                     />
+                   
+                   {/* Email validation feedback */}
+                   {emailValidation.loading && (
+                     <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
+                       <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                       <span>Validating email...</span>
+                     </div>
+                   )}
+                   
+                   {emailValidation.error && (
+                     <p className="mt-2 text-sm text-red-600">
+                       {emailValidation.error}
+                     </p>
+                   )}
+                   
+                   {emailValidation.valid === true && !emailValidation.loading && (
+                     <p className="mt-2 text-sm text-green-600">
+                       ✓ Email is valid
+                     </p>
+                   )}
                   </div>
 
                   {/* Phone */}
