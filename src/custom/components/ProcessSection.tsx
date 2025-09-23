@@ -82,7 +82,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
 
             {/* Card layout with special handling for card 07 */}
             <div className="relative z-10 max-w-4xl mx-auto">
-              {/* First 6 cards in 2-column grid */}
+              {/* Cards 02-07 in 2-column grid below */}
               <div className="grid grid-cols-2 gap-8 mb-8">
                 {processSteps.slice(0, 6).map((step, index) => (
                   <div
