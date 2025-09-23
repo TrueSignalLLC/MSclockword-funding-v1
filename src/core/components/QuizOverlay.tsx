@@ -84,15 +84,16 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   // Store answers using config IDs
   const [quizData, setQuizData] = useState({
-    zip: '',
-    home_status: '',
-    install_pref: '',
-    intent_timing: '',
-    existing_system: '',
+    business_zip: '',
+    business_type: '',
+    funding_amount: '',
+    funding_timeline: '',
+    credit_score: '',
     first_name: '',
     last_name: '',
     phone: '',
     email: '',
+    business_name: '',
     leadid_token: '',
     xxTrustedFormCertUrl: ''
   });
@@ -261,9 +262,9 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     }
 
     // Handle ZIP validation when 5 digits entered
-    if (field === 'zip' && value.length === 5) {
+    if (field === 'business_zip' && value.length === 5) {
       // Store user's ZIP answer first
-      storeQuizAnswer('zip', value);
+      storeQuizAnswer('business_zip', value);
       
       // Set loading immediately
       setValidationState({ loading: true, valid: null, error: null });
@@ -287,7 +288,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         // Store entire validation response if valid
         if (result.valid) {
           console.log('About to store validation with:', result);
-          storeValidation('zip', result);
+          storeValidation('business_zip', result);
           // Check immediately after storing
           const stored = JSON.parse(sessionStorage.getItem('session_data'));
           console.log('Session storage after store:', stored);
@@ -723,13 +724,13 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         lastName: quizData.last_name,
         email: quizData.email,
         phone: quizData.phone,
-        zip: quizData.zip,
+        zip: quizData.business_zip,
         city: sessionData.validations?.zip?.data?.city || 'your area',
-        homeStatus: quizData.home_status,
-        installPref: quizData.install_pref,
-        intentTiming: quizData.intent_timing,
-        existingSystem: quizData.existing_system,
-        homeType: quizData.home_status === 'owner' ? 'owned' : 'rental'
+        homeStatus: quizData.business_type,
+        installPref: quizData.funding_amount,
+        intentTiming: quizData.funding_timeline,
+        existingSystem: quizData.credit_score,
+        homeType: quizData.business_type === 'owner' ? 'owned' : 'rental'
       };
       
       sessionStorage.setItem('quiz_data', JSON.stringify(quizFormData));
@@ -753,10 +754,10 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   };
 
   const getThankYouMessage = () => {
-    if (quizData.home_status === 'owner' && quizData.install_pref === 'pro') {
-      return "A specialist serving your area can review monitored options with you shortly—install as soon as tomorrow in many areas.";
+    if (quizData.funding_timeline === 'asap') {
+      return "A funding specialist will contact you within 15 minutes to discuss your urgent funding needs and expedite your application.";
     }
-    return "We'll start with renter-friendly, no-drill options you can set up in minutes.";
+    return "A funding specialist will review your application and contact you with personalized funding options within 24 hours.";
   };
 
   if (!isOpen) return null;
@@ -870,9 +871,9 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder={steps[0].placeholder || "Enter ZIP code"}
-                      value={quizData.zip}
-                      onChange={(e) => handleInputChange('zip', e.target.value)}
+                      placeholder={steps[0].placeholder || "Enter business ZIP code"}
+                      value={quizData.business_zip}
+                      onChange={(e) => handleInputChange('business_zip', e.target.value)}
                       className="w-full p-4 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                       maxLength={5}
                     />
@@ -940,6 +941,15 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                       placeholder="Last Name"
                       value={quizData.last_name}
                       onChange={(e) => handleInputChange('last_name', e.target.value)}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Business Name"
+                      value={quizData.business_name}
+                      onChange={(e) => handleInputChange('business_name', e.target.value)}
                       className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
@@ -1102,7 +1112,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
               title={!canProceed() ? 'Please complete and validate all fields' : ''}
               style={{ pointerEvents: !canProceed() ? 'none' : 'auto' }}
             >
-              {currentStep === steps.length - 1 ? 'Get My Options' : 'Next'}
+              {currentStep === steps.length - 1 ? 'Get My Funding Options' : 'Next'}
               {currentStep < steps.length - 1 && <ChevronRight className="w-4 h-4" />}
             </button>
           </div>
