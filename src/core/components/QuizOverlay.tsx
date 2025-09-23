@@ -10,16 +10,8 @@ import { PhoneValidationPopup } from './PhoneValidationPopup';
 
 interface QuizOverlayProps {
   isOpen: boolean;
-  onClose: () => void;
+  const totalSteps = steps.length + 1; // +1 for contact form
 }
-
-export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingStage, setLoadingStage] = useState(0);
-  const [showExitModal, setShowExitModal] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleClose = () => {
     setShowExitModal(true);
   };
@@ -35,8 +27,6 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
-        storeQuizAnswer(currentStepConfig.id, answer);
-        
         // Start loading screen
         setShowLoadingScreen(true);
         setLoadingProgress(0);
