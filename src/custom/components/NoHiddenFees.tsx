@@ -9,7 +9,7 @@ export const NoHiddenFees: React.FC = () => {
           <div className="order-2 lg:order-1">
             <img 
               src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              alt="Business handshake"
+              alt="Two business owners shaking hands at table after concluding deal"
               className="w-full h-96 object-cover rounded-lg shadow-lg"
             />
           </div>
