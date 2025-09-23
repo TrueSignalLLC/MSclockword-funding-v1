@@ -29,8 +29,8 @@ export const UltraFlexibleFunding: React.FC = () => {
           {/* Right Column - Image */}
           <div>
             <img 
-              src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              alt="Business team collaboration"
+              src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Team collaborating in shop"
               className="w-full h-96 object-cover rounded-lg shadow-lg"
             />
           </div>
