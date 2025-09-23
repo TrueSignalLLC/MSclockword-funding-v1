@@ -20,29 +20,34 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const [loadingStage, setLoadingStage] = useState(0);
   const [showExitModal, setShowExitModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showPhoneValidation, setShowPhoneValidation] = useState(false);
+  const [otpAttempts, setOtpAttempts] = useState(0);
+  const steps = quizConfig.steps || [];
+  const loadingStages = quizConfig.loadingStep?.stages || [];
+  const totalSteps = steps.length + 1; // +1 for contact form
+  
   const [quizData, setQuizData] = useState({
-    company_type: '',
-    financing_purpose: [],
+    funding_amount: '',
+    financing_purpose: [] as string[],
     monthly_revenue: 50000,
     credit_score: '',
     business_age: '',
     business_industry: '',
+    company_type: '',
     business_zip: '',
     first_name: '',
     last_name: '',
     email: '',
     phone: '',
-    business_name: ''
+    business_name: '',
+    leadid_token: ''
   });
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [showPhoneValidation, setShowPhoneValidation] = useState(false);
-  const [otpAttempts, setOtpAttempts] = useState(0);
-  
+
+  const [validationStates, setValidationStates] = useState<Record<string, any>>({});
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
   const { getCompliancePayload } = useCompliance();
-  
-  const steps = quizConfig.steps || [];
-  const totalSteps = steps.length + 2;
-  const loadingStages = quizConfig.loadingStep?.stages || [];
 
   const handleClose = () => {
     setShowExitModal(true);
@@ -60,9 +65,10 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const handleNext = async () => {
     if (currentStep < steps.length) {
       const currentStepConfig = steps[currentStep];
-      const answer = getAnswerForStep(currentStepConfig);
       
-      if (currentStepConfig.id === 'monthly_revenue') {
+      if (currentStep === steps.length - 1) {
+        // Store the final quiz answer before loading
+        const answer = getAnswerForStep(currentStepConfig);
         storeQuizAnswer(currentStepConfig.id, answer);
         
         // Start loading screen
