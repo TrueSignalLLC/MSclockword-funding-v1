@@ -24,6 +24,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const [showPhoneValidation, setShowPhoneValidation] = useState(false);
   const [otpAttempts, setOtpAttempts] = useState(0);
   const [otpLoading, setOtpLoading] = useState(false);
+  const [tcpaConsent, setTcpaConsent] = useState(false);
   
   // Email validation state
   const [emailValidation, setEmailValidation] = useState({
@@ -422,6 +423,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
              !emailValidation.loading &&
              (phoneValidation.valid === true || phoneValidation.status === 'needs_otp') &&
              !phoneValidation.loading &&
+             tcpaConsent &&
              !showPhoneValidation &&
              !showOTPModal;
     }
@@ -434,10 +436,15 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
       // Get compliance data
       const complianceData = getCompliancePayload();
       
+      // Get TCPA consent text from quiz config
+      const tcpaText = quizConfig.submission.consent.text;
+      
       // Prepare final payload
       const payload = {
         ...getFinalSubmissionPayload(),
-        ...complianceData
+        ...complianceData,
+        tcpa_text: tcpaText,
+        consent: true
       };
 
       // Submit to webhook
@@ -990,14 +997,13 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                     <input
                       type="checkbox"
                       id="consent"
+                      checked={tcpaConsent}
+                      onChange={(e) => setTcpaConsent(e.target.checked)}
                       required
                       className="mt-1 w-4 h-4 text-clockwork-orange-500 border-gray-300 rounded focus:ring-clockwork-orange-500"
                     />
                     <label htmlFor="consent" className="text-sm text-gray-600 leading-relaxed">
-                      By clicking "Get My Funding Options", you expressly consent to be contacted by Clockwork Funding and our lending partners at the number/email provided (including autodialed, prerecorded, and text messages) regarding business funding solutions. You also consent to receive marketing, service notifications, and account updates via SMS messaging. Consent not required to purchase. Message & data rates may apply. Messaging frequency may vary. Reply STOP to opt out of texts. See our{' '}
-                      <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>,{' '}
-                      <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Terms of Service</a>, and{' '}
-                      <a href="/tcpa-disclaimer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">TCPA Disclaimer</a>.
+                      <span dangerouslySetInnerHTML={{ __html: quizConfig.submission.consent.text }} />
                     </label>
                   </div>
                 </div>
