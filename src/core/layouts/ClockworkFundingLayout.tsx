@@ -4,6 +4,7 @@ import { FundingBenefits } from '../../custom/components/FundingBenefits';
 import { OurApproach } from '../../custom/components/OurApproach';
 import { OurProcess } from '../../custom/components/OurProcess';
 import { NoHiddenFees } from '../../custom/components/NoHiddenFees';
+import { FundWhatOthersWont } from '../../custom/components/FundWhatOthersWont';
 import { ClockworkFAQ } from '../../custom/components/ClockworkFAQ';
 import { Footer } from '../components/Footer';
 import { QuizOverlay } from '../components/QuizOverlay';
