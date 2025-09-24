@@ -50,7 +50,7 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-clockwork-orange-500 mb-8 leading-tight text-center px-2.5 md:px-0">
+          <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-clockwork-orange-500 mb-8 leading-tight text-center">
             Unlock Large-Scale Uncapped<br />
             Business Funding, in Excess of<br />
             <span className="text-clockwork-orange-600">$1,000,000</span>
