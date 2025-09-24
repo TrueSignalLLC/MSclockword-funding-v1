@@ -59,6 +59,7 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
           {/* Description */}
           <div className="max-w-4xl mx-auto mb-8">
             <p className="text-base md:text-xl text-gray-700 mb-6">
+            <p className="text-sm md:text-xl text-gray-700 mb-6">
               That's right! There is <span className="font-bold text-gray-900">NO CAP</span> to the competitively low-interest
               funding you can qualify for if you have a 640+ credit score, at least
               1 year in business, and a profitable track record.
