@@ -8,7 +8,11 @@ import { useCompliance } from '../../core/hooks/useCompliance';
 import { OTPModal } from '../../core/components/OTPModal';
 import { PhoneValidationPopup } from '../../core/components/PhoneValidationPopup';
 
-export const EmbeddedQuizForm: React.FC = () => {
+interface EmbeddedQuizFormProps {
+  initialAnswers?: Record<string, any>;
+}
+
+export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswers }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -44,7 +48,7 @@ export const EmbeddedQuizForm: React.FC = () => {
   const phoneValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const [quizData, setQuizData] = useState({
-    funding_amount: '',
+    funding_amount: initialAnswers?.funding_amount || '',
     company_type: '',
     financing_purpose: [] as string[],
     annual_revenue: 50000,
@@ -67,13 +71,31 @@ export const EmbeddedQuizForm: React.FC = () => {
   // Load session data on mount
   useEffect(() => {
     const sessionData = getSessionData();
-    if (sessionData.quiz_answers.funding_amount) {
+    
+    // Merge initial answers with session data, giving priority to initialAnswers
+    const mergedAnswers = {
+      ...sessionData.quiz_answers,
+      ...initialAnswers
+    };
+    
+    if (mergedAnswers.funding_amount) {
       setQuizData(prev => ({
         ...prev,
-        funding_amount: sessionData.quiz_answers.funding_amount
+        funding_amount: mergedAnswers.funding_amount,
+        company_type: mergedAnswers.company_type || '',
+        financing_purpose: mergedAnswers.financing_purpose || [],
+        annual_revenue: mergedAnswers.annual_revenue || 50000,
+        credit_score: mergedAnswers.credit_score || '',
+        business_age: mergedAnswers.business_age || '',
+        business_industry: mergedAnswers.business_industry || ''
       }));
     }
-  }, []);
+    
+    // If we have initial answers (coming from home page), start from step 1
+    if (initialAnswers?.funding_amount) {
+      setCurrentStep(1);
+    }
+  }, [initialAnswers]);
 
   // Email validation handler with debouncing
   const handleEmailValidation = async (email: string) => {

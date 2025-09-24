@@ -1,8 +1,24 @@
 import React, { useState } from 'react';
 import { Settings } from 'lucide-react';
-import { EmbeddedQuizForm } from './EmbeddedQuizForm';
+import { useNavigate } from 'react-router-dom';
+import { quizConfig } from '../../config/quiz.config';
+import { storeQuizAnswer } from '../../core/utils/session';
 
 export const ClockworkHero: React.FC = () => {
+  const navigate = useNavigate();
+  const [selectedFundingAmount, setSelectedFundingAmount] = useState('');
+  const [showFundingAmountError, setShowFundingAmountError] = useState(false);
+
+  const handleGetQualified = () => {
+    if (!selectedFundingAmount) {
+      setShowFundingAmountError(true);
+      return;
+    }
+    
+    // Store the answer and navigate to quiz
+    storeQuizAnswer('funding_amount', selectedFundingAmount);
+    navigate('/quiz');
+  };
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center py-20">
@@ -58,7 +74,53 @@ export const ClockworkHero: React.FC = () => {
 
           {/* Form Section */}
           <div id="hero-form" className="max-w-2xl mx-auto order-2 md:order-none mb-8">
-            <EmbeddedQuizForm />
+            <div className="bg-clockwork-orange-100 rounded-2xl shadow-xl p-8 border border-gray-200">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    {quizConfig.steps[0].question}
+                  </h3>
+                  {quizConfig.steps[0].helper && (
+                    <p className="text-gray-700 mb-6">
+                      {quizConfig.steps[0].helper}
+                    </p>
+                  )}
+                </div>
+
+                <div className="max-w-md mx-auto space-y-4">
+                  <select
+                    value={selectedFundingAmount}
+                    onChange={(e) => {
+                      setSelectedFundingAmount(e.target.value);
+                      setShowFundingAmountError(false);
+                    }}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white ${
+                      showFundingAmountError ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  >
+                    <option value="" disabled>Amount</option>
+                    {quizConfig.steps[0].options?.map((option: any, index: number) => (
+                      <option key={index} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  {showFundingAmountError && (
+                    <p className="text-red-500 text-sm text-center">
+                      Please select a funding amount to continue
+                    </p>
+                  )}
+
+                  <button
+                    onClick={handleGetQualified}
+                    className="w-full bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white font-bold text-xl py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  >
+                    Get Qualified
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Moved checkmark section below quiz on mobile */}

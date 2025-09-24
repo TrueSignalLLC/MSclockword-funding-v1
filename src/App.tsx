@@ -7,6 +7,7 @@ import { PrivacyPolicy } from './core/pages/PrivacyPolicy';
 import { TermsOfService } from './core/pages/TermsOfService';
 import { TCPADisclaimer } from './core/pages/TCPADisclaimer';
 import { Contact } from './core/pages/Contact';
+import { QuizPage } from './core/pages/QuizPage';
 
 function App() {
   // Temporary debugging code for environment variables
@@ -28,6 +29,9 @@ function App() {
         <Routes>
           {/* Layout-based routes */}
           <Route path="/" element={<ClockworkFundingLayout />} />
+          
+          {/* Quiz page */}
+          <Route path="/quiz" element={<QuizPage />} />
           
           {/* Legal pages */}
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
