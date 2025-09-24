@@ -2,10 +2,10 @@ import React from 'react';
 import { TrendingUp, Calculator, DollarSign, MapPin, Handshake } from 'lucide-react';
 
 interface OurApproachProps {
-  onQuizStart: () => void;
+  onScrollToHero: () => void;
 }
 
-export const OurApproach: React.FC<OurApproachProps> = ({ onQuizStart }) => {
+export const OurApproach: React.FC<OurApproachProps> = ({ onScrollToHero }) => {
   const approaches = [
     {
       icon: <TrendingUp className="w-8 h-8" />,
@@ -55,7 +55,7 @@ export const OurApproach: React.FC<OurApproachProps> = ({ onQuizStart }) => {
           <div className="border-t border-gray-200 mt-12 pt-8">
             <div className="text-center">
               <button
-                onClick={onQuizStart}
+                onClick={onScrollToHero}
                 className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white font-bold text-xl py-4 px-12 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 Apply for Funding

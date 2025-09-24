@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ClockworkFAQProps {
-  onQuizStart: () => void;
+  onScrollToHero: () => void;
 }
 
-export const ClockworkFAQ: React.FC<ClockworkFAQProps> = ({ onQuizStart }) => {
+export const ClockworkFAQ: React.FC<ClockworkFAQProps> = ({ onScrollToHero }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const faqs = [
@@ -83,7 +83,7 @@ export const ClockworkFAQ: React.FC<ClockworkFAQProps> = ({ onQuizStart }) => {
         {/* CTA Button */}
         <div className="text-center">
           <button
-            onClick={onQuizStart}
+            onClick={onScrollToHero}
             className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white font-bold text-xl py-4 px-12 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
             Apply for Funding

@@ -2,10 +2,10 @@ import React from 'react';
 import { User, FileText, DollarSign, TrendingUp, Clock, BarChart3, MessageCircle } from 'lucide-react';
 
 interface ProcessSectionProps {
-  onQuizStart: () => void;
+  onScrollToHero: () => void;
 }
 
-export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) => {
+export const ProcessSection: React.FC<ProcessSectionProps> = ({ onScrollToHero }) => {
   const processSteps = [
     {
       number: '01',
@@ -239,7 +239,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
         {/* CTA Button */}
         <div className="text-center mt-16">
           <button
-            onClick={onQuizStart}
+            onClick={onScrollToHero}
             className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white font-bold text-xl py-4 px-12 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
             Apply for Funding
