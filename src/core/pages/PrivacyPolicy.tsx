@@ -39,7 +39,7 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
             ))}
             {section.outro && (
               <p className="text-gray-600 mt-4 whitespace-pre-line">
-                {section.outro}
+                dangerouslySetInnerHTML={{ __html: section.outro }}
               </p>
             )}
           </div>
