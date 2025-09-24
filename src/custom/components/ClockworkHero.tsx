@@ -70,16 +70,6 @@ export const ClockworkHero: React.FC = () => {
               funding you can qualify for if you have at least $500k in annual revenue,
               12 months in business, and a profitable track-record.
             </p>
-            
-            <div className="flex items-start justify-center gap-3 text-sm md:text-lg text-gray-800 mb-8 order-3 md:order-none">
-              <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0 mt-1">
-                <span className="text-white text-sm font-bold">✓</span>
-              </div>
-              <p className="text-left">
-                <span className="font-bold">Ask about our no-FICO, revenue-based financing option,</span><br />
-                available for high-performing companies!
-              </p>
-            </div>
           </div>
 
           {/* Form Section */}
