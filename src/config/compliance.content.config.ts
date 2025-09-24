@@ -475,14 +475,6 @@ export const complianceContent = {
         ]
       },
       {
-        title: "Contact Information",
-        type: "contact",
-        content: [
-          "Clockwork Funding, LLC",
-          "Email: <a href=\"mailto:info@clockworkfunding.com\" class=\"text-blue-600 hover:underline\">info@clockworkfunding.com</a>",
-          "Address: [Street Address], [City, State ZIP]",
-          "Phone: [phone]"
-        ]
       }
     ]
   },
