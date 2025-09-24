@@ -765,13 +765,13 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                         setCurrentStep(prev => prev + 1);
                       }, 300);
                     }}
-                    className={`p-6 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-white hover:shadow-lg ${
+                    className={`p-4 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-white hover:shadow-lg ${
                       getAnswerForStep(steps[currentStep]) === option.value
                         ? 'border-clockwork-orange-500 bg-white'
                         : 'border-gray-300 bg-white'
                     }`}
                   >
-                    <span className="font-bold text-xl text-gray-900">{option.label}</span>
+                    <span className="font-bold text-2xl text-gray-900">{option.label}</span>
                   </button>
                 ))}
               </div>
@@ -782,7 +782,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <label
                     key={index}
-                    className="flex items-center justify-center p-6 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-white hover:shadow-lg transition-all duration-200 bg-white"
+                    className="flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-white hover:shadow-lg transition-all duration-200 bg-white"
                   >
                     <input
                       type="checkbox"
@@ -802,7 +802,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       }}
                       className="w-6 h-6 text-clockwork-orange-500 border-2 border-gray-300 rounded focus:ring-clockwork-orange-500 focus:ring-2 mr-4"
                     />
-                    <span className="font-bold text-xl text-gray-900">{option.label}</span>
+                    <span className="font-bold text-2xl text-gray-900">{option.label}</span>
                   </label>
                 ))}
               </div>
