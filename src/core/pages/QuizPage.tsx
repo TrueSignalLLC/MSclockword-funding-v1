@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Settings, X } from 'lucide-react';
 import { EmbeddedQuizForm } from '../../custom/components/EmbeddedQuizForm';
+import { ClockworkFAQ } from '../../custom/components/ClockworkFAQ';
 import { getSessionData } from '../utils/session';
 import { Footer } from '../components/Footer';
 
@@ -70,6 +71,24 @@ export const QuizPage: React.FC = () => {
           )}
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <ClockworkFAQ onScrollToHero={() => {
+        // Scroll to the quiz form section
+        const quizForm = document.querySelector('.bg-clockwork-orange-100');
+        if (quizForm) {
+          quizForm.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        } else {
+          // Fallback to top of page if element not found
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }
+      }} />
 
       {/* Advertising Disclosure Popup */}
       {showAdvertisingDisclosure && (
