@@ -81,15 +81,13 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
             </p>
             <div className="bg-gray-50 p-4 rounded-lg">
               {section.content.map((item: string, itemIndex: number) => (
-                <p key={itemIndex} className="text-gray-600" dangerouslySetInnerHTML={{ __html: item }}>
-                </p>
+                <p key={itemIndex} className="text-gray-600" dangerouslySetInnerHTML={{ __html: item }} />
               ))}
             </div>
             {section.outro && (
               <p className="text-gray-600 mt-4 whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: section.outro }}
-              >
-              </p>
+              />
             )}
           </div>
         );
