@@ -65,7 +65,7 @@ export const quizConfig = {
       type: 'slider' as const,
       question: "What's your average annual revenue?",
       helper: 'Move the slider to select your annual revenue range.',
-      min: 50000,
+      min: 5000,
       max: 50000000,
       step: 50000,
       formatValue: (value: number) => {
@@ -75,7 +75,7 @@ export const quizConfig = {
         return `$${value.toLocaleString()}`;
       },
       required: true,
-      defaultValue: 250000,
+      defaultValue: 500000,
       sidebar: {
         title: 'Annual Revenue',
         content: 'Your annual revenue helps us determine the appropriate funding amount and terms for your business.'

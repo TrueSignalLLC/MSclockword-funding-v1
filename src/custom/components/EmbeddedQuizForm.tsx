@@ -51,7 +51,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     funding_amount: initialAnswers?.funding_amount || '',
     company_type: '',
     financing_purpose: [] as string[],
-    annual_revenue: 250000,
+    annual_revenue: 500000,
     credit_score: '',
     business_age: '',
     business_industry: '',
@@ -84,7 +84,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         funding_amount: mergedAnswers.funding_amount,
         company_type: mergedAnswers.company_type || '',
         financing_purpose: mergedAnswers.financing_purpose || [],
-        annual_revenue: mergedAnswers.annual_revenue || 250000,
+        annual_revenue: mergedAnswers.annual_revenue || 500000,
         credit_score: mergedAnswers.credit_score || '',
         business_age: mergedAnswers.business_age || '',
         business_industry: mergedAnswers.business_industry || ''
@@ -846,7 +846,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                   <div className="relative">
                     <input
                       type="range"
-                      min={50000}
+                      min={5000}
                       max={50000000}
                       step={getSliderStep(quizData.annual_revenue)}
                       value={quizData.annual_revenue}
@@ -860,7 +860,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     />
                     
                     <div className="flex justify-between text-sm text-gray-500 mt-2">
-                      <span>$50k</span>
+                      <span>$5k</span>
                       <span>$50M+</span>
                     </div>
                   </div>
