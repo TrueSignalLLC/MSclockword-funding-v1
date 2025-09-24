@@ -776,7 +776,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
             {/* Question Content */}
             {steps[currentStep].type === 'button-group' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <div className="flex flex-col gap-4 max-w-2xl mx-auto">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <button
                     key={index}
