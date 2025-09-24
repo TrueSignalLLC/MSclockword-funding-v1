@@ -659,9 +659,9 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
   const formatSliderValue = (value: number) => {
     if (value >= 50000000) return '$50,000,000+';
-    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-    if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
-    return `$${value.toLocaleString()}`;
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
+    return `${value.toLocaleString()}`;
   };
 
   const getSliderStep = (value: number) => {
