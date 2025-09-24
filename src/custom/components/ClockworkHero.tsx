@@ -1,27 +1,8 @@
 import React, { useState } from 'react';
 import { Settings } from 'lucide-react';
-import { quizConfig } from '../../config/quiz.config';
-import { storeQuizAnswer } from '../../core/utils/session';
+import { EmbeddedQuizForm } from './EmbeddedQuizForm';
 
-interface ClockworkHeroProps {
-  onQuizStart: () => void;
-}
-
-export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => {
-  const [selectedAmount, setSelectedAmount] = useState<string>('');
-  
-  // Get the first question from quiz config
-  const firstQuestion = quizConfig.steps[0];
-  
-  const handleAmountSelect = (value: string, label: string) => {
-    setSelectedAmount(label);
-    // Store the answer
-    storeQuizAnswer(firstQuestion.id, value);
-    // Open the quiz overlay to continue with remaining questions
-    setTimeout(() => {
-      onQuizStart();
-    }, 300);
-  };
+export const ClockworkHero: React.FC = () => {
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center py-20">
@@ -77,30 +58,7 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
 
           {/* Form Section */}
           <div id="hero-form" className="max-w-2xl mx-auto order-2 md:order-none mb-8">
-            <div className="bg-clockwork-orange-100 rounded-2xl shadow-xl p-8 border border-gray-200 mb-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
-                {firstQuestion.question}
-              </h3>
-              <p className="text-gray-700 text-center mb-6">
-                {firstQuestion.helper}
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {firstQuestion.options?.map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleAmountSelect(option.value, option.label)}
-                    className={`p-4 border-2 rounded-lg text-left transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-50 ${
-                      selectedAmount === option.label 
-                        ? 'border-clockwork-orange-500 bg-clockwork-orange-50' 
-                        : 'border-gray-300 bg-white'
-                    }`}
-                  >
-                    <span className="font-semibold text-gray-900">{option.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <EmbeddedQuizForm />
           </div>
 
           {/* Moved checkmark section below quiz on mobile */}
