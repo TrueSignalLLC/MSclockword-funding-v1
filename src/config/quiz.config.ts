@@ -8,12 +8,12 @@ export const quizConfig = {
       question: 'How much do you need?',
       helper: 'If you are unsure, 10% of annual revenue is a good place to start',
       options: [
-        { value: '5k-49k', label: '$5-49,999' },
+        { value: '5k-49k', label: '$5k-49,999' },
         { value: '50k-99k', label: '$50k-99,999' },
         { value: '100k-249k', label: '$100k-249,999' },
         { value: '250k-500k', label: '$250k-500k' },
         { value: '500k-1m', label: '$500k-1M' },
-        { value: '1m-5m', label: '$1-4.99M' },
+        { value: '1m-5m', label: '$1M-4.99M' },
         { value: '5m-15m', label: '$5M-15M' }
       ],
       required: true,
