@@ -349,7 +349,7 @@ export const complianceContent = {
           "If you believe content on the Website infringes your copyright, send a DMCA notice to our designated agent:",
           "",
           "Clockwork Funding, LLC – DMCA Agent",
-          "Email: [copyright@clockworkfunding.com]",
+          "Email: <a href=\"mailto:copyright@clockworkfunding.com\" class=\"text-blue-600 hover:underline\">copyright@clockworkfunding.com</a>",
           "Address: [Street Address], [City, State ZIP]",
           "Phone: [phone]",
           "",
@@ -453,7 +453,7 @@ export const complianceContent = {
         type: "paragraph",
         content: [
           "Clockwork Funding, LLC",
-          "Email: [info@clockworkfunding.com]",
+          "Email: <a href=\"mailto:info@clockworkfunding.com\" class=\"text-blue-600 hover:underline\">info@clockworkfunding.com</a>",
           "Address: [Street Address], [City, State ZIP]",
           "Phone: [phone]",
           "",
@@ -479,7 +479,7 @@ export const complianceContent = {
         type: "contact",
         content: [
           "Clockwork Funding, LLC",
-          "Email: [info@clockworkfunding.com]",
+          "Email: <a href=\"mailto:info@clockworkfunding.com\" class=\"text-blue-600 hover:underline\">info@clockworkfunding.com</a>",
           "Address: [Street Address], [City, State ZIP]",
           "Phone: [phone]"
         ]
