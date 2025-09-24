@@ -30,9 +30,9 @@ export const QuizPage: React.FC = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-6 py-4">
-          {/* Top row with logo and advertising disclosure */}
-          <div className="flex items-center justify-between mb-4">
-            {/* Logo */}
+          {/* Single row with logo, progress bar, and advertising disclosure */}
+          <div className="flex items-center justify-between">
+            {/* Logo - Left */}
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-8 h-8 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
@@ -45,31 +45,31 @@ export const QuizPage: React.FC = () => {
               <span className="text-xl font-bold text-clockwork-blue-600">Clockwork Funding</span>
             </div>
             
-            {/* Advertising Disclosure */}
+            {/* Progress Bar - Center */}
+            <div className="flex-1 max-w-md mx-8">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-medium text-gray-700">
+                  Progress
+                </span>
+                <span className="text-sm text-gray-500">
+                  Step 2 of 8
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: '25%' }}
+                />
+              </div>
+            </div>
+            
+            {/* Advertising Disclosure - Right */}
             <button
               onClick={() => setShowAdvertisingDisclosure(true)}
               className="text-sm text-gray-600 hover:text-clockwork-blue-600 underline transition-colors"
             >
               Advertising Disclosure
             </button>
-          </div>
-          
-          {/* Progress Bar - Full Width */}
-          <div className="w-full">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">
-                Progress
-              </span>
-              <span className="text-sm text-gray-500">
-                Step 2 of 8
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: '25%' }}
-              />
-            </div>
           </div>
         </div>
       </header>
