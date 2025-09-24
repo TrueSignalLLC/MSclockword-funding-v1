@@ -750,7 +750,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
             {/* Question Content */}
             {steps[currentStep].type === 'button-group' && (
-              <div className="space-y-4 max-w-6xl mx-auto">
+              <div className="space-y-4 max-w-2xl mx-auto">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <button
                     key={index}
@@ -778,7 +778,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             )}
 
             {steps[currentStep].type === 'multi-select' && (
-              <div className="space-y-4 max-w-6xl mx-auto">
+              <div className="space-y-4 max-w-2xl mx-auto">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <label
                     key={index}
