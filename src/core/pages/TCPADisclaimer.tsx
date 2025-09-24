@@ -32,12 +32,6 @@ export const TCPADisclaimer: React.FC = () => {
                 <span className="text-xl font-bold text-gray-900">{siteConfig.client.name}</span>
               </div>
             </div>
-            <button
-              onClick={handleQuizStart}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
-            >
-              Secure My Home Now !
-            </button>
           </div>
         </div>
       </header>
