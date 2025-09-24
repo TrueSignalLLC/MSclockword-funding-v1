@@ -634,8 +634,9 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   };
 
   const getSliderStep = (value: number) => {
+    if (value <= 1000000) return 50000; // 50k increments up to 1M
     if (value >= 10000000) return 500000; // 500k increments above 10M
-    return 50000; // 50k increments below 10M
+    return 100000; // 100k increments between 1M and 10M
   };
 
   return (
@@ -821,7 +822,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       type="range"
                       min={5000}
                       max={50000000}
-                      step={getSliderStep(quizData.annual_revenue)}
+                      step={50000}
                       value={quizData.annual_revenue}
                       onChange={(e) => {
                         setQuizData(prev => ({
