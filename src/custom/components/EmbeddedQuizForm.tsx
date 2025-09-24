@@ -1050,6 +1050,15 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                 <ChevronRight className="w-4 h-4" />
               </button>
             )}
+            
+            {/* TCPA content for phone step */}
+            {currentStep === 11 && (
+              <div className="mt-6 max-w-md mx-auto">
+                <p className="text-xs text-gray-600 leading-relaxed text-center">
+                  By checking this box and clicking 'Continue', I agree to receive automated marketing calls/texts from or on behalf of Clockworking Funding and their partners at the number I provided. I understand this consent is optional. Msg & data rates may apply.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
