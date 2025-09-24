@@ -43,7 +43,7 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
               <p 
                 className="text-gray-600 mt-4 whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: section.outro }}
-              </p>
+              />
             )}
           </div>
         );
@@ -86,14 +86,14 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
                   key={itemIndex} 
                   className="text-gray-600"
                   dangerouslySetInnerHTML={{ __html: item }}
-                </p>
+                />
               ))}
             </div>
             {section.outro && (
               <p 
                 className="text-gray-600 mt-4 whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: section.outro }}
-              </p>
+              />
             )}
           </div>
         );
