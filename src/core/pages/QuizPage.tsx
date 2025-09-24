@@ -76,8 +76,8 @@ export const QuizPage: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <section className="py-4 md:py-12">
-        <div className="w-full md:w-4/5 mx-auto px-4 md:px-6">
+      <section className="py-4 md:py-12 min-h-screen md:min-h-0">
+        <div className="w-full md:w-4/5 mx-auto px-4 md:px-6 min-h-screen md:min-h-0 flex flex-col">
           <div className="text-center mb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-clockwork-blue-600 mb-3 hidden md:block">
               Complete Your Funding Application
@@ -88,12 +88,14 @@ export const QuizPage: React.FC = () => {
           </div>
 
           {/* Quiz Form */}
-          {initialQuizData && (
-            <EmbeddedQuizForm 
-              initialAnswers={initialQuizData} 
-              onStepChange={setCurrentStep}
-            />
-          )}
+          <div className="flex-1 flex items-center md:block">
+            {initialQuizData && (
+              <EmbeddedQuizForm 
+                initialAnswers={initialQuizData} 
+                onStepChange={setCurrentStep}
+              />
+            )}
+          </div>
         </div>
       </section>
 
