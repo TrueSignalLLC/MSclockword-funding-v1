@@ -751,7 +751,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             {/* Question Content */}
             {steps[currentStep].type === 'button-group' && (
               <div className="max-w-2xl mx-auto">
-                <div className="space-y-4">
+                <div className="flex flex-col space-y-4">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <button
                     key={index}
@@ -766,7 +766,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                         setCurrentStep(prev => prev + 1);
                       }, 300);
                     }}
-                    className={`p-3 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg ${
+                    className={`w-full p-3 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg ${
                       getAnswerForStep(steps[currentStep]) === option.value
                         ? 'border-clockwork-orange-500 bg-clockwork-orange-100'
                         : 'border-gray-300 bg-clockwork-orange-50'
@@ -781,11 +781,11 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
             {steps[currentStep].type === 'multi-select' && (
               <div className="max-w-2xl mx-auto">
-                <div className="space-y-4">
+                <div className="flex flex-col space-y-4">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <label
                     key={index}
-                    className="flex items-center justify-center p-3 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg transition-all duration-200 bg-clockwork-orange-50"
+                    className="w-full flex items-center justify-center p-3 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg transition-all duration-200 bg-clockwork-orange-50"
                   >
                     <input
                       type="checkbox"
