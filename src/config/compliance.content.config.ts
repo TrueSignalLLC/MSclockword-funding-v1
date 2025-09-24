@@ -257,196 +257,232 @@ export const complianceContent = {
   terms: {
     hero: {
       title: "Terms of Service",
-      subtitle: `Terms and conditions for using ${siteConfig.client.name} services`,
-      lastUpdated: siteConfig.compliance.legal.lastUpdated
+      subtitle: "Terms and conditions for using Clockwork Funding services",
+      lastUpdated: "September 23, 2025"
     },
     sections: [
       {
-        title: "Introduction",
+        title: "Terms of Use",
         type: "paragraph",
         content: [
-          `Welcome to ${siteConfig.client.name}. By accessing our website and using our services, you agree to comply with and be bound by the following Terms of Service. Please read them carefully.`
-        ]
-      },
-      {
-        title: "Definitions",
-        type: "list",
-        content: [
-          `"Company," "We," "Us," or "Our" refers to Andiamo Ventures LLC, which operates the ${siteConfig.client.legalName} brand and website.`,
-          `"User," "You," or "Your" refers to the individual or entity accessing our services`,
-          `"Services" refer to our home security solutions and related services`
-        ]
-      },
-      {
-        title: "Acceptance of Terms",
-        type: "paragraph",
-        content: [
-          `By accessing and using the services provided by ${siteConfig.client.name}, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.`
-        ]
-      },
-      {
-        title: "Description of Service",
-        type: "paragraph",
-        content: [
-          `${siteConfig.client.name} provides comprehensive home security solutions and monitoring services. Our services include security system installation, 24/7 monitoring, smart home integration, and emergency response coordination.`
-        ]
-      },
-      {
-        title: "Use of Services",
-        type: "paragraph",
-        content: [
-          "You must be at least 18 years old to use our services. You agree to provide accurate and complete information when using our services. Unauthorized use of our website or services is strictly prohibited."
-        ]
-      },
-      {
-        title: "User Obligations",
-        type: "list",
-        intro: "You agree to:",
-        content: [
-          "Provide accurate, current, and complete information during registration",
-          "Maintain the security of your account credentials",
-          "Use our services only for lawful purposes and in accordance with these terms",
-          "Not interfere with or disrupt the integrity or performance of our services",
-          "Not attempt to gain unauthorized access to our systems or networks"
-        ]
-      },
-      {
-        title: "Privacy Policy",
-        type: "paragraph",
-        content: [
-          "Your use of our website and services is also governed by our <a href=\"/privacy-policy\" class=\"text-blue-600 hover:underline\">Privacy Policy</a>, which details how we collect, use, and protect your information."
-        ]
-      },
-      {
-        title: "Terms of Service for SMS Communications",
-        type: "paragraph",
-        content: [
-          `Information obtained as part of the SMS consent process will not be shared with third parties or affiliates for marketing purposes. If you consent to receive marketing, customer care, and account notification SMS messages from ${siteConfig.client.name}, you will receive marketing, customer care, and account notification SMS messages from us. Reply ${siteConfig.compliance.messaging?.replyKeywords?.stop || 'STOP'} to opt out; Reply ${siteConfig.compliance.messaging?.replyKeywords?.help || 'HELP'} for support; Message & data rates may apply; Messaging frequency may vary. Visit our <a href="/privacy-policy" class="text-blue-600 hover:underline">Privacy Policy</a> for more information.`,
-          `Information obtained as part of the SMS consent process will not be shared with third parties or affiliates for marketing purposes. If you consent to receive marketing, customer care, and account notification SMS messages from ${siteConfig.client.name}, you will receive marketing, customer care, and account notification SMS messages from us. Reply ${siteConfig.compliance.messaging?.replyKeywords?.stop || 'STOP'} to opt out; Reply ${siteConfig.compliance.messaging?.replyKeywords?.help || 'HELP'} for support; Message & data rates may apply; Messaging frequency may vary. Visit our <a href="/privacy-policy" class="text-blue-600 hover:underline">Privacy Policy</a> for more information.`,
+          "Welcome to the website of Clockwork Funding, LLC (\"Clockwork Funding,\" \"we,\" \"us,\" or \"our\"). These Terms of Use (\"Terms\"), together with any documents referenced here (the \"Services\"), govern your access to and use of clockworkfunding.com and any related pages, content, features, applications, or communications we provide (collectively, the \"Website\").",
           "",
-          "Sample message examples:",
-          `• "Hello, this is ${siteConfig.client.name}. Your home security check is due. Visit ${siteConfig.client.domain} or call ${siteConfig.compliance.contact?.phone || 'us'}. Reply ${siteConfig.compliance.messaging?.replyKeywords?.stop || 'STOP'} to opt out of SMS messaging at any time."`,
-          `• "Welcome to ${siteConfig.client.name}. Monitor your security system status at ${siteConfig.client.domain}. Questions? Contact support. Reply ${siteConfig.compliance.messaging?.replyKeywords?.stop || 'STOP'} to opt out of SMS messaging at any time."`,
-          `• "Hello, this is ${siteConfig.client.name}. Your security service is confirmed and active. Questions? Contact us at ${siteConfig.compliance.contact?.email || 'admin@yourhomesecured.com'}. Reply ${siteConfig.compliance.messaging?.replyKeywords?.stop || 'STOP'} to opt out of SMS messaging at any time."`,
+          "By using the Website or clicking to accept these Terms, you agree to be bound by these Terms, our Advertising Disclosures ([link to: clockworkfunding.com/advertising-disclosure]) and our Privacy Policy ([link to: clockworkfunding.com/privacy]) (including any state-specific notices). If you do not agree, do not use the Website.",
           "",
-          `You may receive up to 50 SMS messages per week related to marketing, customer care, and account notifications. Message and data rates may apply. Please be aware that many carriers charge a fee for each message sent or received. This can vary depending on the carrier's pricing structure and whether the message is sent domestically or internationally. Message frequency may vary depending on the type of communication. You can opt out at any time by texting "${siteConfig.compliance.messaging?.replyKeywords?.stop || 'STOP'}". You will not receive any further messages. Reply "START" to start receiving messages again. For assistance, text "${siteConfig.compliance.messaging?.replyKeywords?.help || 'HELP'}" or contact us for assistance.`
+          "We may update these Terms at any time in our discretion. Changes are effective when posted and apply to all Website use thereafter. If we make material changes, we'll note it on the Website. Your continued use means you accept the updated Terms."
         ]
       },
       {
-        title: "Service Availability",
+        title: "I. Services",
         type: "paragraph",
         content: [
-          "We strive to maintain high availability of our services, but we do not guarantee uninterrupted access. Our services may be temporarily unavailable due to maintenance, updates, or circumstances beyond our control. We reserve the right to modify, suspend, or discontinue any aspect of our services at any time."
-        ]
-      },
-      {
-        title: "Payment Terms",
-        type: "paragraph",
-        content: [
-          "Payment terms vary depending on the service plan selected. All payments are due according to the terms specified in your service agreement. Late payments may result in service suspension. Failure to pay may result in service suspension or termination. All payments are non-refundable unless otherwise specified."
-        ]
-      },
-      {
-        title: "Intellectual Property",
-        type: "paragraph",
-        content: [
-          `All content, features, and functionality of our services, including but not limited to text, graphics, logos, software, and design, are owned by ${siteConfig.client.name} and are protected by copyright, trademark, and other intellectual property laws. You may not reproduce, distribute, or create derivative works without our express written permission. You may not reproduce, distribute, or exploit our content for commercial purposes without authorization.`
-        ]
-      },
-      {
-        title: "Third-Party Links",
-        type: "paragraph",
-        content: [
-          "Our website does not condone or endorse third-party links. Any external links that may appear are not under our control, and we are not responsible for their content, policies, or practices.",
+          "Clockwork Funding provides users with information about small-business financing and related products offered by third-party providers and advertisers (\"Service Providers\"). We are not a lender, broker of record, financial institution, or advisor; our Website is an information and referral platform only. We do not validate licensing or guarantee terms/rates, make credit decisions, or issue financial products. Any quotes, terms, or products are subject to the Service Provider's own eligibility criteria, disclosures, and agreements.",
           "",
-          "SMS consent is not shared with third parties for marketing purposes"
+          "We are not responsible for the conduct, policies, or decisions of Service Providers."
         ]
       },
       {
-        title: "Confidentiality",
+        title: "II. Eligibility",
         type: "paragraph",
         content: [
-          "Both parties agree to maintain the confidentiality of any proprietary or confidential information shared during the course of our business relationship. This includes but is not limited to business strategies, customer data, pricing information, and technical specifications."
+          "The Website is offered to users 18+ located in the United States (including territories). By using the Website, you represent that you meet these requirements and can form a binding contract."
         ]
       },
       {
-        title: "Limitation of Liability",
+        title: "III. Accessing the Website & Communications",
         type: "paragraph",
         content: [
-          `To the maximum extent permitted by law, ${siteConfig.client.name} shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or business opportunities, arising from your use of our services. We are not liable for any direct, indirect, incidental, or consequential damages arising from your use of our services, including but not limited to lost profits, delays, or service disruptions.`,
+          "We may withdraw or amend the Website or any part of the Services at any time without notice. From time to time, access may be limited or unavailable.",
           "",
-          "Our total liability for any claims arising from or related to our services shall not exceed the amount paid by you for the services in the twelve months preceding the claim."
+          "To use certain features, you may provide contact information (e.g., name, email, phone) and, if you submit a financing information request (\"Information Request\"), additional information (\"User Data\"), which can include business details, date of birth, SSN/EIN, bank information, financial data, and other identifiers. You represent that all User Data you submit is accurate and that you're authorized to provide it.",
+          "",
+          "By providing contact information, you agree that we (or our service vendors) may contact you via email, phone, and text, including via automated dialing systems and prerecorded messages, for informational and marketing purposes. Consent is not a condition of purchase. Message and data rates may apply. You can opt out of emails via the unsubscribe link, and of texts by replying STOP. For calls, you can ask to be added to our internal do-not-call list. See our Privacy Policy for details.",
+          "",
+          "When you submit an Information Request, you also consent to being contacted directly by the relevant Service Providers under their own privacy policies. To stop their communications, contact the Service Provider directly."
         ]
       },
       {
-        title: "Indemnification",
+        title: "IV. Personal Use",
         type: "paragraph",
         content: [
-          `You agree to indemnify, defend, and hold harmless ${siteConfig.client.name}, its officers, directors, employees, and agents from and against any claims, damages, losses, costs, and expenses arising from your use of our services or violation of these terms.`
+          "You may use the Website for your personal, non-commercial use. You may not resell, distribute, or exploit the Services or content for other purposes."
         ]
       },
       {
-        title: "Service Modifications and Termination",
-        type: "list",
-        intro: "We reserve the right to modify or discontinue any part of our services at any time without notice. We may terminate or suspend your access if you violate these Terms of Service. Either party may terminate this agreement at any time with written notice. Upon termination:",
-        content: [
-          "Your access to our services will be discontinued",
-          "All outstanding payments become immediately due",
-          "Confidentiality obligations will survive termination",
-          "We may retain your data as required by law or for legitimate business purposes"
-        ]
-      },
-      {
-        title: "Governing Law",
+        title: "V. Intellectual Property",
         type: "paragraph",
         content: [
-          `These Terms of Service are governed by and construed in accordance with the laws of ${siteConfig.compliance.legal?.jurisdiction || 'the United States'}, without regard to its conflict of law provisions. Any disputes arising from these terms shall be resolved in the courts of ${siteConfig.compliance.legal?.arbitrationLocation || 'the United States'}.`
+          "The Website and all content, features, and functionality (text, graphics, logos, videos, software, design, and arrangement) are owned by Clockwork Funding or our licensors and are protected by intellectual-property laws. We grant you a limited, non-exclusive, non-transferable license to access and use the Website for its intended purpose. You may not copy, modify, reverse engineer, distribute, publicly display, or create derivative works except as expressly permitted."
         ]
       },
       {
-        title: "Dispute Resolution",
+        title: "VI. User Contributions",
         type: "paragraph",
         content: [
-          "Before pursuing formal legal action, both parties agree to attempt to resolve disputes through good faith negotiation. If negotiation fails, disputes may be resolved through binding arbitration in accordance with the rules of the American Arbitration Association."
+          "If the Website allows posting (e.g., comments, reviews), any content you submit (\"User Contributions\") must comply with these Terms. You are solely responsible for your User Contributions. By posting, you grant us and our service providers a nonexclusive, worldwide, royalty-free license to use, reproduce, modify, display, distribute, and disclose such content in connection with operating and improving the Services. Do not post anything you do not have rights to share."
         ]
       },
       {
-        title: "Force Majeure",
+        title: "VII. Prohibited Uses & Content Standards",
         type: "paragraph",
         content: [
-          "Neither party shall be liable for any failure or delay in performance due to circumstances beyond their reasonable control, including but not limited to acts of God, natural disasters, war, terrorism, government actions, or technical failures."
+          "You agree not to:",
+          "• Violate any law or regulation; exploit or harm minors; impersonate others.",
+          "• Post content that is defamatory, obscene, harassing, hateful, infringing, deceptive, or otherwise objectionable.",
+          "• Send spam, chain letters, or unsolicited promotions.",
+          "• Introduce malware or interfere with Website operations.",
+          "• Attempt unauthorized access to the Website, systems, or data.",
+          "• Use scraping/automation (bots, spiders) without our written consent."
         ]
       },
       {
-        title: "Severability",
+        title: "VIII. Monitoring & Enforcement",
         type: "paragraph",
         content: [
-          "If any provision of these terms is found to be unenforceable or invalid, the remaining provisions will continue to be valid and enforceable to the fullest extent permitted by law."
+          "We may remove content, suspend access, or take any action we deem appropriate for violations of these Terms, suspected illegal activity, or risks to users. We may cooperate with law enforcement and comply with lawful requests."
         ]
       },
       {
-        title: "Entire Agreement",
+        title: "IX. DMCA (Copyright)",
         type: "paragraph",
         content: [
-          `These terms constitute the entire agreement between you and ${siteConfig.client.name} regarding the use of our services and supersede all prior agreements and understandings, whether written or oral.`
+          "If you believe content on the Website infringes your copyright, send a DMCA notice to our designated agent:",
+          "",
+          "Clockwork Funding, LLC – DMCA Agent",
+          "Email: [copyright@clockworkfunding.com]",
+          "Address: [Street Address], [City, State ZIP]",
+          "Phone: [phone]",
+          "",
+          "Include: (1) your signature; (2) identification of the copyrighted work; (3) identification of the allegedly infringing material and its location; (4) your contact info; (5) a good-faith statement that use is unauthorized; and (6) a statement under penalty of perjury that your notice is accurate and you are authorized to act. Repeat infringers' access may be terminated."
         ]
       },
       {
-        title: "Changes to These Terms",
+        title: "X. Reliance on Information",
         type: "paragraph",
         content: [
-          "We reserve the right to update these Terms of Service at any time. Changes will be effective upon posting to our website. Your continued use of our services constitutes acceptance of the revised terms."
+          "Content on the Website is for general informational purposes only. We do not warrant accuracy, completeness, timeliness, or usefulness. Your reliance is at your own risk. Third-party materials reflect the opinions of their authors; we are not responsible for third-party content."
+        ]
+      },
+      {
+        title: "XI. Changes to the Website",
+        type: "paragraph",
+        content: [
+          "We may update content at any time; materials may be out of date. We have no obligation to update any content."
+        ]
+      },
+      {
+        title: "XII. Links & Social Features",
+        type: "paragraph",
+        content: [
+          "The Website may include links or tools that let you share information to third-party platforms. Those platforms are not under our control and are governed by their own terms and privacy policies. We may disable links or social features at any time."
+        ]
+      },
+      {
+        title: "XIII. Third-Party Sites",
+        type: "paragraph",
+        content: [
+          "Links to third-party sites (including Service Provider pages, ads, and sponsored links) are provided for convenience only. We are not responsible for their content, policies, or practices. Your use of third-party sites is at your own risk."
+        ]
+      },
+      {
+        title: "XIV. Geographic Restrictions",
+        type: "paragraph",
+        content: [
+          "The Website is intended for users in the United States. If you access it from elsewhere, you are responsible for compliance with local laws."
+        ]
+      },
+      {
+        title: "XV. Disclaimer of Warranties",
+        type: "paragraph",
+        content: [
+          "YOUR USE OF THE WEBSITE IS AT YOUR OWN RISK. THE WEBSITE AND SERVICES ARE PROVIDED \"AS IS\" AND \"AS AVAILABLE.\" WE AND OUR AFFILIATES, SUPPLIERS, AND PARTNERS DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, AND ANY WARRANTIES ARISING FROM COURSE OF DEALING OR USAGE. We do not warrant that the Website will be error-free, secure, uninterrupted, or free of malware.",
+          "",
+          "Some jurisdictions do not allow limitations on implied warranties; some limitations may not apply to you."
+        ]
+      },
+      {
+        title: "XVI. Limitation of Liability",
+        type: "paragraph",
+        content: [
+          "TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT WILL CLOCKWORK FUNDING, ITS AFFILIATES, LICENSORS, SERVICE PROVIDERS, OR THEIR DIRECTORS, OFFICERS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA, GOODWILL, OR BUSINESS, ARISING FROM OR RELATED TO YOUR USE OF (OR INABILITY TO USE) THE WEBSITE OR SERVICES, EVEN IF FORESEEABLE. IF, NOTWITHSTANDING THE FOREGOING, LIABILITY IS FOUND, OUR TOTAL LIABILITY TO YOU SHALL NOT EXCEED US $50.00.",
+          "",
+          "Some jurisdictions do not allow certain limitations; some limitations may not apply to you."
+        ]
+      },
+      {
+        title: "XVII. Indemnification",
+        type: "paragraph",
+        content: [
+          "You agree to defend, indemnify, and hold harmless Clockwork Funding and its affiliates, licensors, and service providers from any claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) arising out of or related to: (a) your use of the Website or Services; (b) your User Data or User Contributions; or (c) your violation of these Terms or applicable law."
+        ]
+      },
+      {
+        title: "XVIII. Governing Law & Venue; Class Action Waiver",
+        type: "paragraph",
+        content: [
+          "These Terms and any dispute or claim related to them or the Website are governed by the laws of the State of Delaware, without regard to conflicts-of-law rules. You agree to the exclusive jurisdiction and venue of the state or federal courts located in Delaware and waive any objection to jurisdiction or venue.",
+          "",
+          "Class Action Waiver. You agree that any claim shall be brought individually, and you will not participate in a class or representative action against us.",
+          "",
+          "(If you prefer to use binding arbitration and a jury waiver instead, I can drop in the arbitration section from your prior draft.)"
+        ]
+      },
+      {
+        title: "XIX. Limitation on Time to File Claims",
+        type: "paragraph",
+        content: [
+          "ANY CLAIM ARISING OUT OF OR RELATED TO THESE TERMS OR THE WEBSITE MUST BE FILED WITHIN ONE (1) YEAR AFTER THE CLAIM ACCRUES OR IT IS PERMANENTLY BARRED."
+        ]
+      },
+      {
+        title: "XX. Waiver & Severability",
+        type: "paragraph",
+        content: [
+          "No waiver of any term is a further or continuing waiver of that term or any other. If any provision is found invalid or unenforceable, the remaining provisions remain in full force and effect."
+        ]
+      },
+      {
+        title: "XXI. Entire Agreement",
+        type: "paragraph",
+        content: [
+          "These Terms, together with our Privacy Policy and Advertising Disclosures, are the entire agreement between you and Clockwork Funding regarding the Website and Services and supersede all prior understandings."
+        ]
+      },
+      {
+        title: "XXII. Contact",
+        type: "paragraph",
+        content: [
+          "Clockwork Funding, LLC",
+          "Email: [info@clockworkfunding.com]",
+          "Address: [Street Address], [City, State ZIP]",
+          "Phone: [phone]",
+          "",
+          "Thank you for visiting the Website."
+        ]
+      },
+      {
+        title: "CCPA",
+        type: "paragraph",
+        content: [
+          "https://optconsumerprivacy.com/?site="
+        ]
+      },
+      {
+        title: "Marketing Company Disclosure",
+        type: "paragraph",
+        content: [
+          "We are a marketing company. This Site is part of our marketing efforts for third-parties. The offers that are discussed or appear on our website are from third party advertisers who compensate us. This compensation may impact how and where products appear on our website and the order in which they appear. The compensation that we get may also influence the topic, posts, and content on this website. We do not represent all services or products available on the market. Editorial opinions expressed on the Site are strictly our own, and are not provided, endorsed, or approved by advertisers. We are not affiliated with any third party advertiser other than as stated above. As such, we do not recommend or endorse any product or service on this website. If you are redirected to a third party advertiser's site, you should review their terms and conditions and privacy policy as they may differ significantly from those posted on this site."
         ]
       },
       {
         title: "Contact Information",
         type: "contact",
         content: [
-          `Company: Andiamo Ventures LLC (operating the YourHomeSecured brand)`,
-          `Address: 1560 E Southlake Blvd, Southlake, TX 76092`,
-          `Email: admin@yourhomesecured.com`
-        ],
-        outro: "We will respond to your inquiry within a reasonable timeframe.\n\nBy using our services, you acknowledge that you have read, understood, and agreed to these Terms of Service and our <a href=\"/privacy-policy\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-600 hover:underline\">Privacy Policy</a>."
+          "Clockwork Funding, LLC",
+          "Email: [info@clockworkfunding.com]",
+          "Address: [Street Address], [City, State ZIP]",
+          "Phone: [phone]"
+        ]
       }
     ]
   },
