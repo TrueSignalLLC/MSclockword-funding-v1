@@ -64,6 +64,7 @@ export const ClockworkHero: React.FC = () => {
           {/* Description */}
           <div className="max-w-4xl mx-auto mb-8">
             <p className="text-sm md:text-xl text-gray-700 mb-6">
+            </p>
             <p className="text-xs md:text-lg text-gray-700 mb-6">
               That's right! There is <span className="font-bold text-gray-900">NO CAP</span> to the competitively low-interest
               funding you can qualify for if you have at least $500k in annual revenue,
