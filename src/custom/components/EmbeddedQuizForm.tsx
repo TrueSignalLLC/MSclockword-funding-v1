@@ -1024,6 +1024,34 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         ) : (
           <></>
         )}
+        
+        {/* Centered Next Button for Form Steps (steps 7-11) */}
+        {!showLoadingScreen && currentStep >= 7 && currentStep <= 11 && (
+          <div className="text-center mt-8">
+            {currentStep === 11 ? (
+              <button
+                onClick={handleNext}
+                disabled={!canProceed() || isSubmitting}
+                className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2 mx-auto"
+              >
+                {isSubmitting ? (
+                  'Submitting...'
+                ) : (
+                  'Get My Funding Options'
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                disabled={!canProceed() || isSubmitting}
+                className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2 mx-auto"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Footer */}
@@ -1040,21 +1068,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           )}
         </div>
         
-        {!showLoadingScreen && currentStep === 11 && (
-          <button
-            onClick={handleNext}
-            disabled={!canProceed() || isSubmitting}
-            className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2"
-          >
-            {isSubmitting ? (
-              'Submitting...'
-            ) : (
-              'Get My Funding Options'
-            )}
-          </button>
-        )}
-        
-        {!showLoadingScreen && ((currentStep < 11 && currentStep > 6) || (currentStep === 3 && steps[currentStep].type === 'slider')) && (
+        {!showLoadingScreen && currentStep === 3 && steps[currentStep].type === 'slider' && (
           <button
             onClick={handleNext}
             disabled={!canProceed() || isSubmitting}
