@@ -245,7 +245,7 @@ export const complianceContent = {
         type: "contact",
         content: [
           "Clockwork Funding, LLC",
-          "Email: [privacy@clockworkfunding.com]",
+          "Email: <a href=\"mailto:privacy@clockworkfunding.com\" class=\"text-blue-600 hover:underline\">privacy@clockworkfunding.com</a>",
           "Phone: [phone]",
           "Address: [business address]"
         ]
