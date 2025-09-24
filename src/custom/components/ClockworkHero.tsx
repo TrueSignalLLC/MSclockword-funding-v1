@@ -25,7 +25,7 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center py-20">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-2 md:px-6">
         <div className="text-center">
           {/* Logo */}
           <div className="flex items-center justify-center mb-8 md:mb-12">
