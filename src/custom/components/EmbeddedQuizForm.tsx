@@ -894,7 +894,7 @@ export const EmbeddedQuizForm: React.FC = () => {
               </div>
 
               {/* Email */}
-              <div>
+              <div className="flex items-center gap-4">
                 <input
                   type="email"
                   value={quizData.email}
@@ -914,29 +914,30 @@ export const EmbeddedQuizForm: React.FC = () => {
                   required
                 />
                 
-                {/* Email validation feedback */}
-                {emailValidation.loading && (
-                  <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
-                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span>Validating email...</span>
-                  </div>
-                )}
-                
-                {emailValidation.error && (
-                  <p className="mt-2 text-sm text-red-600">
-                    {emailValidation.error}
-                  </p>
-                )}
-                
+                {/* Email validation feedback - only show when valid */}
                 {emailValidation.valid === true && !emailValidation.loading && (
-                  <p className="mt-2 text-sm text-green-600">
+                  <p className="text-sm text-green-600 whitespace-nowrap">
                     ✓ Email is valid
                   </p>
                 )}
               </div>
+              
+              {/* Email validation feedback below field for loading and errors */}
+              {emailValidation.loading && (
+                <div className="flex items-center gap-2 text-sm text-blue-600">
+                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span>Validating email...</span>
+                </div>
+              )}
+              
+              {emailValidation.error && (
+                <p className="text-sm text-red-600">
+                  {emailValidation.error}
+                </p>
+              )}
 
               {/* Phone */}
-              <div>
+              <div className="flex items-center gap-4">
                 <input
                   type="tel"
                   value={quizData.phone}
@@ -956,35 +957,36 @@ export const EmbeddedQuizForm: React.FC = () => {
                   required
                 />
                 
-                {/* Phone validation feedback */}
-                {phoneValidation.loading && (
-                  <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
-                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span>Validating phone number...</span>
-                  </div>
-                )}
-                
-                {phoneValidation.error && (
-                  <p className="mt-2 text-sm text-red-600">
-                    {phoneValidation.error}
-                  </p>
-                )}
-                
+                {/* Phone validation feedback - only show when valid */}
                 {phoneValidation.valid === true && !phoneValidation.loading && (
-                  <p className="mt-2 text-sm text-green-600">
+                  <p className="text-sm text-green-600 whitespace-nowrap">
                     ✓ Phone number is valid
                     {phoneValidation.phoneType && (
                       <span className="ml-2 text-gray-500">({phoneValidation.phoneType})</span>
                     )}
                   </p>
                 )}
-                
-                {phoneValidation.status === 'needs_otp' && (
-                  <p className="mt-2 text-sm text-orange-600">
-                    📱 This mobile number will require SMS verification
-                  </p>
-                )}
               </div>
+              
+              {/* Phone validation feedback below field for loading, errors, and OTP notice */}
+              {phoneValidation.loading && (
+                <div className="flex items-center gap-2 text-sm text-blue-600">
+                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span>Validating phone number...</span>
+                </div>
+              )}
+              
+              {phoneValidation.error && (
+                <p className="text-sm text-red-600">
+                  {phoneValidation.error}
+                </p>
+              )}
+              
+              {phoneValidation.status === 'needs_otp' && (
+                <p className="text-sm text-orange-600">
+                  📱 This mobile number will require SMS verification
+                </p>
+              )}
 
               {/* Business Name */}
               <div>
@@ -1002,7 +1004,7 @@ export const EmbeddedQuizForm: React.FC = () => {
               </div>
 
               {/* Consent */}
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3 text-left">
                 <input
                   type="checkbox"
                   id="consent"
