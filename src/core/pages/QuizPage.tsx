@@ -51,9 +51,6 @@ export const QuizPage: React.FC = () => {
                 <span className="text-sm font-medium text-gray-700">
                   Progress
                 </span>
-                <span className="text-sm text-gray-500">
-                  Step 2 of 12
-                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
