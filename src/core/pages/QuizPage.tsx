@@ -76,7 +76,7 @@ export const QuizPage: React.FC = () => {
 
       {/* Main Content */}
       <section className="py-12">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="w-4/5 mx-auto px-6">
           <div className="text-center mb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-clockwork-blue-600 mb-3">
               Complete Your Funding Application

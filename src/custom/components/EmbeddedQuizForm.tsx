@@ -750,7 +750,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
             {/* Question Content */}
             {steps[currentStep].type === 'button-group' && (
-              <div className="flex flex-col gap-6 max-w-3xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <button
                     key={index}
@@ -765,24 +765,24 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                         setCurrentStep(prev => prev + 1);
                       }, 300);
                     }}
-                    className={`p-4 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg ${
+                    className={`p-3 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg ${
                       getAnswerForStep(steps[currentStep]) === option.value
                         ? 'border-clockwork-orange-500 bg-clockwork-orange-100'
                         : 'border-gray-300 bg-clockwork-orange-50'
                     }`}
                   >
-                    <span className="font-bold text-2xl text-gray-900">{option.label}</span>
+                    <span className="font-bold text-lg md:text-xl text-gray-900">{option.label}</span>
                   </button>
                 ))}
               </div>
             )}
 
             {steps[currentStep].type === 'multi-select' && (
-              <div className="max-w-3xl mx-auto space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <label
                     key={index}
-                    className="flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg transition-all duration-200 bg-clockwork-orange-50"
+                    className="flex items-center justify-center p-3 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg transition-all duration-200 bg-clockwork-orange-50"
                   >
                     <input
                       type="checkbox"
@@ -802,7 +802,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       }}
                       className="w-6 h-6 text-clockwork-orange-500 border-2 border-gray-300 rounded focus:ring-clockwork-orange-500 focus:ring-2 mr-4"
                     />
-                    <span className="font-bold text-2xl text-gray-900">{option.label}</span>
+                    <span className="font-bold text-lg md:text-xl text-gray-900">{option.label}</span>
                   </label>
                 ))}
               </div>
