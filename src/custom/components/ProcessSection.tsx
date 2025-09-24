@@ -58,12 +58,12 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onScrollToHero }
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
             Our Process Allows You To <span className="text-clockwork-orange-500">Move Fast.</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
           <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
             When most people hear "funding," they think of long waits, hidden fees, and bank rejections.
             We built a process that's different. With custom-tailored programs and a team that works fast, 
             we help business owners access capital without the stress, delays, or guesswork.
           </p>
+        </div>
         </div>
 
         {/* Desktop Circular Layout */}
