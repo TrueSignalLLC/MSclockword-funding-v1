@@ -98,26 +98,36 @@ export const ClockworkHero: React.FC = () => {
                 </div>
 
                 <div className="max-w-md mx-auto space-y-4">
-                  <div className="flex flex-col space-y-3">
-                    {quizConfig.steps[0].options?.map((option: any, index: number) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          setSelectedFundingAmount(option.value);
-                          setShowFundingAmountError(false);
-                          // Store the answer and navigate to quiz immediately
-                          storeQuizAnswer('funding_amount', option.value);
-                          navigate('/quiz');
-                        }}
-                        className={`w-full p-4 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg ${
-                          selectedFundingAmount === option.value
-                            ? 'border-clockwork-orange-500 bg-clockwork-orange-200'
-                            : 'border-gray-300 bg-white'
-                        }`}
-                      >
-                        <span className="font-bold text-lg text-gray-900">{option.label}</span>
-                      </button>
-                    ))}
+                  <div className="space-y-4">
+                    <select
+                      value={selectedFundingAmount}
+                      onChange={(e) => {
+                        setSelectedFundingAmount(e.target.value);
+                        setShowFundingAmountError(false);
+                      }}
+                      className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
+                    >
+                      <option value="">Select funding amount...</option>
+                      {quizConfig.steps[0].options?.map((option: any, index: number) => (
+                        <option key={index} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    
+                    {showFundingAmountError && (
+                      <p className="text-red-600 text-sm text-center">
+                        Please select a funding amount to continue
+                      </p>
+                    )}
+                    
+                    <button
+                      onClick={handleGetQualified}
+                      className="w-full bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-bold text-xl py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                      disabled={!selectedFundingAmount}
+                    >
+                      Start Quiz
+                    </button>
                   </div>
 
                 </div>
