@@ -640,33 +640,6 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
   return (
     <div className="bg-clockwork-orange-100 rounded-2xl shadow-xl p-8 border border-gray-200">
-      {/* Progress Bar */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">
-            {showLoadingScreen 
-              ? `Step ${steps.length + 1} of ${totalSteps}` 
-              : `Step ${currentStep + 1} of ${totalSteps}`
-            }
-          </span>
-          <span className="text-sm text-gray-500">
-            {showLoadingScreen 
-              ? `${Math.round(((steps.length + 1) / totalSteps) * 100)}%`
-              : `${Math.round(((currentStep + 1) / totalSteps) * 100)}%`
-            }
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
-            style={{ 
-              width: showLoadingScreen 
-                ? `${((steps.length + 1) / totalSteps) * 100}%`
-                : `${((currentStep + 1) / totalSteps) * 100}%` 
-            }}
-          />
-        </div>
-      </div>
 
       {/* Content */}
       <div className="min-h-[400px]">
