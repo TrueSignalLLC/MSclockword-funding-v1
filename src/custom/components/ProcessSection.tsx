@@ -63,8 +63,6 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onScrollToHero }
             We built a process that's different. With custom-tailored programs and a team that works fast, 
             we help business owners access capital without the stress, delays, or guesswork.
           </p>
-        </div>
-        </div>
 
         {/* Desktop Circular Layout */}
         <div className="hidden lg:block">
