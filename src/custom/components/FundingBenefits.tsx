@@ -45,7 +45,7 @@ export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onScrollToHero
           </div>
 
           {/* Right Column - Visual */}
-          <div className="flex justify-center">
+          <div className="hidden md:flex justify-center">
             <div className="relative">
               {/* Blue Circle Background */}
               <div className="w-80 h-80 bg-clockwork-blue-600 rounded-full flex items-center justify-center">
