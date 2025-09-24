@@ -1058,7 +1058,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           )}
         </div>
         
-        {!showLoadingScreen && (
+        {!showLoadingScreen && currentStep >= steps.length && (
           <button
             onClick={handleNext}
             disabled={!canProceed() || isSubmitting}
@@ -1074,6 +1074,17 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             ) : (
               'Get My Funding Options'
             )}
+          </button>
+        )}
+        
+        {!showLoadingScreen && currentStep < steps.length && steps[currentStep].type !== 'button-group' && (
+          <button
+            onClick={handleNext}
+            disabled={!canProceed() || isSubmitting}
+            className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2"
+          >
+            Next
+            <ChevronRight className="w-4 h-4" />
           </button>
         )}
       </div>
