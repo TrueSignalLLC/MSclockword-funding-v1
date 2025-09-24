@@ -76,7 +76,7 @@ export const QuizPage: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <section className="py-12">
+      <section className="py-4 md:py-12">
         <div className="w-full md:w-4/5 mx-auto px-4 md:px-6">
           <div className="text-center mb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-clockwork-blue-600 mb-3 hidden md:block">
