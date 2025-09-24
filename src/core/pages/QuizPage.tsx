@@ -94,22 +94,7 @@ export const QuizPage: React.FC = () => {
       </section>
 
       {/* FAQ Section */}
-      <ClockworkFAQ onScrollToHero={() => {
-        // Scroll to the quiz form section
-        const quizForm = document.querySelector('.bg-clockwork-orange-100');
-        if (quizForm) {
-          quizForm.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
-        } else {
-          // Fallback to top of page if element not found
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        }
-      }} />
+      <ClockworkFAQ onScrollToHero={() => {}} />
 
       {/* Advertising Disclosure Popup */}
       {showAdvertisingDisclosure && (
