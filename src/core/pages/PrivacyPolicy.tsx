@@ -33,6 +33,8 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
               </h3>
             )}
             {section.content.map((paragraph: string, pIndex: number) => (
+              <p
+                key={pIndex}
                 className="text-gray-600 mb-2 last:mb-0" 
                 dangerouslySetInnerHTML={{ __html: paragraph }}
               />
