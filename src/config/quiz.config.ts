@@ -65,8 +65,8 @@ export const quizConfig = {
       type: 'slider' as const,
       question: "What's your average annual revenue?",
       helper: 'Move the slider to select your annual revenue range.',
-      min: 5000,
-      max: 50000000,
+      min: 50000,
+      max: 2000000,
       step: 50000,
       formatValue: (value: number) => {
         if (value >= 50000000) return '$50,000,000+';
