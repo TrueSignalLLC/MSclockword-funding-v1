@@ -103,6 +103,9 @@ export const ClockworkHero: React.FC = () => {
                         onClick={() => {
                           setSelectedFundingAmount(option.value);
                           setShowFundingAmountError(false);
+                          // Store the answer and navigate to quiz immediately
+                          storeQuizAnswer('funding_amount', option.value);
+                          navigate('/quiz');
                         }}
                         className={`w-full p-4 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg ${
                           selectedFundingAmount === option.value
@@ -115,18 +118,6 @@ export const ClockworkHero: React.FC = () => {
                     ))}
                   </div>
 
-                  {showFundingAmountError && (
-                    <p className="text-red-500 text-sm text-center">
-                      Please select a funding amount to continue
-                    </p>
-                  )}
-
-                  <button
-                    onClick={handleGetQualified}
-                    className="w-full bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white font-bold text-xl py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                  >
-                    Get Qualified
-                  </button>
                 </div>
               </div>
             </div>
