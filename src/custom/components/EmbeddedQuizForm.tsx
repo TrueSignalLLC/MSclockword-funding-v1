@@ -866,9 +866,6 @@ export const EmbeddedQuizForm: React.FC = () => {
               {/* Name Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    First Name *
-                  </label>
                   <input
                     type="text"
                     value={quizData.first_name}
@@ -882,9 +879,6 @@ export const EmbeddedQuizForm: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Last Name *
-                  </label>
                   <input
                     type="text"
                     value={quizData.last_name}
@@ -901,9 +895,6 @@ export const EmbeddedQuizForm: React.FC = () => {
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email *
-                </label>
                 <input
                   type="email"
                   value={quizData.email}
@@ -946,9 +937,6 @@ export const EmbeddedQuizForm: React.FC = () => {
 
               {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone *
-                </label>
                 <input
                   type="tel"
                   value={quizData.phone}
@@ -957,7 +945,7 @@ export const EmbeddedQuizForm: React.FC = () => {
                     storeFormField('phone', e.target.value);
                     handlePhoneValidation(e.target.value);
                   }}
-                  placeholder="(___) ___-____"
+                  placeholder="Phone Number"
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white ${
                     phoneValidation.valid === true 
                       ? 'border-green-500' 
@@ -1000,9 +988,6 @@ export const EmbeddedQuizForm: React.FC = () => {
 
               {/* Business Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Business Name *
-                </label>
                 <input
                   type="text"
                   value={quizData.business_name}
