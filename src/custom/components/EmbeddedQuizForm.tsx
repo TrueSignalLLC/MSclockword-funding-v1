@@ -1037,7 +1037,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                 {isSubmitting ? (
                   'Submitting...'
                 ) : (
-                  'Get My Funding Options'
+                  'Get Qualified'
                 )}
               </button>
             ) : (
@@ -1055,7 +1055,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             {currentStep === 11 && (
               <div className="mt-6 max-w-md mx-auto">
                 <p className="text-xs text-gray-600 leading-relaxed text-center">
-                  By checking this box and clicking 'Continue', I agree to receive automated marketing calls/texts from or on behalf of Clockworking Funding and their partners at the number I provided. I understand this consent is optional. Msg & data rates may apply.
+                  By clicking "Get Qualified", I am providing my informed consent to receive automated marketing calls/texts from or on behalf of Clockwork Funding and their partners at the number I provided. I understand this consent is optional. Msg & data rates may apply.
                 </p>
               </div>
             )}
