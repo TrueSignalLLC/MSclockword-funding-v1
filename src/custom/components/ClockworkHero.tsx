@@ -21,30 +21,30 @@ export const ClockworkHero: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center py-20">
-      <div className="max-w-6xl mx-auto px-2 md:px-6">
-        <div className="text-center">
-          {/* Logo */}
-          <div className="flex items-center justify-center mb-8 md:mb-12">
-            <div className="flex items-center gap-2 md:gap-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      {/* Top Banner with Logo */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <div className="flex items-center">
+            <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-12 h-12 md:w-16 md:h-16 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
-                  <Settings className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                <div className="w-8 h-8 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
+                  <Settings className="w-4 h-4 text-white" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 md:w-6 md:h-6 bg-clockwork-blue-600 rounded-full flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-clockwork-blue-600 rounded-full flex items-center justify-center">
+                  <div className="w-1 h-1 bg-white rounded-full"></div>
                 </div>
               </div>
-              <div className="text-left">
-                <h1 className="text-2xl md:text-4xl font-bold text-clockwork-blue-600 tracking-wide">
-                  CLOCKWORK
-                </h1>
-                <h2 className="text-2xl md:text-4xl font-bold text-clockwork-blue-600 tracking-wide -mt-1 md:-mt-2">
-                  FUNDING
-                </h2>
-              </div>
+              <span className="text-xl font-bold text-clockwork-blue-600">Clockwork Funding</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <section className="flex items-center py-20 min-h-[calc(100vh-80px)]">
+        <div className="max-w-6xl mx-auto px-2 md:px-6">
+          <div className="text-center">
 
           {/* Main Headline */}
           <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-clockwork-orange-500 mb-8 leading-tight text-center">
@@ -144,7 +144,8 @@ export const ClockworkHero: React.FC = () => {
             </p>
           </div>
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   );
 };
