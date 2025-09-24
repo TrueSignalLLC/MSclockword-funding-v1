@@ -65,8 +65,8 @@ export const ClockworkHero: React.FC = () => {
           <div className="max-w-4xl mx-auto mb-8">
             <p className="text-sm md:text-xl text-gray-700 mb-6">
               That's right! There is <span className="font-bold text-gray-900">NO CAP</span> to the competitively low-interest
-              funding you can qualify for if you have a 640+ credit score, at least
-              1 year in business, and a profitable track record.
+              funding you can qualify for if you have at least $500k in annual revenue,
+              12 months in business, and a profitable track-record.
             </p>
             
             <div className="flex items-start justify-center gap-3 text-sm md:text-lg text-gray-800 mb-8 order-3 md:order-none">
@@ -74,7 +74,7 @@ export const ClockworkHero: React.FC = () => {
                 <span className="text-white text-sm font-bold">✓</span>
               </div>
               <p className="text-left">
-                <span className="font-bold">Ask about our no-credit, revenue-based financing option,</span><br />
+                <span className="font-bold">Ask about our no-FICO, revenue-based financing option,</span><br />
                 available for high-performing companies!
               </p>
             </div>
@@ -129,7 +129,7 @@ export const ClockworkHero: React.FC = () => {
               <span className="text-white text-sm font-bold">✓</span>
             </div>
             <p className="text-left">
-              <span className="font-bold">Ask about our no-credit, revenue-based financing option,</span><br />
+              <span className="font-bold">Ask about our no-FICO, revenue-based financing option,</span><br />
               available for high-performing companies!
             </p>
           </div>
