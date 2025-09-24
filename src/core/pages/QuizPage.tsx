@@ -30,7 +30,9 @@ export const QuizPage: React.FC = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          {/* Top row with logo and advertising disclosure */}
+          <div className="flex items-center justify-between mb-4">
+            {/* Logo */}
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-8 h-8 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
@@ -39,6 +41,38 @@ export const QuizPage: React.FC = () => {
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-clockwork-blue-600 rounded-full flex items-center justify-center">
                   <div className="w-1 h-1 bg-white rounded-full"></div>
                 </div>
+              </div>
+              <span className="text-xl font-bold text-clockwork-blue-600">Clockwork Funding</span>
+            </div>
+            
+            {/* Advertising Disclosure */}
+            <button
+              onClick={() => setShowAdvertisingDisclosure(true)}
+              className="text-sm text-gray-600 hover:text-clockwork-blue-600 underline transition-colors"
+            >
+              Advertising Disclosure
+            </button>
+          </div>
+          
+          {/* Progress Bar - Full Width */}
+          <div className="w-full">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">
+                Progress
+              </span>
+              <span className="text-sm text-gray-500">
+                Step 2 of 8
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
+                style={{ width: '25%' }}
+              />
+            </div>
+          </div>
+        </div>
+      </header>
               </div>
               <span className="text-xl font-bold text-clockwork-blue-600">Clockwork Funding</span>
             </div>
