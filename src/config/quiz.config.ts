@@ -42,9 +42,9 @@ export const quizConfig = {
     },
     {
       id: 'financing_purpose',
-      type: 'multi-select' as const,
+      type: 'button-group' as const,
       question: 'What are you getting the financing for?',
-      helper: 'Select all that apply.',
+      helper: 'Select the primary purpose for your financing.',
       options: [
         { value: 'mergers_acquisitions', label: 'Mergers and acquisitions' },
         { value: 'working_capital', label: 'Working Capital / Cash Flow' },
@@ -66,7 +66,7 @@ export const quizConfig = {
       question: "What's your average annual revenue?",
       helper: 'Move the slider to select your annual revenue range.',
       min: 50000,
-      max: 50000000,
+      max: 2000000,
       step: 50000,
       formatValue: (value: number) => {
         if (value >= 50000000) return '$50,000,000+';
@@ -75,6 +75,7 @@ export const quizConfig = {
         return `$${value.toLocaleString()}`;
       },
       required: true,
+      defaultValue: 500000,
       sidebar: {
         title: 'Annual Revenue',
         content: 'Your annual revenue helps us determine the appropriate funding amount and terms for your business.'
@@ -132,6 +133,77 @@ export const quizConfig = {
       sidebar: {
         title: 'Industry Type',
         content: 'Different industries have different funding needs and qualification requirements.'
+      }
+    },
+    {
+      id: 'business_zip',
+      type: 'input' as const,
+      question: "What's the business zip code?",
+      helper: 'Enter your business location zip code.',
+      placeholder: 'ZIP Code',
+      inputType: 'text',
+      required: true,
+      sidebar: {
+        title: 'Business Location',
+        content: 'We need your business zip code to match you with local funding options and requirements.'
+      }
+    },
+    {
+      id: 'business_name',
+      type: 'input' as const,
+      question: 'What is your business name?',
+      helper: 'Enter your official business name.',
+      placeholder: 'Your Business Name',
+      inputType: 'text',
+      required: true,
+      sidebar: {
+        title: 'Business Name',
+        content: 'Your official business name helps us verify your business information and prepare funding documents.'
+      }
+    },
+    {
+      id: 'full_name',
+      type: 'name-fields' as const,
+      question: 'What is your name?',
+      helper: 'Enter your first and last name.',
+      required: true,
+      sidebar: {
+        title: 'Personal Information',
+        content: 'We need your name for the funding application and to contact you about your options.'
+      }
+    },
+    {
+      id: 'email',
+      type: 'input' as const,
+      question: "What's your email address?",
+      helper: 'Enter your email address for funding updates.',
+      placeholder: 'you@example.com',
+      inputType: 'email',
+      required: true,
+      validation: {
+        enabled: true,
+        apiEndpoint: config.api.emailValidation
+      },
+      sidebar: {
+        title: 'Email Address',
+        content: 'We\'ll use your email to send funding options and important updates about your application.'
+      }
+    },
+    {
+      id: 'phone',
+      type: 'input' as const,
+      question: 'Phone number',
+      helper: 'Enter your phone number for verification.',
+      placeholder: 'Phone Number',
+      inputType: 'tel',
+      required: true,
+      validation: {
+        enabled: true,
+        apiEndpoint: config.api.phoneValidation
+      },
+      sidebar: {
+        title: 'Phone Verification',
+        content: 'We need to verify your phone number for security and to contact you about your funding options.'
       }
     }
   ],
