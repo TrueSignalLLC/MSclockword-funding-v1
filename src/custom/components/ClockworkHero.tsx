@@ -28,21 +28,21 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center">
           {/* Logo */}
-          <div className="flex items-center justify-center mb-12">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center mb-8 md:mb-12">
+            <div className="flex items-center gap-2 md:gap-4">
               <div className="relative">
-                <div className="w-16 h-16 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
-                  <Settings className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
+                  <Settings className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-clockwork-blue-600 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 md:w-6 md:h-6 bg-clockwork-blue-600 rounded-full flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>
                 </div>
               </div>
               <div className="text-left">
-                <h1 className="text-4xl font-bold text-clockwork-blue-600 tracking-wide">
+                <h1 className="text-2xl md:text-4xl font-bold text-clockwork-blue-600 tracking-wide">
                   CLOCKWORK
                 </h1>
-                <h2 className="text-4xl font-bold text-clockwork-blue-600 tracking-wide -mt-2">
+                <h2 className="text-2xl md:text-4xl font-bold text-clockwork-blue-600 tracking-wide -mt-1 md:-mt-2">
                   FUNDING
                 </h2>
               </div>
