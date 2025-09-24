@@ -76,7 +76,7 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
           </div>
 
           {/* Form Section */}
-          <div id="hero-form" className="max-w-2xl mx-auto order-2 md:order-none">
+          <div id="hero-form" className="max-w-2xl mx-auto order-2 md:order-none mb-8">
             <div className="bg-clockwork-orange-100 rounded-2xl shadow-xl p-8 border border-gray-200 mb-8">
               <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
                 {firstQuestion.question}
@@ -101,6 +101,17 @@ export const ClockworkHero: React.FC<ClockworkHeroProps> = ({ onQuizStart }) => 
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Moved checkmark section below quiz on mobile */}
+          <div className="flex items-start justify-center gap-3 text-sm md:text-lg text-gray-800 mb-8 order-4 md:hidden">
+            <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0 mt-1">
+              <span className="text-white text-sm font-bold">✓</span>
+            </div>
+            <p className="text-left">
+              <span className="font-bold">Ask about our no-credit, revenue-based financing option,</span><br />
+              available for high-performing companies!
+            </p>
           </div>
 
           {/* Disclaimer */}
