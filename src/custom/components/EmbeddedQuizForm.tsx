@@ -850,7 +850,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     <input
                       type="range"
                       min={50000}
-                      max={2000000}
+                      max={50000000}
                       step={50000}
                       value={quizData.annual_revenue}
                       onChange={(e) => {
@@ -864,7 +864,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     
                     <div className="flex justify-between text-sm text-gray-500 mt-2">
                       <span>$50k</span>
-                      <span>$2M</span>
+                      <span>$50M</span>
                     </div>
                   </div>
                 </div>
