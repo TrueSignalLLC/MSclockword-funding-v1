@@ -887,12 +887,12 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                           }
                         }}
                         placeholder={steps[currentStep].placeholder}
-                        className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
+                        className={`w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
                           steps[currentStep].id === 'email' && emailValidation.valid === true 
-                            ? 'border-green-500' 
+                            ? 'border-2 border-green-500' 
                             : steps[currentStep].id === 'email' && emailValidation.valid === false 
-                            ? 'border-red-500' 
-                            : 'border-gray-300'
+                            ? 'border-2 border-red-500' 
+                            : 'border-2 border-clockwork-orange-500'
                         }`}
                         required
                       />
@@ -929,12 +929,12 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                           handlePhoneValidation(e.target.value);
                         }}
                         placeholder={steps[currentStep].placeholder}
-                        className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
+                        className={`w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
                           phoneValidation.valid === true 
-                            ? 'border-green-500' 
+                            ? 'border-2 border-green-500' 
                             : phoneValidation.valid === false 
-                            ? 'border-red-500' 
-                            : 'border-gray-300'
+                            ? 'border-2 border-red-500' 
+                            : 'border-2 border-clockwork-orange-500'
                         }`}
                         required
                       />
@@ -978,7 +978,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                         storeFormField(steps[currentStep].id, e.target.value);
                       }}
                       placeholder={steps[currentStep].placeholder}
-                      className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
+                      className="w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
                       required
                     />
                   )}
@@ -997,7 +997,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       storeFormField('first_name', e.target.value);
                     }}
                     placeholder="First Name"
-                    className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
+                    className="w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
                     required
                   />
                   <input
@@ -1008,7 +1008,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       storeFormField('last_name', e.target.value);
                     }}
                     placeholder="Last Name"
-                    className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
+                    className="w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
                     required
                   />
                 </div>
