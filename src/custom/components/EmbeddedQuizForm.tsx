@@ -10,9 +10,10 @@ import { PhoneValidationPopup } from '../../core/components/PhoneValidationPopup
 
 interface EmbeddedQuizFormProps {
   initialAnswers?: Record<string, any>;
+  onStepChange?: (step: number) => void;
 }
 
-export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswers }) => {
+export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswers, onStepChange }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -95,9 +96,14 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     // If we have initial answers (coming from home page), start from step 1
     if (initialAnswers?.funding_amount) {
       setCurrentStep(1);
+      onStepChange?.(1);
     }
   }, [initialAnswers]);
 
+  // Update parent component when step changes
+  useEffect(() => {
+    onStepChange?.(currentStep);
+  }, [currentStep, onStepChange]);
   // Email validation handler with debouncing
   const handleEmailValidation = async (email: string) => {
     // Clear existing timeout

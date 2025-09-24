@@ -10,6 +10,8 @@ export const QuizPage: React.FC = () => {
   const navigate = useNavigate();
   const [initialQuizData, setInitialQuizData] = useState<Record<string, any> | null>(null);
   const [showAdvertisingDisclosure, setShowAdvertisingDisclosure] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [totalSteps] = useState(12); // Total number of quiz steps
 
   useEffect(() => {
     const sessionData = getSessionData();
@@ -25,6 +27,8 @@ export const QuizPage: React.FC = () => {
     setInitialQuizData(sessionData.quiz_answers);
   }, [navigate]);
 
+  // Calculate progress percentage
+  const progressPercentage = Math.min(((currentStep + 1) / totalSteps) * 100, 100);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -51,11 +55,14 @@ export const QuizPage: React.FC = () => {
                 <span className="text-sm font-medium text-gray-700">
                   Progress
                 </span>
+                <span className="text-sm font-medium text-gray-700">
+                  {Math.round(progressPercentage)}%
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: '17%' }}
+                  style={{ width: `${progressPercentage}%` }}
                 />
               </div>
             </div>
@@ -85,7 +92,10 @@ export const QuizPage: React.FC = () => {
 
           {/* Quiz Form */}
           {initialQuizData && (
-            <EmbeddedQuizForm initialAnswers={initialQuizData} />
+            <EmbeddedQuizForm 
+              initialAnswers={initialQuizData} 
+              onStepChange={setCurrentStep}
+            />
           )}
         </div>
       </section>
