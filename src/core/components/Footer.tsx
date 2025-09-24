@@ -9,20 +9,10 @@ export const Footer: React.FC = () => {
           {/* Left side - Company info */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <img 
-                src="/clockwork-logo.svg" 
-                alt="Clockwork Funding Logo" 
-                className="w-8 h-8"
-                onError={(e) => {
-                  // Fallback to text if logo fails to load
-                  e.currentTarget.style.display = 'none';
-                  const fallback = document.createElement('div');
-                  fallback.className = 'w-8 h-8 bg-clockwork-orange-500 rounded-full flex items-center justify-center';
-                  fallback.innerHTML = '<span class="text-white font-bold text-sm">CF</span>';
-                  e.currentTarget.parentNode?.insertBefore(fallback, e.currentTarget);
-                }}
-              />
-              <h3 className="text-2xl font-bold text-white">Clockwork Funding</h3>
+              <div className="w-8 h-8 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">CF</span>
+              </div>
+              <span className="text-2xl font-bold text-white">Clockwork Funding</span>
             </div>
             <p className="text-gray-400 leading-relaxed max-w-md text-sm">
               Your trusted partner for comprehensive business funding solutions. 
