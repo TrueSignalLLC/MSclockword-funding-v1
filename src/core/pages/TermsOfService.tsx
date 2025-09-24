@@ -81,8 +81,7 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
             </p>
             <div className="bg-gray-50 p-4 rounded-lg">
               {section.content.map((item: string, itemIndex: number) => (
-                <p key={itemIndex} className="text-gray-600">
-                  {item}
+                <p key={itemIndex} className="text-gray-600" dangerouslySetInnerHTML={{ __html: item }}>
                 </p>
               ))}
             </div>
