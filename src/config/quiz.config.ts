@@ -42,9 +42,9 @@ export const quizConfig = {
     },
     {
       id: 'financing_purpose',
-      type: 'multi-select' as const,
+      type: 'button-group' as const,
       question: 'What are you getting the financing for?',
-      helper: 'Select all that apply.',
+      helper: 'Select the primary purpose for your financing.',
       options: [
         { value: 'mergers_acquisitions', label: 'Mergers and acquisitions' },
         { value: 'working_capital', label: 'Working Capital / Cash Flow' },

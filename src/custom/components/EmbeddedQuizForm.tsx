@@ -410,10 +410,6 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       const currentStepConfig = steps[currentStep];
       const answer = getAnswerForStep(currentStepConfig);
       
-      if (currentStepConfig.type === 'multi-select') {
-        return Array.isArray(answer) && answer.length > 0;
-      }
-      
       return answer !== '' && answer !== null && answer !== undefined;
     } else {
       // Contact form validation
