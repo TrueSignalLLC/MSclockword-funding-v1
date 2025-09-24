@@ -456,7 +456,14 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
       if (config.api.leadSubmit) {
         console.log('3. Starting fetch request...');
         
-        const response = await fetch(config.api.leadSubmit, {
+        // Use proxy endpoint for development to avoid CORS issues
+        const endpoint = config.api.leadSubmit.includes('cryptochainitalia.app.n8n.cloud') 
+          ? '/api/webhook'
+          : config.api.leadSubmit;
+        
+        console.log('3a. Using endpoint:', endpoint);
+        
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
