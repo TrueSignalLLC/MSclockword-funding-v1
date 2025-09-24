@@ -21,27 +21,6 @@ export const Footer: React.FC = () => {
             </p>
           </div>
           
-          {/* Right side - Contact info */}
-          <div className="flex flex-col items-start md:items-end">
-            <div className="flex gap-4 mb-6">
-              <a 
-                href="mailto:admin@clockworkfunding.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-              >
-                <Mail className="w-4 h-4" />
-                Email Us
-              </a>
-            </div>
-            
-            <div className="text-right">
-              <div className="flex items-center gap-2 text-gray-400 mb-2">
-                <Mail className="w-4 h-4" />
-                <span>admin@clockworkfunding.com</span>
-              </div>
-            </div>
-          </div>
         </div>
         
         {/* Bottom section */}
