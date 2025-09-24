@@ -51,7 +51,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     funding_amount: initialAnswers?.funding_amount || '',
     company_type: '',
     financing_purpose: [] as string[],
-    annual_revenue: 50000,
+    annual_revenue: 250000,
     credit_score: '',
     business_age: '',
     business_industry: '',
@@ -84,7 +84,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         funding_amount: mergedAnswers.funding_amount,
         company_type: mergedAnswers.company_type || '',
         financing_purpose: mergedAnswers.financing_purpose || [],
-        annual_revenue: mergedAnswers.annual_revenue || 50000,
+        annual_revenue: mergedAnswers.annual_revenue || 250000,
         credit_score: mergedAnswers.credit_score || '',
         business_age: mergedAnswers.business_age || '',
         business_industry: mergedAnswers.business_industry || ''

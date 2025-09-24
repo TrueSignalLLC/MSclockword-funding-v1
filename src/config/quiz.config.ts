@@ -75,6 +75,7 @@ export const quizConfig = {
         return `$${value.toLocaleString()}`;
       },
       required: true,
+      defaultValue: 250000,
       sidebar: {
         title: 'Annual Revenue',
         content: 'Your annual revenue helps us determine the appropriate funding amount and terms for your business.'
