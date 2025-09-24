@@ -126,7 +126,7 @@ export const ClockworkHero: React.FC = () => {
                       className="w-full bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-bold text-xl py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                       disabled={!selectedFundingAmount}
                     >
-                      Start Quiz
+                      Apply For Funding
                     </button>
                   </div>
 
