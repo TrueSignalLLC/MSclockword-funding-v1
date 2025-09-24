@@ -37,8 +37,8 @@ export const Footer: React.FC = () => {
               <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 Terms of Service
               </a>
-              <a href="/contact" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                Contact
+              <a href="https://optconsumerprivacy.com/?site=" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                CCPA
               </a>
             </div>
           </div>
