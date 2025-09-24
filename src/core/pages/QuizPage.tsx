@@ -73,37 +73,6 @@ export const QuizPage: React.FC = () => {
           </div>
         </div>
       </header>
-              </div>
-              <span className="text-xl font-bold text-clockwork-blue-600">Clockwork Funding</span>
-            </div>
-            
-            <button
-              onClick={() => setShowAdvertisingDisclosure(true)}
-              className="text-sm text-gray-600 hover:text-clockwork-blue-600 underline transition-colors"
-            >
-              Advertising Disclosure
-            </button>
-          </div>
-          
-          {/* Progress Bar */}
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">
-                Progress
-              </span>
-              <span className="text-sm text-gray-500">
-                Step 2 of 8
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: '25%' }}
-              />
-            </div>
-          </div>
-        </div>
-      </header>
 
       {/* Main Content */}
       <section className="py-12">
