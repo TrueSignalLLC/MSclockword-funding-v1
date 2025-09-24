@@ -1048,7 +1048,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           </button>
         )}
         
-        {!showLoadingScreen && currentStep < 11 && currentStep > 6 && (
+        {!showLoadingScreen && ((currentStep < 11 && currentStep > 6) || (currentStep === 3 && steps[currentStep].type === 'slider')) && (
           <button
             onClick={handleNext}
             disabled={!canProceed() || isSubmitting}
