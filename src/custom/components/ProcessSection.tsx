@@ -2,10 +2,10 @@ import React from 'react';
 import { User, FileText, DollarSign, TrendingUp, Clock, BarChart3, MessageCircle } from 'lucide-react';
 
 interface ProcessSectionProps {
-  onQuizStart: () => void;
+  onScrollToHero: () => void;
 }
 
-export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) => {
+export const ProcessSection: React.FC<ProcessSectionProps> = ({ onScrollToHero }) => {
   const processSteps = [
     {
       number: '01',
@@ -58,8 +58,8 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
             Our Process Allows You To <span className="text-clockwork-orange-500">Move Fast.</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            When most people hear "funding," they think of long waits, hidden fees, and bank rejections. 
+          <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            When most people hear "funding," they think of long waits, hidden fees, and bank rejections.
             We built a process that's different. With custom-tailored programs and a team that works fast, 
             we help business owners access capital without the stress, delays, or guesswork.
           </p>
@@ -188,7 +188,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
 
         {/* Mobile Card Layout */}
         <div className="lg:hidden space-y-6">
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Row 1: Card 01 - Full Width */}
             <div className="w-full">
               <div className="bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-slate-700">
@@ -210,90 +210,36 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ onQuizStart }) =
               </div>
             </div>
 
-            {/* Row 2: Cards 02 and 03 */}
-            <div className="grid grid-cols-2 gap-8">
-              {processSteps.slice(1, 3).map((step, index) => (
-                <div
-                  key={index + 1}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
-                >
-                  <div className="flex items-start gap-4">
-                    {/* Icon circle */}
-                    <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center text-clockwork-orange-400 flex-shrink-0 shadow-lg">
-                      {step.icon}
+            {/* Cards 02-07 stacked vertically on mobile */}
+            {processSteps.slice(1, 7).map((step, index) => (
+              <div
+                key={index + 1}
+                className="w-full bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
+              >
+                <div className="flex items-start gap-4">
+                  {/* Icon circle */}
+                  <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center text-clockwork-orange-400 flex-shrink-0 shadow-lg">
+                    {step.icon}
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-2xl font-bold text-clockwork-orange-500">{step.number}</span>
+                      <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
                     </div>
-                    
-                    {/* Content */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-2xl font-bold text-clockwork-orange-500">{step.number}</span>
-                        <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
-                      </div>
-                      <p className="text-gray-600 leading-relaxed">{step.description}</p>
-                    </div>
+                    <p className="text-gray-600 leading-relaxed">{step.description}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Row 3: Cards 04 and 05 */}
-            <div className="grid grid-cols-2 gap-8">
-              {processSteps.slice(3, 5).map((step, index) => (
-                <div
-                  key={index + 3}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
-                >
-                  <div className="flex items-start gap-4">
-                    {/* Icon circle */}
-                    <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center text-clockwork-orange-400 flex-shrink-0 shadow-lg">
-                      {step.icon}
-                    </div>
-                    
-                    {/* Content */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-2xl font-bold text-clockwork-orange-500">{step.number}</span>
-                        <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
-                      </div>
-                      <p className="text-gray-600 leading-relaxed">{step.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Row 4: Cards 06 and 07 */}
-            <div className="grid grid-cols-2 gap-8">
-              {processSteps.slice(5, 7).map((step, index) => (
-                <div
-                  key={index + 5}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
-                >
-                  <div className="flex items-start gap-4">
-                    {/* Icon circle */}
-                    <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center text-clockwork-orange-400 flex-shrink-0 shadow-lg">
-                      {step.icon}
-                    </div>
-                    
-                    {/* Content */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-2xl font-bold text-clockwork-orange-500">{step.number}</span>
-                        <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
-                      </div>
-                      <p className="text-gray-600 leading-relaxed">{step.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* CTA Button */}
         <div className="text-center mt-16">
           <button
-            onClick={onQuizStart}
+            onClick={onScrollToHero}
             className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white font-bold text-xl py-4 px-12 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
             Apply for Funding

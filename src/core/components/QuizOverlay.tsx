@@ -24,6 +24,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
   const [showPhoneValidation, setShowPhoneValidation] = useState(false);
   const [otpAttempts, setOtpAttempts] = useState(0);
   const [otpLoading, setOtpLoading] = useState(false);
+  const [tcpaConsent, setTcpaConsent] = useState(false);
   
   // Email validation state
   const [emailValidation, setEmailValidation] = useState({
@@ -52,7 +53,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     funding_amount: '',
     company_type: '',
     financing_purpose: [] as string[],
-    monthly_revenue: 50000,
+    annual_revenue: 50000,
     credit_score: '',
     business_age: '',
     business_industry: '',
@@ -384,8 +385,8 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
         return quizData.company_type;
       case 'financing_purpose':
         return quizData.financing_purpose;
-      case 'monthly_revenue':
-        return formatSliderValue(quizData.monthly_revenue);
+      case 'annual_revenue':
+        return formatSliderValue(quizData.annual_revenue);
       case 'credit_score':
         return quizData.credit_score;
       case 'business_age':
@@ -422,6 +423,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
              !emailValidation.loading &&
              (phoneValidation.valid === true || phoneValidation.status === 'needs_otp') &&
              !phoneValidation.loading &&
+             tcpaConsent &&
              !showPhoneValidation &&
              !showOTPModal;
     }
@@ -431,35 +433,95 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
     setIsSubmitting(true);
     
     try {
+      console.log('=== FORM SUBMISSION DEBUG ===');
+      
       // Get compliance data
       const complianceData = getCompliancePayload();
+      
+      // Get TCPA consent text from quiz config
+      const tcpaText = quizConfig.submission.consent.text;
       
       // Prepare final payload
       const payload = {
         ...getFinalSubmissionPayload(),
-        ...complianceData
+        ...complianceData,
+        tcpa_text: tcpaText,
+        consent: true
       };
+      
+      console.log('1. Payload prepared:', payload);
+      console.log('2. Webhook endpoint:', config.api.leadSubmit);
 
       // Submit to webhook
       if (config.api.leadSubmit) {
-        const response = await fetch(config.api.leadSubmit, {
+        console.log('3. Starting fetch request...');
+        
+        // Use proxy endpoint for development to avoid CORS issues
+        const endpoint = config.api.leadSubmit.includes('cryptochainitalia.app.n8n.cloud') 
+          ? '/api/webhook'
+          : config.api.leadSubmit;
+        
+        console.log('3a. Using endpoint:', endpoint);
+        
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        
+        console.log('4. Fetch completed. Response details:');
+        console.log('   - response.ok:', response.ok);
+        console.log('   - response.status:', response.status);
+        console.log('   - response.statusText:', response.statusText);
+        console.log('   - response.headers:', response.headers);
+        console.log('   - response.url:', response.url);
+        
+        // Get response text first (before JSON parsing)
+        const responseText = await response.text();
+        console.log('5. Raw response text:', responseText);
+        
+        let responseData;
+        try {
+          responseData = JSON.parse(responseText);
+          console.log('6. Parsed JSON response:', responseData);
+        } catch (jsonError) {
+          console.error('7. JSON parsing failed:', jsonError);
+          throw new Error(`Invalid JSON response: ${responseText}`);
+        }
 
         if (response.ok) {
-          // Success - redirect or show success message
-          window.location.href = '/thank-you';
+          // Check if the response indicates success and has a redirectURL
+          if (responseData.status === true && responseData.redirectURL) {
+            console.log('8. Success with redirectURL:', responseData.redirectURL);
+            // Redirect to the URL provided by the webhook
+            window.location.href = responseData.redirectURL;
+          } else if (responseData.status === true) {
+            console.log('9. Success but no redirectURL - using fallback');
+            // Success but no redirectURL - use fallback
+            window.location.href = '/thank-you';
+          } else {
+            console.log('10. Response indicates failure:', responseData);
+            // Response indicates failure
+            throw new Error(responseData.message || 'Submission failed');
+          }
         } else {
+          console.log('11. HTTP error response:', response.status, response.statusText);
           throw new Error('Submission failed');
         }
+      } else {
+        console.log('12. No submission endpoint configured');
+        throw new Error('No submission endpoint configured');
       }
     } catch (error) {
-      console.error('Submission error:', error);
-      alert('There was an error submitting your application. Please try again.');
+      console.error('=== SUBMISSION ERROR ===');
+      console.error('Error details:', error);
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      alert(`There was an error submitting your application: ${error instanceof Error ? error.message : 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
+      console.log('=== FORM SUBMISSION END ===');
     }
   };
 
@@ -790,7 +852,7 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                     <div className="mb-8">
                       <div className="text-center mb-6">
                         <div className="text-4xl font-bold text-clockwork-orange-500 mb-2">
-                          {formatSliderValue(quizData.monthly_revenue)}
+                          {formatSliderValue(quizData.annual_revenue)}
                         </div>
                       </div>
                       
@@ -799,12 +861,12 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                           type="range"
                           min={50000}
                           max={50000000}
-                          step={getSliderStep(quizData.monthly_revenue)}
-                          value={quizData.monthly_revenue}
+                          step={getSliderStep(quizData.annual_revenue)}
+                          value={quizData.annual_revenue}
                           onChange={(e) => {
                             setQuizData(prev => ({
                               ...prev,
-                              monthly_revenue: parseInt(e.target.value)
+                              annual_revenue: parseInt(e.target.value)
                             }));
                           }}
                           className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
@@ -990,14 +1052,13 @@ export const QuizOverlay: React.FC<QuizOverlayProps> = ({ isOpen, onClose }) => 
                     <input
                       type="checkbox"
                       id="consent"
+                      checked={tcpaConsent}
+                      onChange={(e) => setTcpaConsent(e.target.checked)}
                       required
                       className="mt-1 w-4 h-4 text-clockwork-orange-500 border-gray-300 rounded focus:ring-clockwork-orange-500"
                     />
                     <label htmlFor="consent" className="text-sm text-gray-600 leading-relaxed">
-                      By clicking "Get My Funding Options", you expressly consent to be contacted by Clockwork Funding and our lending partners at the number/email provided (including autodialed, prerecorded, and text messages) regarding business funding solutions. You also consent to receive marketing, service notifications, and account updates via SMS messaging. Consent not required to purchase. Message & data rates may apply. Messaging frequency may vary. Reply STOP to opt out of texts. See our{' '}
-                      <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>,{' '}
-                      <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Terms of Service</a>, and{' '}
-                      <a href="/tcpa-disclaimer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">TCPA Disclaimer</a>.
+                      <span dangerouslySetInnerHTML={{ __html: quizConfig.submission.consent.text }} />
                     </label>
                   </div>
                 </div>

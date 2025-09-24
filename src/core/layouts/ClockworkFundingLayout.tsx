@@ -27,6 +27,23 @@ export const ClockworkFundingLayout: React.FC = () => {
     setIsQuizOpen(true);
   };
 
+  const handleScrollToHero = () => {
+    // Scroll to the hero form section
+    const heroForm = document.getElementById('hero-form');
+    if (heroForm) {
+      heroForm.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    } else {
+      // Fallback to top of page if element not found
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const handleQuizClose = () => {
     setIsQuizOpen(false);
   };
@@ -35,13 +52,13 @@ export const ClockworkFundingLayout: React.FC = () => {
     <div className="min-h-screen bg-white">
       <ComplianceScripts />
       <ClockworkHero onQuizStart={handleQuizStart} />
-      <FundingBenefits onQuizStart={handleQuizStart} />
-      <OurApproach onQuizStart={handleQuizStart} />
-      <ProcessSection onQuizStart={handleQuizStart} />
+      <FundingBenefits onScrollToHero={handleScrollToHero} />
+      <OurApproach onScrollToHero={handleScrollToHero} />
+      <ProcessSection onScrollToHero={handleScrollToHero} />
       <UltraFlexibleFunding />
       <NoHiddenFeesMiddlemen />
-      <FundWhatOthersWont onQuizStart={handleQuizStart} />
-      <ClockworkFAQ onQuizStart={handleQuizStart} />
+      <FundWhatOthersWont onScrollToHero={handleScrollToHero} />
+      <ClockworkFAQ onScrollToHero={handleScrollToHero} />
       <Footer />
       <QuizOverlay isOpen={isQuizOpen} onClose={handleQuizClose} />
     </div>

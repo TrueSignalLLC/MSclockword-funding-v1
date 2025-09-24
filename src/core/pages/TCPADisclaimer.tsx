@@ -23,21 +23,13 @@ export const TCPADisclaimer: React.FC = () => {
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="flex items-center gap-2">
-                <img 
-                  src="/yourhomesecured-330x330-website (1).svg" 
-                  alt="YourHomeSecured Logo" 
-                  className="w-8 h-8"
-                />
-                <span className="text-xl font-bold text-gray-900">{siteConfig.client.name}</span>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">CF</span>
+                </div>
+                <span className="text-xl font-bold text-gray-900">Clockwork Funding</span>
               </div>
             </div>
-            <button
-              onClick={handleQuizStart}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
-            >
-              Secure My Home Now !
-            </button>
           </div>
         </div>
       </header>

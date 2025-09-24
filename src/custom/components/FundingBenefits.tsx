@@ -2,10 +2,10 @@ import React from 'react';
 import { CheckCircle } from 'lucide-react';
 
 interface FundingBenefitsProps {
-  onQuizStart: () => void;
+  onScrollToHero: () => void;
 }
 
-export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onQuizStart }) => {
+export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onScrollToHero }) => {
   const benefits = [
     'Acquire competitors',
     'Open more locations',
@@ -45,7 +45,7 @@ export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onQuizStart })
           </div>
 
           {/* Right Column - Visual */}
-          <div className="flex justify-center">
+          <div className="hidden md:flex justify-center">
             <div className="relative">
               {/* Blue Circle Background */}
               <div className="w-80 h-80 bg-clockwork-blue-600 rounded-full flex items-center justify-center">
@@ -84,7 +84,7 @@ export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onQuizStart })
         {/* CTA Button */}
         <div className="text-center mt-12">
           <button
-            onClick={onQuizStart}
+            onClick={onScrollToHero}
             className="bg-clockwork-blue-600 hover:bg-clockwork-blue-700 text-white font-bold text-xl py-4 px-12 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
             Apply For Funding

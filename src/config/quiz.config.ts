@@ -61,10 +61,10 @@ export const quizConfig = {
       }
     },
     {
-      id: 'monthly_revenue',
+      id: 'annual_revenue',
       type: 'slider' as const,
-      question: "What's your average monthly revenue?",
-      helper: 'Move the slider to select your monthly revenue range.',
+      question: "What's your average annual revenue?",
+      helper: 'Move the slider to select your annual revenue range.',
       min: 50000,
       max: 50000000,
       step: 50000,
@@ -76,8 +76,8 @@ export const quizConfig = {
       },
       required: true,
       sidebar: {
-        title: 'Monthly Revenue',
-        content: 'Your monthly revenue helps us determine the appropriate funding amount and terms for your business.'
+        title: 'Annual Revenue',
+        content: 'Your annual revenue helps us determine the appropriate funding amount and terms for your business.'
       }
     },
     {
@@ -158,7 +158,7 @@ export const quizConfig = {
       { id: 'leadid_token', type: 'hidden', label: 'LeadiD Token', required: false }
     ],
     consent: {
-      text: 'By clicking "Get My Funding Options", you expressly consent to be contacted by Clockwork Funding and our lending partners at the number/email provided (including autodialed, prerecorded, and text messages) regarding business funding solutions. You also consent to receive marketing, service notifications, and account updates via SMS messaging. Consent not required to purchase. Message & data rates may apply. Messaging frequency may vary. Reply STOP to opt out of texts. See our <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>, <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Terms of Service</a>, and <a href="/tcpa-disclaimer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">TCPA Disclaimer</a>.',
+      text: 'By checking this box and clicking "Get My Funding Options", I agree to receive automated marketing calls/texts from or on behalf of Clockworking Funding and their partners at the number I provided. I understand this consent is optional. Msg & data rates may apply.',
       required: true
     },
     webhook: config.api.leadSubmit

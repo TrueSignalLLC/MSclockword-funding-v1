@@ -81,16 +81,13 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
             </p>
             <div className="bg-gray-50 p-4 rounded-lg">
               {section.content.map((item: string, itemIndex: number) => (
-                <p key={itemIndex} className="text-gray-600">
-                  {item}
-                </p>
+                <p key={itemIndex} className="text-gray-600" dangerouslySetInnerHTML={{ __html: item }} />
               ))}
             </div>
             {section.outro && (
               <p className="text-gray-600 mt-4 whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: section.outro }}
-              >
-              </p>
+              />
             )}
           </div>
         );
@@ -105,23 +102,15 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <div className="flex items-center">
-              <div className="flex items-center gap-2">
-                <img 
-                  src="/yourhomesecured-330x330-website (1).svg" 
-                  alt="YourHomeSecured Logo" 
-                  className="w-8 h-8"
-                />
-                <span className="text-xl font-bold text-gray-900">{siteConfig?.client?.name || 'YourHomeSecured'}</span>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">CF</span>
+                </div>
+                <span className="text-xl font-bold text-gray-900">Clockwork Funding</span>
               </div>
             </div>
-            <button
-              onClick={handleQuizStart}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
-            >
-              Secure My Home Now !
-            </button>
           </div>
         </div>
       </header>

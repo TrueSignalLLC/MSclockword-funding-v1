@@ -1,10 +1,10 @@
 import React from 'react';
 
 interface FundWhatOthersWontProps {
-  onQuizStart: () => void;
+  onScrollToHero: () => void;
 }
 
-export const FundWhatOthersWont: React.FC<FundWhatOthersWontProps> = ({ onQuizStart }) => {
+export const FundWhatOthersWont: React.FC<FundWhatOthersWontProps> = ({ onScrollToHero }) => {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-6">
@@ -40,7 +40,7 @@ export const FundWhatOthersWont: React.FC<FundWhatOthersWontProps> = ({ onQuizSt
         {/* CTA Button */}
         <div className="text-center mt-12">
           <button
-            onClick={onQuizStart}
+            onClick={onScrollToHero}
             className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white font-bold text-xl py-4 px-12 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
             Apply for Funding
