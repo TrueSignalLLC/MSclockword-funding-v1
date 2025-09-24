@@ -1015,6 +1015,8 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
               </div>
             )}
           </div>
+        ) : (
+          <></>
         )}
       </div>
 
