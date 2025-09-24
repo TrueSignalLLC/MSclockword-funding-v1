@@ -52,13 +52,13 @@ export const QuizPage: React.FC = () => {
                   Progress
                 </span>
                 <span className="text-sm text-gray-500">
-                  Step 2 of 8
+                  Step 2 of 12
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-clockwork-orange-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: '25%' }}
+                  style={{ width: '17%' }}
                 />
               </div>
             </div>

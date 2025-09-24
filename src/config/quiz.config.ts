@@ -134,6 +134,77 @@ export const quizConfig = {
         title: 'Industry Type',
         content: 'Different industries have different funding needs and qualification requirements.'
       }
+    },
+    {
+      id: 'business_zip',
+      type: 'input' as const,
+      question: "What's the business zip code?",
+      helper: 'Enter your business location zip code.',
+      placeholder: 'ZIP Code',
+      inputType: 'text',
+      required: true,
+      sidebar: {
+        title: 'Business Location',
+        content: 'We need your business zip code to match you with local funding options and requirements.'
+      }
+    },
+    {
+      id: 'business_name',
+      type: 'input' as const,
+      question: 'What is your business name?',
+      helper: 'Enter your official business name.',
+      placeholder: 'Your Business Name',
+      inputType: 'text',
+      required: true,
+      sidebar: {
+        title: 'Business Name',
+        content: 'Your official business name helps us verify your business information and prepare funding documents.'
+      }
+    },
+    {
+      id: 'full_name',
+      type: 'name-fields' as const,
+      question: 'What is your name?',
+      helper: 'Enter your first and last name.',
+      required: true,
+      sidebar: {
+        title: 'Personal Information',
+        content: 'We need your name for the funding application and to contact you about your options.'
+      }
+    },
+    {
+      id: 'email',
+      type: 'input' as const,
+      question: "What's your email address?",
+      helper: 'Enter your email address for funding updates.',
+      placeholder: 'you@example.com',
+      inputType: 'email',
+      required: true,
+      validation: {
+        enabled: true,
+        apiEndpoint: config.api.emailValidation
+      },
+      sidebar: {
+        title: 'Email Address',
+        content: 'We\'ll use your email to send funding options and important updates about your application.'
+      }
+    },
+    {
+      id: 'phone',
+      type: 'input' as const,
+      question: 'Phone number',
+      helper: 'Enter your phone number for verification.',
+      placeholder: 'Phone Number',
+      inputType: 'tel',
+      required: true,
+      validation: {
+        enabled: true,
+        apiEndpoint: config.api.phoneValidation
+      },
+      sidebar: {
+        title: 'Phone Verification',
+        content: 'We need to verify your phone number for security and to contact you about your funding options.'
+      }
     }
   ],
   

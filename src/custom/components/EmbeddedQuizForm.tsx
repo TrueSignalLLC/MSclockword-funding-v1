@@ -55,11 +55,12 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     credit_score: '',
     business_age: '',
     business_industry: '',
+    business_zip: '',
+    business_name: '',
     first_name: '',
     last_name: '',
     email: '',
     phone: '',
-    business_name: '',
     leadid_token: ''
   });
 
@@ -301,7 +302,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   };
 
   const steps = quizConfig.steps;
-  const totalSteps = 8; // Fixed total of 8 steps
+  const totalSteps = 12; // Updated total of 12 steps
   
   // Loading screen configuration
   const loadingStages = [
@@ -312,11 +313,11 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   ];
 
   const handleNext = async () => {
-    if (currentStep < steps.length) {
+    if (currentStep < steps.length - 1) {
       const currentStepConfig = steps[currentStep];
       
-      // Check if this is the last quiz question (question 7)
-      if (currentStep === steps.length - 1) {
+      // Check if this is the business industry question (step 6, last quiz question before loading)
+      if (currentStep === 6) {
         // Store the final quiz answer before loading
         const answer = getAnswerForStep(currentStepConfig);
         storeQuizAnswer(currentStepConfig.id, answer);
@@ -343,18 +344,19 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           setCurrentStep(prev => prev + 1);
         }, duration + 500);
       } else {
-        // For non-button-group questions, store the answer here
-        if (steps[currentStep].type !== 'button-group') {
+        // Store the answer for all question types
+        if (steps[currentStep].type !== 'button-group' && steps[currentStep].type !== 'name-fields') {
           const answer = getAnswerForStep(currentStepConfig);
           storeQuizAnswer(currentStepConfig.id, answer);
+        } else if (steps[currentStep].type === 'name-fields') {
+          // Store both first and last name
+          storeFormField('first_name', quizData.first_name);
+          storeFormField('last_name', quizData.last_name);
         }
         setCurrentStep(prev => prev + 1);
       }
-    } else if (showLoadingScreen) {
-      // Skip loading if user somehow clicks next during loading
-      return;
-    } else {
-      // Contact form submission
+    } else if (currentStep === steps.length - 1) {
+      // Final step - phone number submission
       // Check if phone needs OTP verification
       if (phoneValidation.status === 'needs_otp') {
         setShowPhoneValidation(true);
@@ -367,14 +369,17 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       } else {
         alert('Please ensure your phone number is valid before proceeding.');
       }
+    } else if (showLoadingScreen) {
+      // Skip loading if user somehow clicks next during loading
+      return;
     }
   };
 
   const handleBack = () => {
     if (showLoadingScreen) {
-      // Go back to last quiz question
+      // Go back to last quiz question (business industry)
       setShowLoadingScreen(false);
-      setCurrentStep(steps.length - 1);
+      setCurrentStep(6);
     } else if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
@@ -396,6 +401,16 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         return quizData.business_age;
       case 'business_industry':
         return quizData.business_industry;
+      case 'business_zip':
+        return quizData.business_zip;
+      case 'business_name':
+        return quizData.business_name;
+      case 'full_name':
+        return quizData.first_name && quizData.last_name ? `${quizData.first_name} ${quizData.last_name}` : '';
+      case 'email':
+        return quizData.email;
+      case 'phone':
+        return quizData.phone;
       default:
         return '';
     }
@@ -406,25 +421,35 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       return false; // No proceeding during loading
     }
     
-    if (currentStep < steps.length) {
+    if (currentStep <= 6) {
+      // Original quiz questions (steps 0-6)
       const currentStepConfig = steps[currentStep];
       const answer = getAnswerForStep(currentStepConfig);
       
       return answer !== '' && answer !== null && answer !== undefined;
-    } else {
-      // Contact form validation
-      return quizData.first_name && 
-             quizData.last_name && 
-             quizData.email && 
-             quizData.phone && 
-             quizData.business_name &&
+    } else if (currentStep === 7) {
+      // Business ZIP - no validation required
+      return quizData.business_zip.trim() !== '';
+    } else if (currentStep === 8) {
+      // Business name - no validation required
+      return quizData.business_name.trim() !== '';
+    } else if (currentStep === 9) {
+      // Full name - no validation required
+      return quizData.first_name.trim() !== '' && quizData.last_name.trim() !== '';
+    } else if (currentStep === 10) {
+      // Email - requires validation
+      return quizData.email.trim() !== '' && 
              emailValidation.valid === true &&
-             !emailValidation.loading &&
+             !emailValidation.loading;
+    } else if (currentStep === 11) {
+      // Phone - requires validation
+      return quizData.phone.trim() !== '' &&
              (phoneValidation.valid === true || phoneValidation.status === 'needs_otp') &&
              !phoneValidation.loading &&
-             tcpaConsent &&
              !showPhoneValidation &&
              !showOTPModal;
+    } else {
+      return false;
     }
   };
 
@@ -845,23 +870,125 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                 </div>
               </div>
             )}
-          </div>
-        ) : (
-          // Contact Form
-          <div className="space-y-6">
-            <div className="text-center">
-              <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Get Your Funding Options
-              </h3>
-              <p className="text-sm text-gray-500 mb-8">
-                Complete your information to receive your personalized funding recommendations.
-              </p>
-            </div>
 
-            <div className="max-w-3xl mx-auto space-y-6">
-              {/* Name Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+            {steps[currentStep].type === 'input' && (
+              <div className="max-w-2xl mx-auto">
+                <div className="space-y-4">
+                  {steps[currentStep].id === 'email' ? (
+                    <div className="space-y-2">
+                      <input
+                        type={steps[currentStep].inputType}
+                        value={quizData[steps[currentStep].id as keyof typeof quizData] as string}
+                        onChange={(e) => {
+                          setQuizData(prev => ({ ...prev, [steps[currentStep].id]: e.target.value }));
+                          storeFormField(steps[currentStep].id, e.target.value);
+                          if (steps[currentStep].id === 'email') {
+                            handleEmailValidation(e.target.value);
+                          }
+                        }}
+                        placeholder={steps[currentStep].placeholder}
+                        className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
+                          steps[currentStep].id === 'email' && emailValidation.valid === true 
+                            ? 'border-green-500' 
+                            : steps[currentStep].id === 'email' && emailValidation.valid === false 
+                            ? 'border-red-500' 
+                            : 'border-gray-300'
+                        }`}
+                        required
+                      />
+                      
+                      {/* Email validation feedback */}
+                      {steps[currentStep].id === 'email' && emailValidation.valid === true && !emailValidation.loading && (
+                        <p className="text-sm text-green-600 text-center">
+                          ✓ Email is valid
+                        </p>
+                      )}
+                      
+                      {/* Email validation loading and errors */}
+                      {steps[currentStep].id === 'email' && emailValidation.loading && (
+                        <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
+                          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                          <span>Validating email...</span>
+                        </div>
+                      )}
+                      
+                      {steps[currentStep].id === 'email' && emailValidation.error && (
+                        <p className="text-sm text-red-600 text-center">
+                          {emailValidation.error}
+                        </p>
+                      )}
+                    </div>
+                  ) : steps[currentStep].id === 'phone' ? (
+                    <div className="space-y-2">
+                      <input
+                        type={steps[currentStep].inputType}
+                        value={quizData[steps[currentStep].id as keyof typeof quizData] as string}
+                        onChange={(e) => {
+                          setQuizData(prev => ({ ...prev, [steps[currentStep].id]: e.target.value }));
+                          storeFormField(steps[currentStep].id, e.target.value);
+                          handlePhoneValidation(e.target.value);
+                        }}
+                        placeholder={steps[currentStep].placeholder}
+                        className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
+                          phoneValidation.valid === true 
+                            ? 'border-green-500' 
+                            : phoneValidation.valid === false 
+                            ? 'border-red-500' 
+                            : 'border-gray-300'
+                        }`}
+                        required
+                      />
+                      
+                      {/* Phone validation feedback */}
+                      {phoneValidation.valid === true && !phoneValidation.loading && (
+                        <p className="text-sm text-green-600 text-center">
+                          ✓ Phone number is valid
+                          {phoneValidation.phoneType && (
+                            <span className="ml-2 text-gray-500">({phoneValidation.phoneType})</span>
+                          )}
+                        </p>
+                      )}
+                      
+                      {/* Phone validation loading, errors, and OTP notice */}
+                      {phoneValidation.loading && (
+                        <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
+                          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                          <span>Validating phone number...</span>
+                        </div>
+                      )}
+                      
+                      {phoneValidation.error && (
+                        <p className="text-sm text-red-600 text-center">
+                          {phoneValidation.error}
+                        </p>
+                      )}
+                      
+                      {phoneValidation.status === 'needs_otp' && (
+                        <p className="text-sm text-orange-600 text-center">
+                          📱 This mobile number will require SMS verification
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      type={steps[currentStep].inputType}
+                      value={quizData[steps[currentStep].id as keyof typeof quizData] as string}
+                      onChange={(e) => {
+                        setQuizData(prev => ({ ...prev, [steps[currentStep].id]: e.target.value }));
+                        storeFormField(steps[currentStep].id, e.target.value);
+                      }}
+                      placeholder={steps[currentStep].placeholder}
+                      className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
+                      required
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+
+            {steps[currentStep].type === 'name-fields' && (
+              <div className="max-w-2xl mx-auto">
+                <div className="space-y-4">
                   <input
                     type="text"
                     value={quizData.first_name}
@@ -873,8 +1000,6 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
                     required
                   />
-                </div>
-                <div>
                   <input
                     type="text"
                     value={quizData.last_name}
@@ -888,132 +1013,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                   />
                 </div>
               </div>
-
-              {/* Email */}
-              <div className="space-y-2">
-                <input
-                  type="email"
-                  value={quizData.email}
-                  onChange={(e) => {
-                    setQuizData(prev => ({ ...prev, email: e.target.value }));
-                    storeFormField('email', e.target.value);
-                    handleEmailValidation(e.target.value);
-                  }}
-                  placeholder="you@example.com"
-                  className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
-                    emailValidation.valid === true 
-                      ? 'border-green-500' 
-                      : emailValidation.valid === false 
-                      ? 'border-red-500' 
-                      : 'border-gray-300'
-                  }`}
-                  required
-                />
-                
-                {/* Email validation feedback */}
-                {emailValidation.valid === true && !emailValidation.loading && (
-                  <p className="text-sm text-green-600 text-center">
-                    ✓ Email is valid
-                  </p>
-                )}
-              </div>
-              
-              {/* Email validation loading and errors */}
-              {emailValidation.loading && (
-                <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
-                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  <span>Validating email...</span>
-                </div>
-              )}
-              
-              {emailValidation.error && (
-                <p className="text-sm text-red-600 text-center">
-                  {emailValidation.error}
-                </p>
-              )}
-
-              {/* Phone */}
-              <div className="space-y-2">
-                <input
-                  type="tel"
-                  value={quizData.phone}
-                  onChange={(e) => {
-                    setQuizData(prev => ({ ...prev, phone: e.target.value }));
-                    storeFormField('phone', e.target.value);
-                    handlePhoneValidation(e.target.value);
-                  }}
-                  placeholder="Phone Number"
-                  className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
-                    phoneValidation.valid === true 
-                      ? 'border-green-500' 
-                      : phoneValidation.valid === false 
-                      ? 'border-red-500' 
-                      : 'border-gray-300'
-                  }`}
-                  required
-                />
-                
-                {/* Phone validation feedback */}
-                {phoneValidation.valid === true && !phoneValidation.loading && (
-                  <p className="text-sm text-green-600 text-center">
-                    ✓ Phone number is valid
-                    {phoneValidation.phoneType && (
-                      <span className="ml-2 text-gray-500">({phoneValidation.phoneType})</span>
-                    )}
-                  </p>
-                )}
-              </div>
-              
-              {/* Phone validation loading, errors, and OTP notice */}
-              {phoneValidation.loading && (
-                <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
-                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  <span>Validating phone number...</span>
-                </div>
-              )}
-              
-              {phoneValidation.error && (
-                <p className="text-sm text-red-600 text-center">
-                  {phoneValidation.error}
-                </p>
-              )}
-              
-              {phoneValidation.status === 'needs_otp' && (
-                <p className="text-sm text-orange-600 text-center">
-                  📱 This mobile number will require SMS verification
-                </p>
-              )}
-
-              {/* Business Name */}
-              <div>
-                <input
-                  type="text"
-                  value={quizData.business_name}
-                  onChange={(e) => {
-                    setQuizData(prev => ({ ...prev, business_name: e.target.value }));
-                    storeFormField('business_name', e.target.value);
-                  }}
-                  placeholder="Your Business Name"
-                  className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
-                  required
-                />
-              </div>
-
-              {/* Consent */}
-              <div className="flex items-start gap-4 text-left">
-                <input
-                  type="checkbox"
-                  id="consent"
-                  checked={tcpaConsent}
-                  onChange={(e) => setTcpaConsent(e.target.checked)}
-                  required
-                  className="mt-1 w-5 h-5 text-clockwork-orange-500 border-gray-300 rounded focus:ring-clockwork-orange-500"
-                />
-                <label htmlFor="consent" className="text-xs text-gray-500 leading-relaxed">
-                  <span dangerouslySetInnerHTML={{ __html: quizConfig.submission.consent.text }} />
-                </label>
-              </div>
-            </div>
+            )}
           </div>
         )}
       </div>
@@ -1032,7 +1032,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           )}
         </div>
         
-        {!showLoadingScreen && currentStep >= steps.length && (
+        {!showLoadingScreen && currentStep === 11 && (
           <button
             onClick={handleNext}
             disabled={!canProceed() || isSubmitting}
@@ -1040,18 +1040,13 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           >
             {isSubmitting ? (
               'Submitting...'
-            ) : currentStep < steps.length ? (
-              <>
-                Next
-                <ChevronRight className="w-4 h-4" />
-              </>
             ) : (
               'Get My Funding Options'
             )}
           </button>
         )}
         
-        {!showLoadingScreen && currentStep < steps.length && steps[currentStep].type !== 'button-group' && (
+        {!showLoadingScreen && currentStep < 11 && currentStep > 6 && (
           <button
             onClick={handleNext}
             disabled={!canProceed() || isSubmitting}
