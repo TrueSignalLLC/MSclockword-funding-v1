@@ -28,11 +28,20 @@ export const ClockworkFundingLayout: React.FC = () => {
   };
 
   const handleScrollToHero = () => {
-    // Scroll to the top of the page (hero section)
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    // Scroll to the hero form section
+    const heroForm = document.getElementById('hero-form');
+    if (heroForm) {
+      heroForm.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    } else {
+      // Fallback to top of page if element not found
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
   };
 
   const handleQuizClose = () => {
