@@ -96,23 +96,24 @@ export const ClockworkHero: React.FC = () => {
                 </div>
 
                 <div className="max-w-md mx-auto space-y-4">
-                  <select
-                    value={selectedFundingAmount}
-                    onChange={(e) => {
-                      setSelectedFundingAmount(e.target.value);
-                      setShowFundingAmountError(false);
-                    }}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white ${
-                      showFundingAmountError ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                  >
-                    <option value="" disabled>Amount</option>
+                  <div className="flex flex-col space-y-3">
                     {quizConfig.steps[0].options?.map((option: any, index: number) => (
-                      <option key={index} value={option.value}>
-                        {option.label}
-                      </option>
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setSelectedFundingAmount(option.value);
+                          setShowFundingAmountError(false);
+                        }}
+                        className={`w-full p-4 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg ${
+                          selectedFundingAmount === option.value
+                            ? 'border-clockwork-orange-500 bg-clockwork-orange-200'
+                            : 'border-gray-300 bg-white'
+                        }`}
+                      >
+                        <span className="font-bold text-lg text-gray-900">{option.label}</span>
+                      </button>
                     ))}
-                  </select>
+                  </div>
 
                   {showFundingAmountError && (
                     <p className="text-red-500 text-sm text-center">
