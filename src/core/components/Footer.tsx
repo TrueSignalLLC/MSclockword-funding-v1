@@ -77,15 +77,8 @@ export const Footer: React.FC = () => {
         
         {/* Compliance disclaimer */}
         <div className="mt-6 pt-6 border-t border-gray-700">
-          <p className="text-xs text-gray-500 leading-relaxed text-center">
-            By submitting your information, you agree to be contacted by Clockwork Funding 
-            and/or our lending partners regarding business funding solutions via phone, 
-            text, or email. Consent is not a condition of purchase. Message and data rates may apply.
-          </p>
-          <p className="text-xs text-gray-500 leading-relaxed text-center">
-            This website is not part of the Facebook website or Facebook Inc. Additionally, 
-            this site is NOT endorsed by Facebook in any way. FACEBOOK is a trademark of 
-            FACEBOOK, Inc.
+          <p className="text-xs text-gray-500 leading-relaxed text-center mb-4">
+            We are a marketing company. This Site is part of our marketing efforts for third-parties. The offers that are discussed or appear on our website are from third party advertisers who compensate us. This compensation may impact how and where products appear on our website and the order in which they appear. The compensation that we get may also influence the topic, posts, and content on our Site this website. We do not represent all services or products available on the market. Editorial opinions expressed on the Site are strictly our own, and are not provided, endorsed, or approved by advertisers. We are not affiliated with any third party advertiser other than as stated above. As such, we do not recommend or endorse any product or service on this website. If you are redirected to a third party advertiser's site, you should review their terms and conditions and privacy policy as they may differ significantly from those posted on this site.
           </p>
         </div>
       </div>
