@@ -737,11 +737,11 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           // Quiz Questions
           <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                 {steps[currentStep].question}
               </h3>
               {steps[currentStep].helper && (
-                <p className="text-gray-700 mb-6">
+                <p className="text-sm text-gray-500 mb-8">
                   {steps[currentStep].helper}
                 </p>
               )}
@@ -749,7 +749,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
             {/* Question Content */}
             {steps[currentStep].type === 'button-group' && (
-              <div className="flex flex-col gap-4 max-w-2xl mx-auto">
+              <div className="flex flex-col gap-6 max-w-3xl mx-auto">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <button
                     key={index}
@@ -764,24 +764,24 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                         setCurrentStep(prev => prev + 1);
                       }, 300);
                     }}
-                    className={`p-4 border-2 rounded-lg text-left transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-white ${
+                    className={`p-6 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-white hover:shadow-lg ${
                       getAnswerForStep(steps[currentStep]) === option.value
                         ? 'border-clockwork-orange-500 bg-white'
                         : 'border-gray-300 bg-white'
                     }`}
                   >
-                    <span className="font-semibold text-gray-900">{option.label}</span>
+                    <span className="font-bold text-xl text-gray-900">{option.label}</span>
                   </button>
                 ))}
               </div>
             )}
 
             {steps[currentStep].type === 'multi-select' && (
-              <div className="max-w-2xl mx-auto space-y-3">
+              <div className="max-w-3xl mx-auto space-y-4">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <label
                     key={index}
-                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:border-clockwork-orange-500 hover:bg-white transition-all duration-200 bg-white"
+                    className="flex items-center justify-center p-6 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-white hover:shadow-lg transition-all duration-200 bg-white"
                   >
                     <input
                       type="checkbox"
@@ -799,19 +799,19 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                           }));
                         }
                       }}
-                      className="w-5 h-5 text-clockwork-orange-500 border-2 border-gray-300 rounded focus:ring-clockwork-orange-500 focus:ring-2 mr-4"
+                      className="w-6 h-6 text-clockwork-orange-500 border-2 border-gray-300 rounded focus:ring-clockwork-orange-500 focus:ring-2 mr-4"
                     />
-                    <span className="font-semibold text-gray-900">{option.label}</span>
+                    <span className="font-bold text-xl text-gray-900">{option.label}</span>
                   </label>
                 ))}
               </div>
             )}
 
             {steps[currentStep].type === 'slider' && (
-              <div className="max-w-2xl mx-auto">
+              <div className="max-w-3xl mx-auto">
                 <div className="mb-8">
                   <div className="text-center mb-6">
-                    <div className="text-4xl font-bold text-clockwork-orange-500 mb-2">
+                    <div className="text-6xl md:text-7xl font-bold text-clockwork-orange-500 mb-4">
                       {formatSliderValue(quizData.annual_revenue)}
                     </div>
                   </div>
@@ -845,17 +845,17 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           // Contact Form
           <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                 Get Your Funding Options
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-sm text-gray-500 mb-8">
                 Complete your information to receive your personalized funding recommendations.
               </p>
             </div>
 
-            <div className="max-w-2xl mx-auto space-y-4">
+            <div className="max-w-3xl mx-auto space-y-6">
               {/* Name Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <input
                     type="text"
@@ -865,7 +865,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       storeFormField('first_name', e.target.value);
                     }}
                     placeholder="First Name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white"
+                    className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
                     required
                   />
                 </div>
@@ -878,14 +878,14 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       storeFormField('last_name', e.target.value);
                     }}
                     placeholder="Last Name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white"
+                    className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
                     required
                   />
                 </div>
               </div>
 
               {/* Email */}
-              <div className="flex items-center gap-4">
+              <div className="space-y-2">
                 <input
                   type="email"
                   value={quizData.email}
@@ -895,7 +895,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     handleEmailValidation(e.target.value);
                   }}
                   placeholder="you@example.com"
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white ${
+                  className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
                     emailValidation.valid === true 
                       ? 'border-green-500' 
                       : emailValidation.valid === false 
@@ -905,30 +905,30 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                   required
                 />
                 
-                {/* Email validation feedback - only show when valid */}
+                {/* Email validation feedback */}
                 {emailValidation.valid === true && !emailValidation.loading && (
-                  <p className="text-sm text-green-600 whitespace-nowrap">
+                  <p className="text-sm text-green-600 text-center">
                     ✓ Email is valid
                   </p>
                 )}
               </div>
               
-              {/* Email validation feedback below field for loading and errors */}
+              {/* Email validation loading and errors */}
               {emailValidation.loading && (
-                <div className="flex items-center gap-2 text-sm text-blue-600">
+                <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
                   <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                   <span>Validating email...</span>
                 </div>
               )}
               
               {emailValidation.error && (
-                <p className="text-sm text-red-600">
+                <p className="text-sm text-red-600 text-center">
                   {emailValidation.error}
                 </p>
               )}
 
               {/* Phone */}
-              <div className="flex items-center gap-4">
+              <div className="space-y-2">
                 <input
                   type="tel"
                   value={quizData.phone}
@@ -938,7 +938,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     handlePhoneValidation(e.target.value);
                   }}
                   placeholder="Phone Number"
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white ${
+                  className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
                     phoneValidation.valid === true 
                       ? 'border-green-500' 
                       : phoneValidation.valid === false 
@@ -948,9 +948,9 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                   required
                 />
                 
-                {/* Phone validation feedback - only show when valid */}
+                {/* Phone validation feedback */}
                 {phoneValidation.valid === true && !phoneValidation.loading && (
-                  <p className="text-sm text-green-600 whitespace-nowrap">
+                  <p className="text-sm text-green-600 text-center">
                     ✓ Phone number is valid
                     {phoneValidation.phoneType && (
                       <span className="ml-2 text-gray-500">({phoneValidation.phoneType})</span>
@@ -959,22 +959,22 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                 )}
               </div>
               
-              {/* Phone validation feedback below field for loading, errors, and OTP notice */}
+              {/* Phone validation loading, errors, and OTP notice */}
               {phoneValidation.loading && (
-                <div className="flex items-center gap-2 text-sm text-blue-600">
+                <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
                   <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                   <span>Validating phone number...</span>
                 </div>
               )}
               
               {phoneValidation.error && (
-                <p className="text-sm text-red-600">
+                <p className="text-sm text-red-600 text-center">
                   {phoneValidation.error}
                 </p>
               )}
               
               {phoneValidation.status === 'needs_otp' && (
-                <p className="text-sm text-orange-600">
+                <p className="text-sm text-orange-600 text-center">
                   📱 This mobile number will require SMS verification
                 </p>
               )}
@@ -989,22 +989,22 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     storeFormField('business_name', e.target.value);
                   }}
                   placeholder="Your Business Name"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white"
+                  className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
                   required
                 />
               </div>
 
               {/* Consent */}
-              <div className="flex items-start gap-3 text-left">
+              <div className="flex items-start gap-4 text-left">
                 <input
                   type="checkbox"
                   id="consent"
                   checked={tcpaConsent}
                   onChange={(e) => setTcpaConsent(e.target.checked)}
                   required
-                  className="mt-1 w-4 h-4 text-clockwork-orange-500 border-gray-300 rounded focus:ring-clockwork-orange-500"
+                  className="mt-1 w-5 h-5 text-clockwork-orange-500 border-gray-300 rounded focus:ring-clockwork-orange-500"
                 />
-                <label htmlFor="consent" className="text-sm text-gray-600 leading-relaxed">
+                <label htmlFor="consent" className="text-xs text-gray-500 leading-relaxed">
                   <span dangerouslySetInnerHTML={{ __html: quizConfig.submission.consent.text }} />
                 </label>
               </div>
