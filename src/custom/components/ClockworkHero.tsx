@@ -46,12 +46,12 @@ export const ClockworkHero: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <section className="flex items-center py-20 min-h-[calc(100vh-80px)]">
+      <section className="flex items-center py-8 md:py-20 min-h-[calc(100vh-80px)]">
         <div className="max-w-6xl mx-auto px-2 md:px-6">
           <div className="text-center">
 
           {/* Main Headline */}
-          <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-clockwork-orange-500 mb-8 leading-tight text-center">
+          <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-clockwork-orange-500 mb-4 md:mb-8 leading-tight text-center">
             Unlock Large-Scale Uncapped<br />
             Business Funding, in Excess of<br />
             <span className="text-clockwork-orange-600">$1,000,000</span>
@@ -122,19 +122,19 @@ export const ClockworkHero: React.FC = () => {
           </div>
 
           {/* Moved checkmark section below quiz on mobile */}
-          <div className="flex items-start justify-center gap-3 text-sm md:text-lg text-gray-800 mb-8 order-4 md:hidden">
-            <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0 mt-1">
-              <span className="text-white text-sm font-bold">✓</span>
+          <div className="flex items-start gap-3 text-base md:text-lg text-gray-800 mb-8 order-4 md:hidden px-4">
+            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg mt-0.5">
+              <span className="text-white text-xs font-bold">✓</span>
             </div>
-            <p className="text-left">
-              <span className="font-bold">Ask about our no-FICO, revenue-based financing option,</span><br />
-              available for high-performing companies!
-            </p>
+            <div className="text-left leading-relaxed">
+              <p className="font-bold mb-1">Ask about our no-FICO, revenue-based financing option</p>
+              <p className="text-sm">available for high-performing companies!</p>
+            </div>
           </div>
 
           {/* Disclaimer */}
           <div className="max-w-3xl mx-auto mt-12">
-            <p className="text-sm text-gray-600 italic leading-relaxed">
+            <p className="hidden md:block text-sm text-gray-600 italic leading-relaxed">
               <strong>Note:</strong> Funding terms, approval amounts, and interest rates vary based on your credit
               profile, business structure, and timing of application. All funding estimates are based on
               current lender data and may be adjusted as new offers or documentation become
