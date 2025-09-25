@@ -33,7 +33,6 @@ export const ClockworkHero: React.FC = () => {
                 alt="Clockwork Funding Logo" 
                 className="w-8 h-8"
               />
-              <span className="text-xl font-bold text-clockwork-blue-600">Clockwork Funding</span>
             </div>
             
             <button
