@@ -39,7 +39,7 @@ export const QuizPage: React.FC = () => {
               <img 
                 src="/logo__2_-removebg-preview.png" 
                 alt="Clockwork Funding Logo" 
-                className="w-[160px] h-[53px] md:w-[240px] md:h-[79px]"
+                className="w-[126px] h-[42px] md:w-[240px] md:h-[79px]"
               />
             </div>
             
