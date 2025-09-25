@@ -46,12 +46,12 @@ export const ClockworkHero: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <section className="flex items-center py-20 min-h-[calc(100vh-80px)]">
+      <section className="flex items-center py-8 md:py-20 min-h-[calc(100vh-80px)]">
         <div className="max-w-6xl mx-auto px-2 md:px-6">
           <div className="text-center">
 
           {/* Main Headline */}
-          <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-clockwork-orange-500 mb-8 leading-tight text-center">
+          <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-clockwork-orange-500 mb-4 md:mb-8 leading-tight text-center">
             Unlock Large-Scale Uncapped<br />
             Business Funding, in Excess of<br />
             <span className="text-clockwork-orange-600">$1,000,000</span>
