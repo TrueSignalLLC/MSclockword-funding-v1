@@ -880,11 +880,11 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           // Quiz Questions
           <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h3 className="text-2xl md:text-5xl font-bold text-gray-900 mb-6">
                 {steps[currentStep].question}
               </h3>
               {steps[currentStep].helper && (
-                <p className="text-sm text-gray-500 mb-8">
+                <p className="text-xs md:text-sm text-gray-500 mb-4 md:mb-8">
                   {steps[currentStep].helper}
                 </p>
               )}
@@ -893,7 +893,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             {/* Question Content */}
             {steps[currentStep].type === 'button-group' && (
               <div className="max-w-2xl mx-auto">
-                <div className="flex flex-col space-y-4">
+                <div className="flex flex-col space-y-2 md:space-y-4">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <button
                     key={index}
@@ -908,26 +908,76 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                         setCurrentStep(prev => prev + 1);
                       }, 300);
                     }}
-                    className={`w-full p-3 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg ${
+                    className={`w-full p-2 md:p-3 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg text-sm md:text-base ${
                       getAnswerForStep(steps[currentStep]) === option.value
                         ? 'border-clockwork-orange-500 bg-clockwork-orange-100'
                         : 'border-gray-300 bg-clockwork-orange-50'
                     }`}
                   >
-                    <span className="font-bold text-lg md:text-xl text-gray-900">{option.label}</span>
+                    <span className="font-bold text-sm md:text-base text-gray-900">{option.label}</span>
                   </button>
                 ))}
                 </div>
               </div>
             )}
 
+            {steps[currentStep].type === 'slider' && (
+              <div className="max-w-2xl mx-auto">
+                <div className="space-y-6">
+                  {/* Slider Value Display */}
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-clockwork-orange-500 mb-2">
+                      {steps[currentStep].formatValue ? 
+                        steps[currentStep].formatValue(quizData.annual_revenue) : 
+                        `$${quizData.annual_revenue.toLocaleString()}`
+                      }
+                    </div>
+                  </div>
+                  
+                  {/* Slider */}
+                  <div className="px-4">
+                    <input
+                      type="range"
+                      min={steps[currentStep].min || 50000}
+                      max={steps[currentStep].max || 50000000}
+                      step={getSliderStep(quizData.annual_revenue)}
+                      value={quizData.annual_revenue}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        setQuizData(prev => ({
+                          ...prev,
+                          annual_revenue: value
+                        }));
+                      }}
+                      className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                      style={{
+                        background: `linear-gradient(to right, #f97316 0%, #f97316 ${
+                          ((quizData.annual_revenue - (steps[currentStep].min || 50000)) / 
+                           ((steps[currentStep].max || 50000000) - (steps[currentStep].min || 50000))) * 100
+                        }%, #e5e7eb ${
+                          ((quizData.annual_revenue - (steps[currentStep].min || 50000)) / 
+                           ((steps[currentStep].max || 50000000) - (steps[currentStep].min || 50000))) * 100
+                        }%, #e5e7eb 100%)`
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Range Labels */}
+                  <div className="flex justify-between text-sm text-gray-500 px-4">
+                    <span>$50K</span>
+                    <span>$50M+</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {steps[currentStep].type === 'multi-select' && (
               <div className="max-w-2xl mx-auto">
-                <div className="flex flex-col space-y-4">
+                <div className="flex flex-col space-y-2 md:space-y-4">
                 {steps[currentStep].options?.map((option: any, index: number) => (
                   <label
                     key={index}
-                    className="w-full flex items-center justify-center p-3 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg transition-all duration-200 bg-clockwork-orange-50"
+                    className="w-full flex items-center justify-center p-2 md:p-3 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg transition-all duration-200 bg-clockwork-orange-50"
                   >
                     <input
                       type="checkbox"
@@ -945,279 +995,142 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                           }));
                         }
                       }}
-                      className="w-6 h-6 text-clockwork-orange-500 border-2 border-gray-300 rounded focus:ring-clockwork-orange-500 focus:ring-2 mr-4"
+                      className="sr-only"
                     />
-                    <span className="font-bold text-lg md:text-xl text-gray-900">{option.label}</span>
+                    <span className="font-bold text-sm md:text-base text-gray-900">{option.label}</span>
                   </label>
                 ))}
                 </div>
               </div>
             )}
 
-            {steps[currentStep].type === 'slider' && (
-              <div className="max-w-3xl mx-auto">
-                <div className="mb-8">
-                  <div className="text-center mb-6">
-                    <div className="text-6xl md:text-7xl font-bold text-clockwork-orange-500 mb-4">
-                      {formatSliderValue(quizData.annual_revenue)}
-                    </div>
-                  </div>
-                  
-                  <div className="relative">
-                    <input
-                      type="range"
-                      min={50000}
-                      max={50000000}
-                      step={50000}
-                      value={quizData.annual_revenue}
-                      onChange={(e) => {
-                        setQuizData(prev => ({
-                          ...prev,
-                          annual_revenue: parseInt(e.target.value)
-                        }));
-                      }}
-                      className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                    />
-                    
-                    <div className="flex justify-between text-sm text-gray-500 mt-2">
-                      <span>$50k</span>
-                      <span>$50M</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {steps[currentStep].type === 'input' && (
-              <div className="max-w-2xl mx-auto">
-                <div className="space-y-4">
-                  {steps[currentStep].id === 'email' ? (
-                    <div className="space-y-2">
-                      <input
-                        type={steps[currentStep].inputType}
-                        value={quizData[steps[currentStep].id as keyof typeof quizData] as string}
-                        onChange={(e) => {
-                          setQuizData(prev => ({ ...prev, [steps[currentStep].id]: e.target.value }));
-                          storeFormField(steps[currentStep].id, e.target.value);
-                          if (steps[currentStep].id === 'email') {
-                            handleEmailValidation(e.target.value);
-                          }
-                        }}
-                        placeholder={steps[currentStep].placeholder}
-                        className={`w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
-                          steps[currentStep].id === 'email' && emailValidation.valid === true 
-                            ? 'border-2 border-green-500' 
-                            : steps[currentStep].id === 'email' && emailValidation.valid === false 
-                            ? 'border-2 border-red-500' 
-                            : 'border-2 border-clockwork-orange-500'
-                        }`}
-                        required
-                      />
-                      
-                      {/* Email validation feedback */}
-                      {steps[currentStep].id === 'email' && emailValidation.valid === true && !emailValidation.loading && (
-                        <p className="text-sm text-green-600 text-center">
-                          ✓ Email is valid
-                        </p>
-                      )}
-                      
-                      {/* Email validation loading and errors */}
-                      {steps[currentStep].id === 'email' && emailValidation.loading && (
-                        <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
-                          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                          <span>Validating email...</span>
-                        </div>
-                      )}
-                      
-                      {steps[currentStep].id === 'email' && emailValidation.error && (
-                        <p className="text-sm text-red-600 text-center">
-                          {emailValidation.error}
-                        </p>
-                      )}
-                    </div>
-                  ) : steps[currentStep].id === 'phone' ? (
-                    <div className="space-y-2">
-                      <input
-                        type={steps[currentStep].inputType}
-                        value={quizData[steps[currentStep].id as keyof typeof quizData] as string}
-                        onChange={(e) => {
-                          setQuizData(prev => ({ ...prev, [steps[currentStep].id]: e.target.value }));
-                          storeFormField(steps[currentStep].id, e.target.value);
-                          handlePhoneValidation(e.target.value);
-                        }}
-                        placeholder={steps[currentStep].placeholder}
-                        className={`w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold ${
-                          phoneValidation.valid === true 
-                            ? 'border-2 border-green-500' 
-                            : phoneValidation.valid === false 
-                            ? 'border-2 border-red-500' 
-                            : 'border-2 border-clockwork-orange-500'
-                        }`}
-                        required
-                      />
-                      
-                      {/* Phone validation feedback */}
-                      {phoneValidation.valid === true && !phoneValidation.loading && (
-                        <p className="text-sm text-green-600 text-center">
-                          ✓ Phone number is valid
-                          {phoneValidation.phoneType && (
-                            <span className="ml-2 text-gray-500">({phoneValidation.phoneType})</span>
-                          )}
-                        </p>
-                      )}
-                      
-                      {/* Phone validation loading, errors, and OTP notice */}
-                      {phoneValidation.loading && (
-                        <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
-                          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                          <span>Validating phone number...</span>
-                        </div>
-                      )}
-                      
-                      {phoneValidation.error && (
-                        <p className="text-sm text-red-600 text-center">
-                          {phoneValidation.error}
-                        </p>
-                      )}
-                      
-                      {phoneValidation.status === 'needs_otp' && (
-                        <p className="text-sm text-orange-600 text-center">
-                          📱 This mobile number will require SMS verification
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <input
-                      type={steps[currentStep].inputType}
-                      value={quizData[steps[currentStep].id as keyof typeof quizData] as string}
-                      onChange={(e) => {
-                        setQuizData(prev => ({ ...prev, [steps[currentStep].id]: e.target.value }));
-                        storeFormField(steps[currentStep].id, e.target.value);
-                      }}
-                      placeholder={steps[currentStep].placeholder}
-                      className="w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
-                      required
-                    />
-                  )}
-                </div>
+              <div className="max-w-md mx-auto">
+                <input
+                  type={steps[currentStep].inputType || 'text'}
+                  value={
+                    steps[currentStep].id === 'business_zip' ? quizData.business_zip :
+                    steps[currentStep].id === 'business_name' ? quizData.business_name :
+                    steps[currentStep].id === 'email' ? quizData.email :
+                    steps[currentStep].id === 'phone' ? quizData.phone :
+                    ''
+                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (steps[currentStep].id === 'business_zip') {
+                      setQuizData(prev => ({ ...prev, business_zip: value }));
+                    } else if (steps[currentStep].id === 'business_name') {
+                      setQuizData(prev => ({ ...prev, business_name: value }));
+                    } else if (steps[currentStep].id === 'email') {
+                      setQuizData(prev => ({ ...prev, email: value }));
+                      // Trigger email validation
+                      handleEmailValidation(value);
+                    } else if (steps[currentStep].id === 'phone') {
+                      setQuizData(prev => ({ ...prev, phone: value }));
+                      // Trigger phone validation
+                      handlePhoneValidation(value);
+                    }
+                  }}
+                  placeholder={steps[currentStep].placeholder}
+                  className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
+                />
+                
+                {/* Email validation feedback */}
+                {steps[currentStep].id === 'email' && (
+                  <div className="mt-3">
+                    {emailValidation.loading && (
+                      <p className="text-blue-600 text-sm text-center">Validating email...</p>
+                    )}
+                    {emailValidation.valid === true && (
+                      <p className="text-green-600 text-sm text-center">✓ Email is valid</p>
+                    )}
+                    {emailValidation.valid === false && emailValidation.error && (
+                      <p className="text-red-600 text-sm text-center">{emailValidation.error}</p>
+                    )}
+                  </div>
+                )}
+                
+                {/* Phone validation feedback */}
+                {steps[currentStep].id === 'phone' && (
+                  <div className="mt-3">
+                    {phoneValidation.loading && (
+                      <p className="text-blue-600 text-sm text-center">Validating phone...</p>
+                    )}
+                    {phoneValidation.valid === true && (
+                      <p className="text-green-600 text-sm text-center">✓ Phone is valid</p>
+                    )}
+                    {phoneValidation.status === 'needs_otp' && (
+                      <p className="text-orange-600 text-sm text-center">Phone verification required</p>
+                    )}
+                    {phoneValidation.valid === false && phoneValidation.error && (
+                      <p className="text-red-600 text-sm text-center">{phoneValidation.error}</p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
             {steps[currentStep].type === 'name-fields' && (
-              <div className="max-w-2xl mx-auto">
-                <div className="space-y-4">
+              <div className="max-w-md mx-auto">
+                <div className="grid grid-cols-2 gap-4">
                   <input
                     type="text"
                     value={quizData.first_name}
-                    onChange={(e) => {
-                      setQuizData(prev => ({ ...prev, first_name: e.target.value }));
-                      storeFormField('first_name', e.target.value);
-                    }}
+                    onChange={(e) => setQuizData(prev => ({ ...prev, first_name: e.target.value }))}
                     placeholder="First Name"
-                    className="w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
-                    required
+                    className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
                   />
                   <input
                     type="text"
                     value={quizData.last_name}
-                    onChange={(e) => {
-                      setQuizData(prev => ({ ...prev, last_name: e.target.value }));
-                      storeFormField('last_name', e.target.value);
-                    }}
+                    onChange={(e) => setQuizData(prev => ({ ...prev, last_name: e.target.value }))}
                     placeholder="Last Name"
-                    className="w-full px-6 py-4 border-2 border-clockwork-orange-500 rounded-xl focus:ring-2 focus:ring-clockwork-orange-500 focus:border-transparent bg-white text-center text-lg font-semibold"
-                    required
+                    className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
                   />
                 </div>
               </div>
             )}
           </div>
-        ) : (
-          <></>
-        )}
-        
-        {/* Centered Next Button for Form Steps (steps 7-11) */}
-        {!showLoadingScreen && currentStep >= 7 && currentStep <= 11 && (
-          <div className="text-center mt-8">
-            {currentStep === 11 ? (
-              <button
-                onClick={handleNext}
-                disabled={!canProceed() || isSubmitting}
-                className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2 mx-auto"
-              >
-                {isSubmitting ? (
-                  'Submitting...'
-                ) : (
-                  'Get Qualified'
-                )}
-              </button>
-            ) : (
-              <button
-                onClick={handleNext}
-                disabled={!canProceed() || isSubmitting}
-                className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2 mx-auto"
-              >
-                Next
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            )}
-            
-            {/* TCPA content for phone step */}
-            {currentStep === 11 && (
-              <div className="mt-6 max-w-md mx-auto">
-                <p className="text-xs text-gray-600 leading-relaxed text-center">
-                  By clicking "Get Qualified", I am providing my informed consent to receive automated marketing calls/texts from or on behalf of Clockwork Funding and their partners at the number I provided. I understand this consent is optional. Msg & data rates may apply.
-                </p>
-              </div>
-            )}
+        ) : null}
+
+        {/* Navigation Buttons */}
+        {!showLoadingScreen && currentStep < steps.length && 
+         (steps[currentStep].type === 'slider' || 
+          steps[currentStep].type === 'input' || 
+          steps[currentStep].type === 'name-fields') && (
+          <div className={`mt-8 ${
+            steps[currentStep].type === 'input' || steps[currentStep].type === 'name-fields'
+              ? 'max-w-md mx-auto flex justify-between items-center'
+              : 'flex justify-between items-center'
+          }`}>
+            <button
+              onClick={handleBack}
+              disabled={currentStep === 0}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                currentStep === 0
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+              Back
+            </button>
+
+            <button
+              onClick={handleNext}
+              disabled={!canProceed()}
+              className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                canProceed()
+                  ? 'bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              {currentStep === steps.length - 1 ? 'Submit' : 'Next'}
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         )}
       </div>
-
-      {/* Footer */}
-      <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
-        <div className="flex items-center gap-4">
-          {(currentStep > 0 || showLoadingScreen) && (
-            <button
-              onClick={handleBack}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              disabled={showLoadingScreen && loadingProgress < 100}
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-          )}
-        </div>
-        
-        {!showLoadingScreen && currentStep === 3 && steps[currentStep].type === 'slider' && (
-          <button
-            onClick={handleNext}
-            disabled={!canProceed() || isSubmitting}
-            className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2"
-          >
-            Next
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-
-      {/* Phone Validation Popup */}
-      <PhoneValidationPopup
-        isOpen={showPhoneValidation}
-        phoneNumber={quizData.phone}
-        onConfirm={sendOTP}
-        onCancel={() => setShowPhoneValidation(false)}
-        loading={otpLoading}
-      />
-      
-      {/* OTP Modal */}
-      <OTPModal
-        isOpen={showOTPModal}
-        phoneNumber={quizData.phone}
-        onVerify={verifyOTP}
-        onResend={resendOTP}
-        onClose={() => setShowOTPModal(false)}
-        maxAttempts={3}
-      />
     </div>
   );
 };
