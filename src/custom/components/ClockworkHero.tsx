@@ -128,7 +128,7 @@ export const ClockworkHero: React.FC = () => {
             </div>
             <div className="text-left leading-relaxed">
               <p className="font-bold mb-1">Ask about our no-FICO, revenue-based financing option</p>
-              <p>available for high-performing companies!</p>
+              <p className="text-sm">available for high-performing companies!</p>
             </div>
           </div>
 
