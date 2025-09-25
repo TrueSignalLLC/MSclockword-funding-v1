@@ -12,7 +12,7 @@ export const Footer: React.FC = () => {
               <img 
                 src="/logo__2_-removebg-preview.png" 
                 alt="Clockwork Funding Logo" 
-                className="w-8 h-8"
+                className="w-[300px] h-[99px]"
               />
             </div>
             <p className="text-gray-400 leading-relaxed max-w-md text-sm">
