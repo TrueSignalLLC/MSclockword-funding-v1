@@ -23,7 +23,7 @@ export const FundingBenefits: React.FC<FundingBenefitsProps> = ({ onScrollToHero
           {/* Left Column - Content */}
           <div className="text-white">
             <h2 className="text-4xl md:text-5xl font-bold text-clockwork-blue-600 mb-8">
-              We've Provided Over $70 Million<br />
+              We've Provided Over $1 Billion<br />
               in Business Funding
             </h2>
             
