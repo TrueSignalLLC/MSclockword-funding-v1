@@ -486,10 +486,8 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       if (config.api.leadSubmit) {
         console.log('3. Starting fetch request...');
         
-        // Use proxy endpoint for development to avoid CORS issues
-        const endpoint = config.api.leadSubmit.includes('cryptochainitalia.app.n8n.cloud') 
-          ? '/api/webhook'
-          : config.api.leadSubmit;
+        // Use the webhook URL directly
+        const endpoint = config.api.leadSubmit;
         
         console.log('3a. Using endpoint:', endpoint);
         
