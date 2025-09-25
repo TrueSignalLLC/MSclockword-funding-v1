@@ -921,6 +921,56 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
               </div>
             )}
 
+            {steps[currentStep].type === 'slider' && (
+              <div className="max-w-2xl mx-auto">
+                <div className="space-y-6">
+                  {/* Slider Value Display */}
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-clockwork-orange-500 mb-2">
+                      {steps[currentStep].formatValue ? 
+                        steps[currentStep].formatValue(quizData.annual_revenue) : 
+                        `$${quizData.annual_revenue.toLocaleString()}`
+                      }
+                    </div>
+                  </div>
+                  
+                  {/* Slider */}
+                  <div className="px-4">
+                    <input
+                      type="range"
+                      min={steps[currentStep].min || 50000}
+                      max={steps[currentStep].max || 50000000}
+                      step={getSliderStep(quizData.annual_revenue)}
+                      value={quizData.annual_revenue}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        setQuizData(prev => ({
+                          ...prev,
+                          annual_revenue: value
+                        }));
+                      }}
+                      className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                      style={{
+                        background: `linear-gradient(to right, #f97316 0%, #f97316 ${
+                          ((quizData.annual_revenue - (steps[currentStep].min || 50000)) / 
+                           ((steps[currentStep].max || 50000000) - (steps[currentStep].min || 50000))) * 100
+                        }%, #e5e7eb ${
+                          ((quizData.annual_revenue - (steps[currentStep].min || 50000)) / 
+                           ((steps[currentStep].max || 50000000) - (steps[currentStep].min || 50000))) * 100
+                        }%, #e5e7eb 100%)`
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Range Labels */}
+                  <div className="flex justify-between text-sm text-gray-500 px-4">
+                    <span>$50K</span>
+                    <span>$50M+</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {steps[currentStep].type === 'multi-select' && (
               <div className="max-w-2xl mx-auto">
                 <div className="flex flex-col space-y-2 md:space-y-4">
