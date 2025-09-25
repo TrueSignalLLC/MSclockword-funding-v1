@@ -946,3 +946,4 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                         }
                       }}
                       className="
+                        sr-only
