@@ -945,5 +945,17 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                           }));
                         }
                       }}
-                      className="
-                      sr-only
+                      className="sr-only"
+                    />
+                    <span className="font-bold text-sm md:text-base text-gray-900">{option.label}</span>
+                  </label>
+                ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+};
