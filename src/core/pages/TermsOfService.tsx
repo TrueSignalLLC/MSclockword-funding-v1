@@ -105,9 +105,11 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
           <div className="flex items-center">
             <div className="flex items-center">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">CF</span>
-                </div>
+                <img 
+                  src="/logo__2_-removebg-preview.png" 
+                  alt="Clockwork Funding Logo" 
+                  className="w-8 h-8"
+                />
                 <span className="text-xl font-bold text-gray-900">Clockwork Funding</span>
               </div>
             </div>
