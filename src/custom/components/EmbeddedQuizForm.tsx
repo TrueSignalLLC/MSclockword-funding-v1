@@ -1031,14 +1031,18 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       const value = e.target.value;
                       if (steps[currentStep].id === 'business_zip') {
                         setQuizData(prev => ({ ...prev, business_zip: value }));
+                        storeFormField('business_zip', value);
                       } else if (steps[currentStep].id === 'business_name') {
                         setQuizData(prev => ({ ...prev, business_name: value }));
+                        storeFormField('business_name', value);
                       } else if (steps[currentStep].id === 'email') {
                         setQuizData(prev => ({ ...prev, email: value }));
+                        storeFormField('email', value);
                         // Trigger email validation
                         handleEmailValidation(value);
                       } else if (steps[currentStep].id === 'phone') {
                         setQuizData(prev => ({ ...prev, phone: value }));
+                        storeFormField('phone', value);
                         // Trigger phone validation
                         handlePhoneValidation(value);
                       }
@@ -1117,6 +1121,11 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     type="text"
                     value={quizData.first_name}
                     onChange={(e) => setQuizData(prev => ({ ...prev, first_name: e.target.value }))}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setQuizData(prev => ({ ...prev, first_name: value }));
+                      storeFormField('first_name', value);
+                    }}
                     placeholder="First Name"
                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-clockwork-orange-500 focus:outline-none transition-colors"
                   />
@@ -1124,6 +1133,11 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     type="text"
                     value={quizData.last_name}
                     onChange={(e) => setQuizData(prev => ({ ...prev, last_name: e.target.value }))}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setQuizData(prev => ({ ...prev, last_name: value }));
+                      storeFormField('last_name', value);
+                    }}
                     placeholder="Last Name"
                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-clockwork-orange-500 focus:outline-none transition-colors"
                   />
