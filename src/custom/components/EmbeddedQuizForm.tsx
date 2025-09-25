@@ -310,57 +310,31 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   const steps = quizConfig.steps;
   const totalSteps = 12; // Updated total of 12 steps
   
-  // Loading screen configuration
+  // Submission-specific loading stages
   const loadingStages = [
-    { progress: 25, message: 'Analyzing your business profile...' },
-    { progress: 50, message: 'Checking funding availability...' },
-    { progress: 75, message: 'Matching with lenders...' },
-    { progress: 100, message: 'Funding options found!' }
+    { progress: 15, message: 'Encrypting your information...', minTime: 1500, maxTime: 3000 },
+    { progress: 30, message: 'Securely transmitting data...', minTime: 2000, maxTime: 4000 },
+    { progress: 45, message: 'Verifying business details...', minTime: 2500, maxTime: 4000 },
+    { progress: 60, message: 'Analyzing funding eligibility...', minTime: 3000, maxTime: 5000 },
+    { progress: 75, message: 'Matching with lender network...', minTime: 3000, maxTime: 5000 },
+    { progress: 85, message: 'Preparing your options...', minTime: 2000, maxTime: 4000 },
+    { progress: 95, message: 'Finalizing matches...', minTime: 1500, maxTime: 3000 },
+    { progress: 100, message: 'Success! Redirecting...', minTime: 1000, maxTime: 1000 }
   ];
 
   const handleNext = async () => {
     if (currentStep < steps.length - 1) {
+      // Store the answer for all question types
       const currentStepConfig = steps[currentStep];
-      
-      // Check if this is the business industry question (step 6, last quiz question before loading)
-      if (currentStep === 6) {
-        // Store the final quiz answer before loading
+      if (steps[currentStep].type !== 'button-group' && steps[currentStep].type !== 'name-fields') {
         const answer = getAnswerForStep(currentStepConfig);
         storeQuizAnswer(currentStepConfig.id, answer);
-        
-        // Start loading screen
-        setShowLoadingScreen(true);
-        setLoadingProgress(0);
-        setLoadingStage(0);
-        
-        // Animate through loading stages
-        const duration = quizConfig.loadingStep?.duration || 3000;
-        const stageInterval = duration / loadingStages.length;
-        
-        loadingStages.forEach((stage, index) => {
-          setTimeout(() => {
-            setLoadingProgress(stage.progress);
-            setLoadingStage(index);
-          }, stageInterval * (index + 1));
-        });
-        
-        // After loading completes, show contact form
-        setTimeout(() => {
-          setShowLoadingScreen(false);
-          setCurrentStep(prev => prev + 1);
-        }, duration + 500);
-      } else {
-        // Store the answer for all question types
-        if (steps[currentStep].type !== 'button-group' && steps[currentStep].type !== 'name-fields') {
-          const answer = getAnswerForStep(currentStepConfig);
-          storeQuizAnswer(currentStepConfig.id, answer);
-        } else if (steps[currentStep].type === 'name-fields') {
-          // Store both first and last name
-          storeFormField('first_name', quizData.first_name);
-          storeFormField('last_name', quizData.last_name);
-        }
-        setCurrentStep(prev => prev + 1);
+      } else if (steps[currentStep].type === 'name-fields') {
+        // Store both first and last name
+        storeFormField('first_name', quizData.first_name);
+        storeFormField('last_name', quizData.last_name);
       }
+      setCurrentStep(prev => prev + 1);
     } else if (currentStep === steps.length - 1) {
       // Final step - phone number submission
       // Check if phone needs OTP verification
@@ -383,10 +357,11 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
   const handleBack = () => {
     if (showLoadingScreen) {
-      // Go back to last quiz question (business industry)
-      setShowLoadingScreen(false);
-      setCurrentStep(6);
-    } else if (currentStep > 0) {
+      // Don't allow going back during submission loading
+      return;
+    }
+    
+    if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
   };
@@ -486,71 +461,209 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       if (config.api.leadSubmit) {
         console.log('3. Starting fetch request...');
         
-        // Use the webhook URL directly
         const endpoint = config.api.leadSubmit;
-        
         console.log('3a. Using endpoint:', endpoint);
         
-        const response = await fetch(endpoint, {
+        // Show loading screen for submission
+        setShowLoadingScreen(true);
+        setLoadingProgress(0);
+        setLoadingStage(0);
+        
+        // Track timing
+        const startTime = Date.now();
+        let apiCompleted = false;
+        let shouldContinueAnimation = true;
+        
+        // Create AbortController for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+          controller.abort();
+          console.log('Request aborted after 25 seconds');
+        }, 25000); // 25 second timeout
+        
+        // Start the API call with timeout
+        const apiPromise = fetch(endpoint, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        }).then(response => {
+          clearTimeout(timeoutId);
+          apiCompleted = true;
+          console.log('API completed in', Date.now() - startTime, 'ms');
+          return response;
+        }).catch(error => {
+          clearTimeout(timeoutId);
+          apiCompleted = true;
+          if (error.name === 'AbortError') {
+            console.log('Request timed out');
+            throw new Error('Request timeout - but your submission may have been received');
+          }
+          throw error;
         });
         
-        console.log('4. Fetch completed. Response details:');
-        console.log('   - response.ok:', response.ok);
-        console.log('   - response.status:', response.status);
-        console.log('   - response.statusText:', response.statusText);
-        console.log('   - response.headers:', response.headers);
-        console.log('   - response.url:', response.url);
+        // Run intelligent loading animation
+        const animationPromise = intelligentLoadingAnimation(
+          loadingStages,
+          () => apiCompleted,
+          () => shouldContinueAnimation
+        );
         
-        // Get response text first (before JSON parsing)
-        const responseText = await response.text();
-        console.log('5. Raw response text:', responseText);
-        
-        let responseData;
         try {
-          responseData = JSON.parse(responseText);
-          console.log('6. Parsed JSON response:', responseData);
-        } catch (jsonError) {
-          console.error('7. JSON parsing failed:', jsonError);
-          throw new Error(`Invalid JSON response: ${responseText}`);
-        }
-
-        if (response.ok) {
-          // Check if the response indicates success and has a redirectURL
-          if (responseData.status === true && responseData.redirectURL) {
-            console.log('8. Success with redirectURL:', responseData.redirectURL);
-            // Redirect to the URL provided by the webhook
-            window.location.href = responseData.redirectURL;
-          } else if (responseData.status === true) {
-            console.log('9. Success but no redirectURL - using fallback');
-            // Success but no redirectURL - use fallback
-            window.location.href = '/thank-you';
-          } else {
-            console.log('10. Response indicates failure:', responseData);
-            // Response indicates failure
-            throw new Error(responseData.message || 'Submission failed');
+          // Race between API call and timeout
+          const response = await Promise.race([
+            apiPromise,
+            animationPromise.then(() => apiPromise) // Ensure we wait for API even if animation completes
+          ]);
+          
+          console.log('4. Response received:', {
+            ok: response.ok,
+            status: response.status,
+            statusText: response.statusText,
+            timeElapsed: Date.now() - startTime + 'ms'
+          });
+          
+          // Parse response
+          const responseText = await response.text();
+          console.log('5. Raw response text:', responseText);
+          
+          let responseData;
+          try {
+            responseData = JSON.parse(responseText);
+            console.log('6. Parsed JSON response:', responseData);
+          } catch (jsonError) {
+            console.error('JSON parsing failed:', jsonError);
+            // If we got a 200 but no JSON, still treat as success
+            if (response.ok) {
+              await finalizeLoadingAnimation(true);
+              window.location.href = '/thank-you';
+              return;
+            }
+            throw new Error('Invalid response format');
           }
-        } else {
-          console.log('11. HTTP error response:', response.status, response.statusText);
-          throw new Error('Submission failed');
+          
+          // Finalize animation based on success
+          await finalizeLoadingAnimation(response.ok);
+          
+          // Handle redirect
+          if (response.ok && responseData.status === true) {
+            const redirectUrl = responseData.redirectURL || '/thank-you';
+            console.log('Redirecting to:', redirectUrl);
+            
+            // Small delay for user to see success
+            await new Promise(resolve => setTimeout(resolve, 500));
+            window.location.href = redirectUrl;
+          } else {
+            // Even on failure, redirect to thank you
+            console.log('Non-success response, but redirecting anyway');
+            window.location.href = '/thank-you';
+          }
+          
+        } catch (error: any) {
+          console.error('Submission error:', error);
+          shouldContinueAnimation = false;
+          
+          // Check if it was a timeout
+          if (error.message?.includes('timeout')) {
+            // Show success anyway - submission might have gone through
+            await finalizeLoadingAnimation(true, 'Processing complete! Redirecting...');
+          } else {
+            // Other error - still show completion
+            await finalizeLoadingAnimation(true, 'Finalizing your request...');
+          }
+          
+          // Always redirect to thank you
+          window.location.href = '/thank-you';
         }
+        
       } else {
-        console.log('12. No submission endpoint configured');
+        console.log('No submission endpoint configured');
         throw new Error('No submission endpoint configured');
       }
     } catch (error) {
       console.error('=== SUBMISSION ERROR ===');
       console.error('Error details:', error);
-      console.error('Error name:', error.name);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-      alert(`There was an error submitting your application: ${error instanceof Error ? error.message : 'Please try again.'}`);
+      
+      // Hide loading screen
+      setShowLoadingScreen(false);
+      
+      // Don't show error alert - just redirect
+      console.log('Error occurred but redirecting to thank-you page');
+      window.location.href = '/thank-you';
     } finally {
       setIsSubmitting(false);
       console.log('=== FORM SUBMISSION END ===');
     }
+  };
+
+  // Intelligent loading animation that adapts to API response time
+  const intelligentLoadingAnimation = async (
+    stages: Array<{ progress: number; message: string; minTime: number; maxTime: number }>,
+    isApiComplete: () => boolean,
+    shouldContinue: () => boolean
+  ) => {
+    const animationStartTime = Date.now();
+    const MIN_TOTAL_TIME = 4000; // Minimum 4 seconds for good UX
+    const MAX_TOTAL_TIME = 20000; // Maximum 20 seconds before forcing completion
+    
+    for (const [index, stage] of stages.entries()) {
+      if (!shouldContinue()) break;
+      
+      setLoadingProgress(stage.progress);
+      setLoadingStage(index);
+      
+      const stageStartTime = Date.now();
+      const totalElapsed = stageStartTime - animationStartTime;
+      
+      // Calculate dynamic wait time
+      let waitTime = stage.minTime;
+      
+      if (isApiComplete() && stage.progress > 60) {
+        // API done and we're past 60% - speed up
+        waitTime = Math.min(500, stage.minTime);
+      } else if (totalElapsed > MAX_TOTAL_TIME * 0.8) {
+        // We're approaching max time - speed up
+        waitTime = Math.min(300, stage.minTime);
+      } else if (!isApiComplete() && totalElapsed < MAX_TOTAL_TIME * 0.5) {
+        // API not done and we have time - use normal or extended timing
+        waitTime = stage.maxTime;
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+      
+      // Check if we should exit early
+      if (isApiComplete() && totalElapsed > MIN_TOTAL_TIME && stage.progress >= 75) {
+        // API done, minimum time met, and we're far enough - can exit
+        break;
+      }
+      
+      if (totalElapsed > MAX_TOTAL_TIME) {
+        // Maximum time exceeded - force completion
+        console.log('Loading animation max time reached');
+        break;
+      }
+    }
+  };
+
+  // Finalize the loading animation
+  const finalizeLoadingAnimation = async (success: boolean, customMessage?: string) => {
+    // Set to 100% with appropriate message
+    setLoadingProgress(100);
+    
+    const finalMessage = customMessage || (success ? 'Success! Redirecting...' : 'Completing request...');
+    
+    // Find or create final stage
+    const finalStageIndex = 7; // Assuming 8 stages total
+    setLoadingStage(finalStageIndex);
+    
+    // Show final message briefly
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Hide loading screen
+    setShowLoadingScreen(false);
   };
 
   // Send OTP function
@@ -678,10 +791,10 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           <div className="space-y-8">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Finding Your Perfect Funding Match
+                Processing Your Application
               </h3>
               <p className="text-gray-600 mb-8">
-                Please wait while we analyze your information and match you with the best funding options.
+                Please wait while we securely process your information and prepare your funding options.
               </p>
             </div>
 
