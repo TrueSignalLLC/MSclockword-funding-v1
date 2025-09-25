@@ -1098,7 +1098,11 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
          (steps[currentStep].type === 'slider' || 
           steps[currentStep].type === 'input' || 
           steps[currentStep].type === 'name-fields') && (
-          <div className="flex justify-between items-center mt-8">
+          <div className={`mt-8 ${
+            steps[currentStep].type === 'input' || steps[currentStep].type === 'name-fields'
+              ? 'max-w-md mx-auto flex justify-between items-center'
+              : 'flex justify-between items-center'
+          }`}>
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
