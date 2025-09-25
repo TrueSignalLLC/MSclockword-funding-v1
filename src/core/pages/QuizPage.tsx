@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Settings, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { EmbeddedQuizForm } from '../../custom/components/EmbeddedQuizForm';
 import { ClockworkFAQ } from '../../custom/components/ClockworkFAQ';
 import { getSessionData } from '../utils/session';
@@ -31,26 +31,39 @@ export const QuizPage: React.FC = () => {
   const progressPercentage = Math.min(((currentStep + 1) / totalSteps) * 100, 100);
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      {/* Top Banner with Logo - Matching main page */}
+      <div className="bg-white shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-6 py-4">
-          {/* Single row with logo, progress bar, and advertising disclosure */}
           <div className="flex items-center justify-between">
-            {/* Logo - Left */}
             <div className="flex items-center gap-3">
               <img 
                 src="/logo__2_-removebg-preview.png" 
                 alt="Clockwork Funding Logo" 
-                className="w-8 h-8"
+                className="w-[126px] h-[42px] md:w-[240px] md:h-[79px]"
               />
-              <span className="text-xl font-bold text-clockwork-blue-600">Clockwork Funding</span>
             </div>
             
-            {/* Progress Bar - Center */}
-            <div className="flex-1 max-w-md mx-8">
+            <button
+              onClick={() => setShowAdvertisingDisclosure(true)}
+              className="text-sm text-gray-600 hover:text-clockwork-blue-600 underline transition-colors"
+            >
+              Advertising Disclosure
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Progress Bar Section */}
+      <div className="bg-white border-b">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <div className="flex items-center justify-center">
+            <div className="max-w-md w-full">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-gray-700">
                   Progress
+                </span>
+                <span className="text-sm font-medium text-gray-700">
+                  {Math.round(progressPercentage)}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
@@ -60,17 +73,9 @@ export const QuizPage: React.FC = () => {
                 />
               </div>
             </div>
-            
-            {/* Advertising Disclosure - Right */}
-            <button
-              onClick={() => setShowAdvertisingDisclosure(true)}
-              className="text-sm text-gray-600 hover:text-clockwork-blue-600 underline transition-colors"
-            >
-              Advertising Disclosure
-            </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
       <section className="py-4 md:py-12 min-h-screen md:min-h-0">
