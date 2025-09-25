@@ -35,13 +35,13 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
             {section.content.map((paragraph: string, pIndex: number) => (
               <p
                 key={pIndex}
-                className="text-gray-600 mb-2 last:mb-0" 
+                className="text-gray-600 mb-2 last:mb-0 [&_strong]:font-bold [&_strong]:text-gray-800 [&_a]:text-blue-600 [&_a]:hover:underline" 
                 dangerouslySetInnerHTML={{ __html: paragraph }}
               />
             ))}
             {section.outro && (
               <p 
-                className="text-gray-600 mt-4 whitespace-pre-line"
+                className="text-gray-600 mt-4 whitespace-pre-line [&_strong]:font-bold [&_strong]:text-gray-800 [&_a]:text-blue-600 [&_a]:hover:underline"
                 dangerouslySetInnerHTML={{ __html: section.outro }}
               />
             )}
@@ -55,18 +55,18 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
               {pageType === 'terms' && index > 0 ? `${index}. ` : ''}{section.title}
             </h2>
             {section.intro && (
-              <p className="text-gray-600 mb-4">{section.intro}</p>
+              <p className="text-gray-600 mb-4 [&_strong]:font-bold [&_strong]:text-gray-800">{section.intro}</p>
             )}
             <ul className="space-y-2">
               {section.content.map((item: string, itemIndex: number) => (
                 <li key={itemIndex} className="flex items-start">
                   <span className="text-blue-600 mr-2">•</span>
-                  <span className="text-gray-600">{item}</span>
+                  <span className="text-gray-600 [&_strong]:font-bold [&_strong]:text-gray-800">{item}</span>
                 </li>
               ))}
             </ul>
             {section.outro && (
-              <p className="text-gray-600 mt-4">{section.outro}</p>
+              <p className="text-gray-600 mt-4 [&_strong]:font-bold [&_strong]:text-gray-800">{section.outro}</p>
             )}
           </div>
         );
@@ -82,16 +82,16 @@ const LegalPage: React.FC<{ pageType: 'privacy' | 'terms' }> = ({ pageType }) =>
             </p>
             <div className="bg-gray-50 p-4 rounded-lg">
               {section.content.map((item: string, itemIndex: number) => (
-                <p 
-                  key={itemIndex} 
-                  className="text-gray-600"
+                <p
+                  key={itemIndex}
+                  className="text-gray-600 [&_strong]:font-bold [&_strong]:text-gray-800 [&_a]:text-blue-600 [&_a]:hover:underline"
                   dangerouslySetInnerHTML={{ __html: item }}
                 />
               ))}
             </div>
             {section.outro && (
               <p 
-                className="text-gray-600 mt-4 whitespace-pre-line"
+                className="text-gray-600 mt-4 whitespace-pre-line [&_strong]:font-bold [&_strong]:text-gray-800 [&_a]:text-blue-600 [&_a]:hover:underline"
                 dangerouslySetInnerHTML={{ __html: section.outro }}
               />
             )}
