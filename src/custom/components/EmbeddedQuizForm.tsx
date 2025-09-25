@@ -257,21 +257,27 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         
         const validationState = {
           loading: false,
-          valid: result.valid,
-          error: result.error,
+          valid: otpRequired ? false : result.valid, // Not valid until OTP verified if required
+          error: otpRequired ? null : result.error,
           status: actualStatus,
-          message: result.message || null,
+          message: otpRequired ? 'OTP verification required' : (result.message || null),
           phoneType: result.data?.phone_type || result.phoneType || null,
         };
         
         setPhoneValidation(validationState);
         
+        // Auto-open phone validation popup if OTP is required
+        if (actualStatus === 'needs_otp' || otpRequired) {
+          console.log('Phone requires OTP - opening validation popup automatically');
+          setShowPhoneValidation(true);
+        }
+        
         // Store validation result in session
         storeValidation('phone', {
-          valid: result.valid,
-          error: result.error,
+          valid: otpRequired ? false : result.valid,
+          error: otpRequired ? null : result.error,
           status: actualStatus,
-          message: result.message,
+          message: otpRequired ? 'OTP verification required' : result.message,
           phoneType: result.data?.phone_type || result.phoneType,
           otpRequired: otpRequired,
           phoneLocation: result.data?.phone_location,
@@ -279,12 +285,8 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           timestamp: new Date().toISOString()
         });
         
-        // Log for debugging
-        if (otpRequired) {
-          console.log('Phone requires OTP verification - will show popup on submit');
-          // Automatically open phone validation popup when OTP is required
-          setShowPhoneValidation(true);
-        }
+        console.log('Phone validation status:', actualStatus);
+        console.log('Show phone validation modal:', otpRequired);
         
       } catch (error) {
         console.error('Phone validation error:', error);
@@ -323,6 +325,14 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   ];
 
   const handleNext = async () => {
+    // Debug logging for phone step
+    if (currentStep === steps.length - 1) {
+      console.log('Phone step - validation status:', phoneValidation.status);
+      console.log('Phone step - valid:', phoneValidation.valid);
+      console.log('Phone step - showPhoneValidation:', showPhoneValidation);
+      console.log('Phone step - showOTPModal:', showOTPModal);
+    }
+    
     if (currentStep < steps.length - 1) {
       // Store the answer for all question types
       const currentStepConfig = steps[currentStep];
@@ -337,9 +347,10 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       setCurrentStep(prev => prev + 1);
     } else if (currentStep === steps.length - 1) {
       // Final step - phone number submission
-      // Check if phone needs OTP verification
-      if (phoneValidation.status === 'needs_otp') {
-        setShowPhoneValidation(true);
+      // Check if phone needs OTP verification but popup isn't open
+      if (phoneValidation.status === 'needs_otp' && !phoneValidation.valid) {
+        // OTP modal should already be open automatically, just return
+        console.log('Phone needs OTP but not yet verified - waiting for verification');
         return;
       }
       
@@ -425,7 +436,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     } else if (currentStep === 11) {
       // Phone - requires validation
       return quizData.phone.trim() !== '' &&
-             (phoneValidation.valid === true || phoneValidation.status === 'needs_otp') &&
+             phoneValidation.valid === true &&
              !phoneValidation.loading &&
              !showPhoneValidation &&
              !showOTPModal;
@@ -1061,7 +1072,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                         <p className="text-green-600 text-sm text-center">✓ Phone is valid</p>
                       )}
                       {phoneValidation.status === 'needs_otp' && (
-                        <p className="text-orange-600 text-sm text-center">Phone verification required</p>
+                        <p className="text-orange-600 text-sm text-center">✓ Phone verification in progress...</p>
                       )}
                       {phoneValidation.valid === false && phoneValidation.error && (
                         <p className="text-red-600 text-sm text-center">{phoneValidation.error}</p>
@@ -1175,6 +1186,25 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           </div>
         )}
       </div>
+      
+      {/* Phone Validation Popup */}
+      <PhoneValidationPopup
+        isOpen={showPhoneValidation}
+        phoneNumber={quizData.phone}
+        onConfirm={sendOTP}
+        onCancel={() => setShowPhoneValidation(false)}
+        loading={otpLoading}
+      />
+      
+      {/* OTP Modal */}
+      <OTPModal
+        isOpen={showOTPModal}
+        phoneNumber={quizData.phone}
+        onVerify={verifyOTP}
+        onResend={resendOTP}
+        onClose={() => setShowOTPModal(false)}
+        maxAttempts={3}
+      />
     </div>
   );
 };
