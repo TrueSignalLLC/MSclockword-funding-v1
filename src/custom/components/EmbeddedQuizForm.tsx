@@ -1007,7 +1007,10 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         ) : null}
 
         {/* Navigation Buttons */}
-        {!showLoadingScreen && currentStep < steps.length && (
+        {!showLoadingScreen && currentStep < steps.length && 
+         (steps[currentStep].type === 'slider' || 
+          steps[currentStep].type === 'input' || 
+          steps[currentStep].type === 'name-fields') && (
           <div className="flex justify-between items-center mt-8">
             <button
               onClick={handleBack}
