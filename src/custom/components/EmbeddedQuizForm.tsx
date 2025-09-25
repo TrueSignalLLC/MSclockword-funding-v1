@@ -1003,6 +1003,93 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                 </div>
               </div>
             )}
+
+            {steps[currentStep].type === 'input' && (
+              <div className="max-w-md mx-auto">
+                <input
+                  type={steps[currentStep].inputType || 'text'}
+                  value={
+                    steps[currentStep].id === 'business_zip' ? quizData.business_zip :
+                    steps[currentStep].id === 'business_name' ? quizData.business_name :
+                    steps[currentStep].id === 'email' ? quizData.email :
+                    steps[currentStep].id === 'phone' ? quizData.phone :
+                    ''
+                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (steps[currentStep].id === 'business_zip') {
+                      setQuizData(prev => ({ ...prev, business_zip: value }));
+                    } else if (steps[currentStep].id === 'business_name') {
+                      setQuizData(prev => ({ ...prev, business_name: value }));
+                    } else if (steps[currentStep].id === 'email') {
+                      setQuizData(prev => ({ ...prev, email: value }));
+                      // Trigger email validation
+                      handleEmailValidation(value);
+                    } else if (steps[currentStep].id === 'phone') {
+                      setQuizData(prev => ({ ...prev, phone: value }));
+                      // Trigger phone validation
+                      handlePhoneValidation(value);
+                    }
+                  }}
+                  placeholder={steps[currentStep].placeholder}
+                  className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
+                />
+                
+                {/* Email validation feedback */}
+                {steps[currentStep].id === 'email' && (
+                  <div className="mt-3">
+                    {emailValidation.loading && (
+                      <p className="text-blue-600 text-sm text-center">Validating email...</p>
+                    )}
+                    {emailValidation.valid === true && (
+                      <p className="text-green-600 text-sm text-center">✓ Email is valid</p>
+                    )}
+                    {emailValidation.valid === false && emailValidation.error && (
+                      <p className="text-red-600 text-sm text-center">{emailValidation.error}</p>
+                    )}
+                  </div>
+                )}
+                
+                {/* Phone validation feedback */}
+                {steps[currentStep].id === 'phone' && (
+                  <div className="mt-3">
+                    {phoneValidation.loading && (
+                      <p className="text-blue-600 text-sm text-center">Validating phone...</p>
+                    )}
+                    {phoneValidation.valid === true && (
+                      <p className="text-green-600 text-sm text-center">✓ Phone is valid</p>
+                    )}
+                    {phoneValidation.status === 'needs_otp' && (
+                      <p className="text-orange-600 text-sm text-center">Phone verification required</p>
+                    )}
+                    {phoneValidation.valid === false && phoneValidation.error && (
+                      <p className="text-red-600 text-sm text-center">{phoneValidation.error}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {steps[currentStep].type === 'name-fields' && (
+              <div className="max-w-md mx-auto">
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    value={quizData.first_name}
+                    onChange={(e) => setQuizData(prev => ({ ...prev, first_name: e.target.value }))}
+                    placeholder="First Name"
+                    className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
+                  />
+                  <input
+                    type="text"
+                    value={quizData.last_name}
+                    onChange={(e) => setQuizData(prev => ({ ...prev, last_name: e.target.value }))}
+                    placeholder="Last Name"
+                    className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         ) : null}
 
