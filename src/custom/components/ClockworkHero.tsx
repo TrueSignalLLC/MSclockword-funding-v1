@@ -134,7 +134,7 @@ export const ClockworkHero: React.FC = () => {
 
           {/* Disclaimer */}
           <div className="max-w-3xl mx-auto mt-12">
-            <p className="text-sm text-gray-600 italic leading-relaxed">
+            <p className="hidden md:block text-sm text-gray-600 italic leading-relaxed">
               <strong>Note:</strong> Funding terms, approval amounts, and interest rates vary based on your credit
               profile, business structure, and timing of application. All funding estimates are based on
               current lender data and may be adjusted as new offers or documentation become
