@@ -257,21 +257,27 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         
         const validationState = {
           loading: false,
-          valid: result.valid,
-          error: result.error,
+          valid: otpRequired ? false : result.valid, // Not valid until OTP verified if required
+          error: otpRequired ? null : result.error,
           status: actualStatus,
-          message: result.message || null,
+          message: otpRequired ? 'OTP verification required' : (result.message || null),
           phoneType: result.data?.phone_type || result.phoneType || null,
         };
         
         setPhoneValidation(validationState);
         
+        // Auto-open phone validation popup if OTP is required
+        if (actualStatus === 'needs_otp' || otpRequired) {
+          console.log('Phone requires OTP - opening validation popup automatically');
+          setShowPhoneValidation(true);
+        }
+        
         // Store validation result in session
         storeValidation('phone', {
-          valid: result.valid,
-          error: result.error,
+          valid: otpRequired ? false : result.valid,
+          error: otpRequired ? null : result.error,
           status: actualStatus,
-          message: result.message,
+          message: otpRequired ? 'OTP verification required' : result.message,
           phoneType: result.data?.phone_type || result.phoneType,
           otpRequired: otpRequired,
           phoneLocation: result.data?.phone_location,
@@ -279,12 +285,8 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           timestamp: new Date().toISOString()
         });
         
-        // Log for debugging
-        if (otpRequired) {
-          console.log('Phone requires OTP verification - will show popup on submit');
-          // Automatically open phone validation popup when OTP is required
-          setShowPhoneValidation(true);
-        }
+        console.log('Phone validation status:', actualStatus);
+        console.log('Show phone validation modal:', otpRequired);
         
       } catch (error) {
         console.error('Phone validation error:', error);
@@ -323,6 +325,14 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   ];
 
   const handleNext = async () => {
+    // Debug logging for phone step
+    if (currentStep === steps.length - 1) {
+      console.log('Phone step - validation status:', phoneValidation.status);
+      console.log('Phone step - valid:', phoneValidation.valid);
+      console.log('Phone step - showPhoneValidation:', showPhoneValidation);
+      console.log('Phone step - showOTPModal:', showOTPModal);
+    }
+    
     if (currentStep < steps.length - 1) {
       // Store the answer for all question types
       const currentStepConfig = steps[currentStep];
@@ -337,9 +347,10 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       setCurrentStep(prev => prev + 1);
     } else if (currentStep === steps.length - 1) {
       // Final step - phone number submission
-      // Check if phone needs OTP verification
-      if (phoneValidation.status === 'needs_otp') {
-        setShowPhoneValidation(true);
+      // Check if phone needs OTP verification but popup isn't open
+      if (phoneValidation.status === 'needs_otp' && !phoneValidation.valid) {
+        // OTP modal should already be open automatically, just return
+        console.log('Phone needs OTP but not yet verified - waiting for verification');
         return;
       }
       
@@ -425,7 +436,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     } else if (currentStep === 11) {
       // Phone - requires validation
       return quizData.phone.trim() !== '' &&
-             (phoneValidation.valid === true || phoneValidation.status === 'needs_otp') &&
+             phoneValidation.valid === true &&
              !phoneValidation.loading &&
              !showPhoneValidation &&
              !showOTPModal;
@@ -1005,88 +1016,137 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             )}
 
             {steps[currentStep].type === 'input' && (
-              <div className="max-w-md mx-auto">
-                <input
-                  type={steps[currentStep].inputType || 'text'}
-                  value={
-                    steps[currentStep].id === 'business_zip' ? quizData.business_zip :
-                    steps[currentStep].id === 'business_name' ? quizData.business_name :
-                    steps[currentStep].id === 'email' ? quizData.email :
-                    steps[currentStep].id === 'phone' ? quizData.phone :
-                    ''
-                  }
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (steps[currentStep].id === 'business_zip') {
-                      setQuizData(prev => ({ ...prev, business_zip: value }));
-                    } else if (steps[currentStep].id === 'business_name') {
-                      setQuizData(prev => ({ ...prev, business_name: value }));
-                    } else if (steps[currentStep].id === 'email') {
-                      setQuizData(prev => ({ ...prev, email: value }));
-                      // Trigger email validation
-                      handleEmailValidation(value);
-                    } else if (steps[currentStep].id === 'phone') {
-                      setQuizData(prev => ({ ...prev, phone: value }));
-                      // Trigger phone validation
-                      handlePhoneValidation(value);
+              <div className="space-y-6">
+                <div className="max-w-md mx-auto">
+                  <input
+                    type={steps[currentStep].inputType || 'text'}
+                    value={
+                      steps[currentStep].id === 'business_zip' ? quizData.business_zip :
+                      steps[currentStep].id === 'business_name' ? quizData.business_name :
+                      steps[currentStep].id === 'email' ? quizData.email :
+                      steps[currentStep].id === 'phone' ? quizData.phone :
+                      ''
                     }
-                  }}
-                  placeholder={steps[currentStep].placeholder}
-                  className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
-                />
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (steps[currentStep].id === 'business_zip') {
+                        setQuizData(prev => ({ ...prev, business_zip: value }));
+                      } else if (steps[currentStep].id === 'business_name') {
+                        setQuizData(prev => ({ ...prev, business_name: value }));
+                      } else if (steps[currentStep].id === 'email') {
+                        setQuizData(prev => ({ ...prev, email: value }));
+                        // Trigger email validation
+                        handleEmailValidation(value);
+                      } else if (steps[currentStep].id === 'phone') {
+                        setQuizData(prev => ({ ...prev, phone: value }));
+                        // Trigger phone validation
+                        handlePhoneValidation(value);
+                      }
+                    }}
+                    placeholder={steps[currentStep].placeholder}
+                    className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
+                  />
+                  
+                  {/* Email validation feedback */}
+                  {steps[currentStep].id === 'email' && (
+                    <div className="mt-3">
+                      {emailValidation.loading && (
+                        <p className="text-blue-600 text-sm text-center">Validating email...</p>
+                      )}
+                      {emailValidation.valid === true && (
+                        <p className="text-green-600 text-sm text-center">✓ Email is valid</p>
+                      )}
+                      {emailValidation.valid === false && emailValidation.error && (
+                        <p className="text-red-600 text-sm text-center">{emailValidation.error}</p>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Phone validation feedback */}
+                  {steps[currentStep].id === 'phone' && (
+                    <div className="mt-3">
+                      {phoneValidation.loading && (
+                        <p className="text-blue-600 text-sm text-center">Validating phone...</p>
+                      )}
+                      {phoneValidation.valid === true && (
+                        <p className="text-green-600 text-sm text-center">✓ Phone is valid</p>
+                      )}
+                      {phoneValidation.status === 'needs_otp' && (
+                        <p className="text-orange-600 text-sm text-center">✓ Phone verification in progress...</p>
+                      )}
+                      {phoneValidation.valid === false && phoneValidation.error && (
+                        <p className="text-red-600 text-sm text-center">{phoneValidation.error}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
                 
-                {/* Email validation feedback */}
-                {steps[currentStep].id === 'email' && (
-                  <div className="mt-3">
-                    {emailValidation.loading && (
-                      <p className="text-blue-600 text-sm text-center">Validating email...</p>
-                    )}
-                    {emailValidation.valid === true && (
-                      <p className="text-green-600 text-sm text-center">✓ Email is valid</p>
-                    )}
-                    {emailValidation.valid === false && emailValidation.error && (
-                      <p className="text-red-600 text-sm text-center">{emailValidation.error}</p>
-                    )}
-                  </div>
-                )}
+                {/* Centered navigation buttons */}
+                <div className="flex items-center justify-center gap-4">
+                  <button 
+                    onClick={handleBack}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    aria-label="Go back"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  
+                  <button
+                    onClick={handleNext}
+                    disabled={!canProceed()}
+                    className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
                 
-                {/* Phone validation feedback */}
+                {/* TCPA text for phone input */}
                 {steps[currentStep].id === 'phone' && (
-                  <div className="mt-3">
-                    {phoneValidation.loading && (
-                      <p className="text-blue-600 text-sm text-center">Validating phone...</p>
-                    )}
-                    {phoneValidation.valid === true && (
-                      <p className="text-green-600 text-sm text-center">✓ Phone is valid</p>
-                    )}
-                    {phoneValidation.status === 'needs_otp' && (
-                      <p className="text-orange-600 text-sm text-center">Phone verification required</p>
-                    )}
-                    {phoneValidation.valid === false && phoneValidation.error && (
-                      <p className="text-red-600 text-sm text-center">{phoneValidation.error}</p>
-                    )}
+                  <div className="max-w-md mx-auto text-center text-xs text-gray-500 mt-4">
+                    {quizConfig.submission.consent.text}
                   </div>
                 )}
               </div>
             )}
 
             {steps[currentStep].type === 'name-fields' && (
-              <div className="max-w-md mx-auto">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-6">
+                <div className="space-y-4 max-w-md mx-auto">
                   <input
                     type="text"
                     value={quizData.first_name}
                     onChange={(e) => setQuizData(prev => ({ ...prev, first_name: e.target.value }))}
                     placeholder="First Name"
-                    className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-clockwork-orange-500 focus:outline-none transition-colors"
                   />
                   <input
                     type="text"
                     value={quizData.last_name}
                     onChange={(e) => setQuizData(prev => ({ ...prev, last_name: e.target.value }))}
                     placeholder="Last Name"
-                    className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-clockwork-orange-500 focus:outline-none transition-colors"
                   />
+                </div>
+                
+                {/* Centered navigation buttons */}
+                <div className="flex items-center justify-center gap-4">
+                  <button 
+                    onClick={handleBack}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    aria-label="Go back"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  
+                  <button
+                    onClick={handleNext}
+                    disabled={!canProceed()}
+                    className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             )}
@@ -1094,15 +1154,10 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         ) : null}
 
         {/* Navigation Buttons */}
-        {!showLoadingScreen && currentStep < steps.length && 
+        {!showLoadingScreen && currentStep <= 6 && currentStep < steps.length && 
          (steps[currentStep].type === 'slider' || 
-          steps[currentStep].type === 'input' || 
-          steps[currentStep].type === 'name-fields') && (
-          <div className={`mt-8 ${
-            steps[currentStep].type === 'input' || steps[currentStep].type === 'name-fields'
-              ? 'max-w-md mx-auto flex justify-between items-center'
-              : 'flex justify-between items-center'
-          }`}>
+          steps[currentStep].type === 'multi-select') && (
+          <div className="mt-8 flex justify-between items-center">
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
@@ -1111,9 +1166,9 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                   ? 'text-gray-400 cursor-not-allowed'
                   : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
               }`}
+              aria-label="Go back"
             >
               <ChevronLeft className="w-5 h-5" />
-              Back
             </button>
 
             <button
@@ -1125,12 +1180,31 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {currentStep === steps.length - 1 ? 'Submit' : 'Next'}
+              Next
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         )}
       </div>
+      
+      {/* Phone Validation Popup */}
+      <PhoneValidationPopup
+        isOpen={showPhoneValidation}
+        phoneNumber={quizData.phone}
+        onConfirm={sendOTP}
+        onCancel={() => setShowPhoneValidation(false)}
+        loading={otpLoading}
+      />
+      
+      {/* OTP Modal */}
+      <OTPModal
+        isOpen={showOTPModal}
+        phoneNumber={quizData.phone}
+        onVerify={verifyOTP}
+        onResend={resendOTP}
+        onClose={() => setShowOTPModal(false)}
+        maxAttempts={3}
+      />
     </div>
   );
 };
