@@ -9,9 +9,11 @@ export const Footer: React.FC = () => {
           {/* Left side - Company info */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-clockwork-orange-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">CF</span>
-              </div>
+              <img 
+                src="/logo__2_-removebg-preview.png" 
+                alt="Clockwork Funding Logo" 
+                className="w-8 h-8"
+              />
               <span className="text-2xl font-bold text-white">Clockwork Funding</span>
             </div>
             <p className="text-gray-400 leading-relaxed max-w-md text-sm">
