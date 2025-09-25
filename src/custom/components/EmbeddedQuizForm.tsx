@@ -1085,7 +1085,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     disabled={!canProceed()}
                     className="bg-clockwork-orange-500 hover:bg-clockwork-orange-600 disabled:bg-gray-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2"
                   >
-                    Next
+                    Get My Funding Options
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
