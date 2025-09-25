@@ -31,7 +31,7 @@ export const ClockworkHero: React.FC = () => {
               <img 
                 src="/logo__2_-removebg-preview.png" 
                 alt="Clockwork Funding Logo" 
-                className="w-[300px] h-[99px]"
+                className="w-[240px] h-[79px]"
               />
             </div>
             
