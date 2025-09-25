@@ -3,7 +3,7 @@ import { Mail } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-100 text-gray-700 py-12">
+    <footer className="bg-orange-100 text-gray-700 py-12">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Left side - Company info */}
