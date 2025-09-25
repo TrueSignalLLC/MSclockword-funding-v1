@@ -122,7 +122,7 @@ export const ClockworkHero: React.FC = () => {
           </div>
 
           {/* Moved checkmark section below quiz on mobile */}
-          <div className="flex items-start gap-3 text-base md:text-lg text-gray-800 mb-8 order-4 md:hidden px-4">
+          <div className="flex items-center gap-3 text-base md:text-lg text-gray-800 mb-8 order-4 md:hidden px-4">
             <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg mt-1">
               <span className="text-white text-xs font-bold">✓</span>
             </div>
