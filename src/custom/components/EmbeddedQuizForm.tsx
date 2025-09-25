@@ -1005,6 +1005,37 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             )}
           </div>
         ) : null}
+
+        {/* Navigation Buttons */}
+        {!showLoadingScreen && currentStep < steps.length && (
+          <div className="flex justify-between items-center mt-8">
+            <button
+              onClick={handleBack}
+              disabled={currentStep === 0}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                currentStep === 0
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+              Back
+            </button>
+
+            <button
+              onClick={handleNext}
+              disabled={!canProceed()}
+              className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                canProceed()
+                  ? 'bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              {currentStep === steps.length - 1 ? 'Submit' : 'Next'}
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
