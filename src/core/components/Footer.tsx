@@ -14,7 +14,6 @@ export const Footer: React.FC = () => {
                 alt="Clockwork Funding Logo" 
                 className="w-8 h-8"
               />
-              <span className="text-2xl font-bold text-white">Clockwork Funding</span>
             </div>
             <p className="text-gray-400 leading-relaxed max-w-md text-sm">
               Your trusted partner for comprehensive business funding solutions. 
