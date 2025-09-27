@@ -24,17 +24,27 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   const [otpAttempts, setOtpAttempts] = useState(0);
   const [otpLoading, setOtpLoading] = useState(false);
   const [tcpaConsent, setTcpaConsent] = useState(false);
-  
+
+  // Zip validation state
+  const [zipValidation, setZipValidation] = useState({
+    loading: false,
+    valid: null as boolean | null,
+    error: null as string | null
+  });
+
+  // Debounce timeout ref for zip validation
+  const zipValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Email validation state
   const [emailValidation, setEmailValidation] = useState({
     loading: false,
     valid: null as boolean | null,
     error: null as string | null
   });
-  
+
   // Debounce timeout ref for email validation
   const emailValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Phone validation state
   const [phoneValidation, setPhoneValidation] = useState({
     loading: false,
@@ -44,10 +54,10 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     message: null as string | null,
     phoneType: null as string | null,
   });
-  
+
   // Debounce timeout ref for phone validation
   const phoneValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   const [quizData, setQuizData] = useState({
     funding_amount: initialAnswers?.funding_amount || '',
     company_type: '',
@@ -73,13 +83,13 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   // Load session data on mount
   useEffect(() => {
     const sessionData = getSessionData();
-    
+
     // Merge initial answers with session data, giving priority to initialAnswers
     const mergedAnswers = {
       ...sessionData.quiz_answers,
       ...initialAnswers
     };
-    
+
     if (mergedAnswers.funding_amount) {
       setQuizData(prev => ({
         ...prev,
@@ -92,7 +102,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         business_industry: mergedAnswers.business_industry || ''
       }));
     }
-    
+
     // If we have initial answers (coming from home page), start from step 1
     if (initialAnswers?.funding_amount) {
       setCurrentStep(1);
@@ -104,13 +114,103 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   useEffect(() => {
     onStepChange?.(currentStep);
   }, [currentStep, onStepChange]);
+
+  // Zip validation handler with debouncing
+  const handleZipValidation = async (zip: string) => {
+    // Clear existing timeout
+    if (zipValidationTimeoutRef.current) {
+      clearTimeout(zipValidationTimeoutRef.current);
+    }
+
+    // If zip is empty, reset validation state
+    if (!zip.trim()) {
+      setZipValidation({
+        loading: false,
+        valid: null,
+        error: null,
+      });
+      return;
+    }
+
+    // Set loading state immediately
+    setZipValidation((prev) => ({
+      ...prev,
+      loading: true,
+      error: null,
+    }));
+
+    // Debounce the validation call
+    zipValidationTimeoutRef.current = setTimeout(async () => {
+      try {
+        const sessionData = getSessionData();
+
+        // Find zip field configuration from quiz config
+        const zipFieldConfig = quizConfig.submission.fields.find(
+          (field) => field.id === "business_zip"
+        );
+
+        if (!zipFieldConfig) {
+          setZipValidation({
+            loading: false,
+            valid: false,
+            error: "Zip validation not configured",
+          });
+          return;
+        }
+
+        // Create a step-like object for validation
+        const zipStep = {
+          id: "zip",
+          type: "zip" as const,
+          validation: {
+            required: true,
+            apiEndpoint: config.api.zipValidation,
+          },
+        };
+
+        // Pass zip in body as { zip: "value" }
+        const result = await validateField(zipStep, zip, sessionData);
+
+        const validationState = {
+          loading: false,
+          valid: result.valid,
+          error: result.error,
+        };
+
+        setZipValidation(validationState);
+
+        // Store validation result in session
+        storeValidation("zip", {
+          valid: result.valid,
+          error: result.error,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (error) {
+        console.error("Zip validation error:", error);
+        const errorState = {
+          loading: false,
+          valid: false,
+          error: "Validation failed. Please try again.",
+        };
+        setZipValidation(errorState);
+
+        storeValidation("zip", {
+          valid: false,
+          error: "Validation failed",
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }, 800); // 800ms debounce delay
+  };
+
+
   // Email validation handler with debouncing
   const handleEmailValidation = async (email: string) => {
     // Clear existing timeout
     if (emailValidationTimeoutRef.current) {
       clearTimeout(emailValidationTimeoutRef.current);
     }
-    
+
     // If email is empty, reset validation state
     if (!email.trim()) {
       setEmailValidation({
@@ -120,22 +220,22 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       });
       return;
     }
-    
+
     // Set loading state immediately
     setEmailValidation(prev => ({
       ...prev,
       loading: true,
       error: null
     }));
-    
+
     // Debounce the validation call
     emailValidationTimeoutRef.current = setTimeout(async () => {
       try {
         const sessionData = getSessionData();
-        
+
         // Find email field configuration from quiz config
         const emailFieldConfig = quizConfig.submission.fields.find(field => field.id === 'email');
-        
+
         if (!emailFieldConfig) {
           setEmailValidation({
             loading: false,
@@ -144,7 +244,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           });
           return;
         }
-        
+
         // Create a step-like object for validation
         const emailStep = {
           id: 'email',
@@ -154,24 +254,24 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             apiEndpoint: config.api.emailValidation
           }
         };
-        
+
         const result = await validateField(emailStep, email, sessionData);
-        
+
         const validationState = {
           loading: false,
           valid: result.valid,
           error: result.error
         };
-        
+
         setEmailValidation(validationState);
-        
+
         // Store validation result in session
         storeValidation('email', {
           valid: result.valid,
           error: result.error,
           timestamp: new Date().toISOString()
         });
-        
+
       } catch (error) {
         console.error('Email validation error:', error);
         const errorState = {
@@ -180,7 +280,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           error: 'Validation failed. Please try again.'
         };
         setEmailValidation(errorState);
-        
+
         storeValidation('email', {
           valid: false,
           error: 'Validation failed',
@@ -196,7 +296,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     if (phoneValidationTimeoutRef.current) {
       clearTimeout(phoneValidationTimeoutRef.current);
     }
-    
+
     // If phone is empty, reset validation state
     if (!phone.trim()) {
       setPhoneValidation({
@@ -209,7 +309,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       });
       return;
     }
-    
+
     // Set loading state immediately
     setPhoneValidation(prev => ({
       ...prev,
@@ -218,15 +318,15 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       status: null,
       message: null,
     }));
-    
+
     // Debounce the validation call
     phoneValidationTimeoutRef.current = setTimeout(async () => {
       try {
         const sessionData = getSessionData();
-        
+
         // Find phone field configuration from quiz config
         const phoneFieldConfig = quizConfig.submission.fields.find(field => field.id === 'phone');
-        
+
         if (!phoneFieldConfig) {
           setPhoneValidation({
             loading: false,
@@ -238,7 +338,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           });
           return;
         }
-        
+
         // Create a step-like object for validation
         const phoneStep = {
           id: 'phone',
@@ -248,13 +348,13 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             apiEndpoint: config.api.phoneValidation
           }
         };
-        
+
         const result = await validateField(phoneStep, phone, sessionData);
-        
+
         // Check if OTP is required from the API response
         const otpRequired = result.data?.otp_required === true;
         const actualStatus = otpRequired ? 'needs_otp' : (result.valid ? 'valid' : 'invalid');
-        
+
         const validationState = {
           loading: false,
           valid: otpRequired ? false : result.valid, // Not valid until OTP verified if required
@@ -263,15 +363,14 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           message: otpRequired ? 'OTP verification required' : (result.message || null),
           phoneType: result.data?.phone_type || result.phoneType || null,
         };
-        
+
         setPhoneValidation(validationState);
-        
+
         // Auto-open phone validation popup if OTP is required
         if (actualStatus === 'needs_otp' || otpRequired) {
-          console.log('Phone requires OTP - opening validation popup automatically');
           setShowPhoneValidation(true);
         }
-        
+
         // Store validation result in session
         storeValidation('phone', {
           valid: otpRequired ? false : result.valid,
@@ -284,10 +383,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           validationDate: result.data?.validation_date,
           timestamp: new Date().toISOString()
         });
-        
-        console.log('Phone validation status:', actualStatus);
-        console.log('Show phone validation modal:', otpRequired);
-        
+
       } catch (error) {
         console.error('Phone validation error:', error);
         const errorState = {
@@ -299,7 +395,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           phoneType: null,
         };
         setPhoneValidation(errorState);
-        
+
         storeValidation('phone', {
           valid: false,
           error: 'Validation failed',
@@ -311,7 +407,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
   const steps = quizConfig.steps;
   const totalSteps = 12; // Updated total of 12 steps
-  
+
   // Submission-specific loading stages
   const loadingStages = [
     { progress: 15, message: 'Encrypting your information...', minTime: 1500, maxTime: 3000 },
@@ -326,13 +422,16 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
   const handleNext = async () => {
     // Debug logging for phone step
+
+    /*
     if (currentStep === steps.length - 1) {
       console.log('Phone step - validation status:', phoneValidation.status);
       console.log('Phone step - valid:', phoneValidation.valid);
       console.log('Phone step - showPhoneValidation:', showPhoneValidation);
       console.log('Phone step - showOTPModal:', showOTPModal);
     }
-    
+    */
+
     if (currentStep < steps.length - 1) {
       // Store the answer for all question types
       const currentStepConfig = steps[currentStep];
@@ -350,10 +449,9 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       // Check if phone needs OTP verification but popup isn't open
       if (phoneValidation.status === 'needs_otp' && !phoneValidation.valid) {
         // OTP modal should already be open automatically, just return
-        console.log('Phone needs OTP but not yet verified - waiting for verification');
         return;
       }
-      
+
       // If phone is valid or doesn't need OTP, proceed with submission
       if (phoneValidation.valid === true) {
         await handleSubmit();
@@ -371,7 +469,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       // Don't allow going back during submission loading
       return;
     }
-    
+
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
@@ -412,16 +510,16 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     if (showLoadingScreen) {
       return false; // No proceeding during loading
     }
-    
+
     if (currentStep <= 6) {
       // Original quiz questions (steps 0-6)
       const currentStepConfig = steps[currentStep];
       const answer = getAnswerForStep(currentStepConfig);
-      
+
       return answer !== '' && answer !== null && answer !== undefined;
     } else if (currentStep === 7) {
       // Business ZIP - no validation required
-      return quizData.business_zip.trim() !== '';
+      return quizData.business_zip.trim() !== '' && zipValidation.valid === true && !zipValidation.loading;
     } else if (currentStep === 8) {
       // Business name - no validation required
       return quizData.business_name.trim() !== '';
@@ -430,16 +528,16 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       return quizData.first_name.trim() !== '' && quizData.last_name.trim() !== '';
     } else if (currentStep === 10) {
       // Email - requires validation
-      return quizData.email.trim() !== '' && 
-             emailValidation.valid === true &&
-             !emailValidation.loading;
+      return quizData.email.trim() !== '' &&
+        emailValidation.valid === true &&
+        !emailValidation.loading;
     } else if (currentStep === 11) {
       // Phone - requires validation
       return quizData.phone.trim() !== '' &&
-             phoneValidation.valid === true &&
-             !phoneValidation.loading &&
-             !showPhoneValidation &&
-             !showOTPModal;
+        phoneValidation.valid === true &&
+        !phoneValidation.loading &&
+        !showPhoneValidation &&
+        !showOTPModal;
     } else {
       return false;
     }
@@ -447,16 +545,13 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    
     try {
-      console.log('=== FORM SUBMISSION DEBUG ===');
-      
       // Get compliance data
       const complianceData = getCompliancePayload();
-      
+
       // Get TCPA consent text from quiz config
       const tcpaText = quizConfig.submission.consent.text;
-      
+
       // Prepare final payload
       const payload = {
         ...getFinalSubmissionPayload(),
@@ -464,38 +559,32 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         tcpa_text: tcpaText,
         consent: true
       };
-      
-      console.log('1. Payload prepared:', payload);
-      console.log('2. Webhook endpoint:', config.api.leadSubmit);
 
       // Submit to webhook
       if (config.api.leadSubmit) {
-        console.log('3. Starting fetch request...');
-        
+
         const endpoint = config.api.leadSubmit;
-        console.log('3a. Using endpoint:', endpoint);
-        
+
         // Show loading screen for submission
         setShowLoadingScreen(true);
         setLoadingProgress(0);
         setLoadingStage(0);
-        
+
         // Track timing
         const startTime = Date.now();
         let apiCompleted = false;
         let shouldContinueAnimation = true;
-        
+
         // Create AbortController for timeout
         const controller = new AbortController();
         const timeoutId = setTimeout(() => {
           controller.abort();
-          console.log('Request aborted after 25 seconds');
         }, 25000); // 25 second timeout
-        
+
         // Start the API call with timeout
         const apiPromise = fetch(endpoint, {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
@@ -504,47 +593,36 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         }).then(response => {
           clearTimeout(timeoutId);
           apiCompleted = true;
-          console.log('API completed in', Date.now() - startTime, 'ms');
           return response;
         }).catch(error => {
           clearTimeout(timeoutId);
           apiCompleted = true;
           if (error.name === 'AbortError') {
-            console.log('Request timed out');
             throw new Error('Request timeout - but your submission may have been received');
           }
           throw error;
         });
-        
+
         // Run intelligent loading animation
         const animationPromise = intelligentLoadingAnimation(
           loadingStages,
           () => apiCompleted,
           () => shouldContinueAnimation
         );
-        
+
         try {
           // Race between API call and timeout
           const response = await Promise.race([
             apiPromise,
             animationPromise.then(() => apiPromise) // Ensure we wait for API even if animation completes
           ]);
-          
-          console.log('4. Response received:', {
-            ok: response.ok,
-            status: response.status,
-            statusText: response.statusText,
-            timeElapsed: Date.now() - startTime + 'ms'
-          });
-          
+
           // Parse response
           const responseText = await response.text();
-          console.log('5. Raw response text:', responseText);
-          
+
           let responseData;
           try {
             responseData = JSON.parse(responseText);
-            console.log('6. Parsed JSON response:', responseData);
           } catch (jsonError) {
             console.error('JSON parsing failed:', jsonError);
             // If we got a 200 but no JSON, still treat as success
@@ -555,28 +633,26 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             }
             throw new Error('Invalid response format');
           }
-          
+
           // Finalize animation based on success
           await finalizeLoadingAnimation(response.ok);
-          
+
           // Handle redirect
           if (response.ok && responseData.status === true) {
             const redirectUrl = responseData.redirectURL || '/thank-you';
-            console.log('Redirecting to:', redirectUrl);
-            
+
             // Small delay for user to see success
             await new Promise(resolve => setTimeout(resolve, 500));
             window.location.href = redirectUrl;
           } else {
             // Even on failure, redirect to thank you
-            console.log('Non-success response, but redirecting anyway');
             window.location.href = '/thank-you';
           }
-          
+
         } catch (error: any) {
           console.error('Submission error:', error);
           shouldContinueAnimation = false;
-          
+
           // Check if it was a timeout
           if (error.message?.includes('timeout')) {
             // Show success anyway - submission might have gone through
@@ -585,28 +661,25 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             // Other error - still show completion
             await finalizeLoadingAnimation(true, 'Finalizing your request...');
           }
-          
+
           // Always redirect to thank you
           window.location.href = '/thank-you';
         }
-        
+
       } else {
-        console.log('No submission endpoint configured');
         throw new Error('No submission endpoint configured');
       }
     } catch (error) {
       console.error('=== SUBMISSION ERROR ===');
       console.error('Error details:', error);
-      
+
       // Hide loading screen
       setShowLoadingScreen(false);
-      
+
       // Don't show error alert - just redirect
-      console.log('Error occurred but redirecting to thank-you page');
       window.location.href = '/thank-you';
     } finally {
       setIsSubmitting(false);
-      console.log('=== FORM SUBMISSION END ===');
     }
   };
 
@@ -619,19 +692,19 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
     const animationStartTime = Date.now();
     const MIN_TOTAL_TIME = 4000; // Minimum 4 seconds for good UX
     const MAX_TOTAL_TIME = 20000; // Maximum 20 seconds before forcing completion
-    
+
     for (const [index, stage] of stages.entries()) {
       if (!shouldContinue()) break;
-      
+
       setLoadingProgress(stage.progress);
       setLoadingStage(index);
-      
+
       const stageStartTime = Date.now();
       const totalElapsed = stageStartTime - animationStartTime;
-      
+
       // Calculate dynamic wait time
       let waitTime = stage.minTime;
-      
+
       if (isApiComplete() && stage.progress > 60) {
         // API done and we're past 60% - speed up
         waitTime = Math.min(500, stage.minTime);
@@ -642,18 +715,17 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         // API not done and we have time - use normal or extended timing
         waitTime = stage.maxTime;
       }
-      
+
       await new Promise(resolve => setTimeout(resolve, waitTime));
-      
+
       // Check if we should exit early
       if (isApiComplete() && totalElapsed > MIN_TOTAL_TIME && stage.progress >= 75) {
         // API done, minimum time met, and we're far enough - can exit
         break;
       }
-      
+
       if (totalElapsed > MAX_TOTAL_TIME) {
         // Maximum time exceeded - force completion
-        console.log('Loading animation max time reached');
         break;
       }
     }
@@ -663,16 +735,16 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
   const finalizeLoadingAnimation = async (success: boolean, customMessage?: string) => {
     // Set to 100% with appropriate message
     setLoadingProgress(100);
-    
+
     const finalMessage = customMessage || (success ? 'Success! Redirecting...' : 'Completing request...');
-    
+
     // Find or create final stage
     const finalStageIndex = 7; // Assuming 8 stages total
     setLoadingStage(finalStageIndex);
-    
+
     // Show final message briefly
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     // Hide loading screen
     setShowLoadingScreen(false);
   };
@@ -684,32 +756,32 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       if (!config.api.sendOTP) {
         throw new Error('OTP endpoint not configured');
       }
-      
+
       const response = await fetch(config.api.sendOTP, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           phone: quizData.phone,
           ...getSessionData()
         })
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to send OTP');
       }
-      
+
       // Close phone validation popup and open OTP modal
       setShowPhoneValidation(false);
       setShowOTPModal(true);
       setOtpAttempts(0);
-      
+
       // Update phone validation status
       setPhoneValidation(prev => ({
         ...prev,
         status: 'otp_sent',
         message: 'OTP sent successfully'
       }));
-      
+
     } catch (error) {
       console.error('Send OTP error:', error);
       alert('Failed to send OTP. Please try again.');
@@ -717,26 +789,26 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
       setOtpLoading(false);
     }
   };
-  
+
   // Verify OTP function
   const verifyOTP = async (code: string): Promise<{ success: boolean; message?: string }> => {
     try {
       if (!config.api.verifyOTP) {
         throw new Error('OTP verification endpoint not configured');
       }
-      
+
       const response = await fetch(config.api.verifyOTP, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           phone: quizData.phone,
           code: code,
           ...getSessionData()
         })
       });
-      
+
       const result = await response.json();
-      
+
       if (response.ok && result.success) {
         // Update phone validation to valid
         setPhoneValidation(prev => ({
@@ -745,7 +817,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           status: 'valid',
           message: 'Phone verified successfully'
         }));
-        
+
         // Store validation result
         storeValidation('phone', {
           valid: true,
@@ -753,27 +825,27 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
           message: 'Phone verified successfully',
           timestamp: new Date().toISOString()
         });
-        
+
         // Close OTP modal
         setShowOTPModal(false);
-        
+
         return { success: true };
       } else {
-        return { 
-          success: false, 
-          message: result.message || 'Invalid verification code' 
+        return {
+          success: false,
+          message: result.message || 'Invalid verification code'
         };
       }
-      
+
     } catch (error) {
       console.error('Verify OTP error:', error);
-      return { 
-        success: false, 
-        message: 'Verification failed. Please try again.' 
+      return {
+        success: false,
+        message: 'Verification failed. Please try again.'
       };
     }
   };
-  
+
   // Resend OTP function
   const resendOTP = async (): Promise<void> => {
     await sendOTP();
@@ -816,12 +888,12 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                 <div className="w-24 h-24 border-4 border-gray-200 rounded-full animate-spin-slow">
                   <div className="absolute top-0 left-0 w-full h-full border-4 border-transparent border-t-clockwork-orange-500 rounded-full animate-spin"></div>
                 </div>
-                
+
                 {/* Inner spinning ring */}
                 <div className="absolute top-3 left-3 w-18 h-18 border-4 border-gray-100 rounded-full animate-spin-reverse-slow">
                   <div className="absolute top-0 left-0 w-full h-full border-4 border-transparent border-t-clockwork-blue-600 rounded-full animate-spin"></div>
                 </div>
-                
+
                 {/* Center dot */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-clockwork-orange-500 rounded-full"></div>
               </div>
@@ -853,20 +925,18 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
               {loadingStages.map((stage, index) => (
                 <div
                   key={index}
-                  className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ${
-                    index <= loadingStage
-                      ? 'bg-green-50 border border-green-200'
-                      : 'bg-gray-50 border border-gray-200'
-                  }`}
+                  className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ${index <= loadingStage
+                    ? 'bg-green-50 border border-green-200'
+                    : 'bg-gray-50 border border-gray-200'
+                    }`}
                 >
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
-                      index < loadingStage
-                        ? 'bg-green-500 text-white'
-                        : index === loadingStage
+                    className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${index < loadingStage
+                      ? 'bg-green-500 text-white'
+                      : index === loadingStage
                         ? 'bg-clockwork-orange-500 text-white animate-pulse'
                         : 'bg-gray-300 text-gray-500'
-                    }`}
+                      }`}
                   >
                     {index < loadingStage ? (
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -877,9 +947,8 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     )}
                   </div>
                   <span
-                    className={`text-sm font-medium transition-all duration-300 ${
-                      index <= loadingStage ? 'text-gray-800' : 'text-gray-500'
-                    }`}
+                    className={`text-sm font-medium transition-all duration-300 ${index <= loadingStage ? 'text-gray-800' : 'text-gray-500'
+                      }`}
                   >
                     {stage.message}
                   </span>
@@ -905,29 +974,28 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             {steps[currentStep].type === 'button-group' && (
               <div className="max-w-2xl mx-auto">
                 <div className="flex flex-col space-y-2 md:space-y-4">
-                {steps[currentStep].options?.map((option: any, index: number) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      setQuizData(prev => ({
-                        ...prev,
-                        [steps[currentStep].id]: option.value
-                      }));
-                      // Store the answer immediately and auto-advance
-                      storeQuizAnswer(steps[currentStep].id, option.value);
-                      setTimeout(() => {
-                        setCurrentStep(prev => prev + 1);
-                      }, 300);
-                    }}
-                    className={`w-full p-2 md:p-3 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg text-sm md:text-base ${
-                      getAnswerForStep(steps[currentStep]) === option.value
+                  {steps[currentStep].options?.map((option: any, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setQuizData(prev => ({
+                          ...prev,
+                          [steps[currentStep].id]: option.value
+                        }));
+                        // Store the answer immediately and auto-advance
+                        storeQuizAnswer(steps[currentStep].id, option.value);
+                        setTimeout(() => {
+                          setCurrentStep(prev => prev + 1);
+                        }, 300);
+                      }}
+                      className={`w-full p-2 md:p-3 border-2 rounded-xl text-center transition-all duration-200 hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg text-sm md:text-base ${getAnswerForStep(steps[currentStep]) === option.value
                         ? 'border-clockwork-orange-500 bg-clockwork-orange-100'
                         : 'border-gray-300 bg-clockwork-orange-50'
-                    }`}
-                  >
-                    <span className="font-bold text-sm md:text-base text-gray-900">{option.label}</span>
-                  </button>
-                ))}
+                        }`}
+                    >
+                      <span className="font-bold text-sm md:text-base text-gray-900">{option.label}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
@@ -938,13 +1006,13 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                   {/* Slider Value Display */}
                   <div className="text-center">
                     <div className="text-4xl font-bold text-clockwork-orange-500 mb-2">
-                      {steps[currentStep].formatValue ? 
-                        steps[currentStep].formatValue(quizData.annual_revenue) : 
+                      {steps[currentStep].formatValue ?
+                        steps[currentStep].formatValue(quizData.annual_revenue) :
                         `$${quizData.annual_revenue.toLocaleString()}`
                       }
                     </div>
                   </div>
-                  
+
                   {/* Slider */}
                   <div className="px-4">
                     <input
@@ -962,17 +1030,15 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       }}
                       className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                       style={{
-                        background: `linear-gradient(to right, #f97316 0%, #f97316 ${
-                          ((quizData.annual_revenue - (steps[currentStep].min || 50000)) / 
-                           ((steps[currentStep].max || 50000000) - (steps[currentStep].min || 50000))) * 100
-                        }%, #e5e7eb ${
-                          ((quizData.annual_revenue - (steps[currentStep].min || 50000)) / 
-                           ((steps[currentStep].max || 50000000) - (steps[currentStep].min || 50000))) * 100
-                        }%, #e5e7eb 100%)`
+                        background: `linear-gradient(to right, #f97316 0%, #f97316 ${((quizData.annual_revenue - (steps[currentStep].min || 50000)) /
+                          ((steps[currentStep].max || 50000000) - (steps[currentStep].min || 50000))) * 100
+                          }%, #e5e7eb ${((quizData.annual_revenue - (steps[currentStep].min || 50000)) /
+                            ((steps[currentStep].max || 50000000) - (steps[currentStep].min || 50000))) * 100
+                          }%, #e5e7eb 100%)`
                       }}
                     />
                   </div>
-                  
+
                   {/* Range Labels */}
                   <div className="flex justify-between text-sm text-gray-500 px-4">
                     <span>$50K</span>
@@ -985,32 +1051,32 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
             {steps[currentStep].type === 'multi-select' && (
               <div className="max-w-2xl mx-auto">
                 <div className="flex flex-col space-y-2 md:space-y-4">
-                {steps[currentStep].options?.map((option: any, index: number) => (
-                  <label
-                    key={index}
-                    className="w-full flex items-center justify-center p-2 md:p-3 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg transition-all duration-200 bg-clockwork-orange-50"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={quizData.financing_purpose.includes(option.value)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setQuizData(prev => ({
-                            ...prev,
-                            financing_purpose: [...prev.financing_purpose, option.value]
-                          }));
-                        } else {
-                          setQuizData(prev => ({
-                            ...prev,
-                            financing_purpose: prev.financing_purpose.filter(p => p !== option.value)
-                          }));
-                        }
-                      }}
-                      className="sr-only"
-                    />
-                    <span className="font-bold text-sm md:text-base text-gray-900">{option.label}</span>
-                  </label>
-                ))}
+                  {steps[currentStep].options?.map((option: any, index: number) => (
+                    <label
+                      key={index}
+                      className="w-full flex items-center justify-center p-2 md:p-3 border-2 rounded-xl cursor-pointer hover:border-clockwork-orange-500 hover:bg-clockwork-orange-200 hover:shadow-lg transition-all duration-200 bg-clockwork-orange-50"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={quizData.financing_purpose.includes(option.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setQuizData(prev => ({
+                              ...prev,
+                              financing_purpose: [...prev.financing_purpose, option.value]
+                            }));
+                          } else {
+                            setQuizData(prev => ({
+                              ...prev,
+                              financing_purpose: prev.financing_purpose.filter(p => p !== option.value)
+                            }));
+                          }
+                        }}
+                        className="sr-only"
+                      />
+                      <span className="font-bold text-sm md:text-base text-gray-900">{option.label}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
             )}
@@ -1022,16 +1088,18 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     type={steps[currentStep].inputType || 'text'}
                     value={
                       steps[currentStep].id === 'business_zip' ? quizData.business_zip :
-                      steps[currentStep].id === 'business_name' ? quizData.business_name :
-                      steps[currentStep].id === 'email' ? quizData.email :
-                      steps[currentStep].id === 'phone' ? quizData.phone :
-                      ''
+                        steps[currentStep].id === 'business_name' ? quizData.business_name :
+                          steps[currentStep].id === 'email' ? quizData.email :
+                            steps[currentStep].id === 'phone' ? quizData.phone :
+                              ''
                     }
                     onChange={(e) => {
                       const value = e.target.value;
                       if (steps[currentStep].id === 'business_zip') {
                         setQuizData(prev => ({ ...prev, business_zip: value }));
                         storeFormField('business_zip', value);
+
+                        handleZipValidation(value);
                       } else if (steps[currentStep].id === 'business_name') {
                         setQuizData(prev => ({ ...prev, business_name: value }));
                         storeFormField('business_name', value);
@@ -1050,7 +1118,22 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     placeholder={steps[currentStep].placeholder}
                     className="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-semibold bg-white focus:border-clockwork-orange-500 focus:ring-2 focus:ring-clockwork-orange-500 focus:outline-none"
                   />
-                  
+
+                  {/* Zip Code validation feedback */}
+                  {steps[currentStep].id === 'business_zip' && (
+                    <div className="mt-3">
+                      {zipValidation.loading && (
+                        <p className="text-blue-600 text-sm text-center">Validating ZIP code...</p>
+                      )}
+                      {zipValidation.valid === true && (
+                        <p className="text-green-600 text-sm text-center">✓ ZIP code is valid</p>
+                      )}
+                      {zipValidation.valid === false && zipValidation.error && (
+                        <p className="text-red-600 text-sm text-center">{zipValidation.error}</p>
+                      )}
+                    </div>
+                  )}
+
                   {/* Email validation feedback */}
                   {steps[currentStep].id === 'email' && (
                     <div className="mt-3">
@@ -1065,7 +1148,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                       )}
                     </div>
                   )}
-                  
+
                   {/* Phone validation feedback */}
                   {steps[currentStep].id === 'phone' && (
                     <div className="mt-3">
@@ -1084,17 +1167,17 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     </div>
                   )}
                 </div>
-                
+
                 {/* Centered navigation buttons */}
                 <div className="flex items-center justify-center gap-4">
-                  <button 
+                  <button
                     onClick={handleBack}
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                     aria-label="Go back"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
-                  
+
                   <button
                     onClick={handleNext}
                     disabled={!canProceed()}
@@ -1104,7 +1187,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
-                
+
                 {/* TCPA text for phone input */}
                 {steps[currentStep].id === 'phone' && (
                   <div className="max-w-md mx-auto text-center text-xs text-gray-500 mt-4">
@@ -1142,17 +1225,17 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-clockwork-orange-500 focus:outline-none transition-colors"
                   />
                 </div>
-                
+
                 {/* Centered navigation buttons */}
                 <div className="flex items-center justify-center gap-4">
-                  <button 
+                  <button
                     onClick={handleBack}
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                     aria-label="Go back"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
-                  
+
                   <button
                     onClick={handleNext}
                     disabled={!canProceed()}
@@ -1168,39 +1251,37 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         ) : null}
 
         {/* Navigation Buttons */}
-        {!showLoadingScreen && currentStep <= 6 && currentStep < steps.length && 
-         (steps[currentStep].type === 'slider' || 
-          steps[currentStep].type === 'multi-select') && (
-          <div className="mt-8 flex justify-between items-center">
-            <button
-              onClick={handleBack}
-              disabled={currentStep === 0}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                currentStep === 0
+        {!showLoadingScreen && currentStep <= 6 && currentStep < steps.length &&
+          (steps[currentStep].type === 'slider' ||
+            steps[currentStep].type === 'multi-select') && (
+            <div className="mt-8 flex justify-between items-center">
+              <button
+                onClick={handleBack}
+                disabled={currentStep === 0}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${currentStep === 0
                   ? 'text-gray-400 cursor-not-allowed'
                   : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-              }`}
-              aria-label="Go back"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
+                  }`}
+                aria-label="Go back"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
 
-            <button
-              onClick={handleNext}
-              disabled={!canProceed()}
-              className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                canProceed()
+              <button
+                onClick={handleNext}
+                disabled={!canProceed()}
+                className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all duration-200 ${canProceed()
                   ? 'bg-clockwork-orange-500 hover:bg-clockwork-orange-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              Next
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        )}
+                  }`}
+              >
+                Next
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
       </div>
-      
+
       {/* Phone Validation Popup */}
       <PhoneValidationPopup
         isOpen={showPhoneValidation}
@@ -1209,7 +1290,7 @@ export const EmbeddedQuizForm: React.FC<EmbeddedQuizFormProps> = ({ initialAnswe
         onCancel={() => setShowPhoneValidation(false)}
         loading={otpLoading}
       />
-      
+
       {/* OTP Modal */}
       <OTPModal
         isOpen={showOTPModal}

@@ -33,7 +33,6 @@ export const Contact: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission here
-    console.log('Contact form submitted:', formData);
     // You can add your form submission logic here
   };
 

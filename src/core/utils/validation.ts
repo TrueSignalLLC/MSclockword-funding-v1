@@ -89,12 +89,10 @@ export const validateField = async (step: any, value: any, sessionData: any) => 
       
       clearTimeout(timeout);
       const data = await response.json();
-      console.log('Raw API response:', data);
       
       // Handle new response format for validation endpoints
       if (step.id === 'zip' || step.id === 'email' || step.id === 'phone') {
-        console.log('Raw API response:', data);
-        
+      
         // Handle both response structures
         // Some endpoints return {status: "valid"} at root
         // Others return {data: {status: "valid"}}
@@ -108,7 +106,6 @@ export const validateField = async (step: any, value: any, sessionData: any) => 
             data: data.data || data, // Use nested data if available
             ...data
           };
-          console.log('Validation result for', step.id, ':', result);
           return result;
         } else if (status === 'invalid') {
           const result = {
@@ -117,7 +114,6 @@ export const validateField = async (step: any, value: any, sessionData: any) => 
             data: data.data || null,
             ...data
           };
-          console.log('Validation result for', step.id, ':', result);
           return result;
         } else {
           // No valid status found
@@ -127,7 +123,6 @@ export const validateField = async (step: any, value: any, sessionData: any) => 
             data: null,
             ...data
           };
-          console.log('Validation result for', step.id, ':', result);
           return result;
         }
       } else {

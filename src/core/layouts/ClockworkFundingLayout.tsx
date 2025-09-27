@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { ClockworkFAQ } from '../../custom/components/ClockworkFAQ';
 import { ClockworkHero } from '../../custom/components/ClockworkHero';
 import { FundingBenefits } from '../../custom/components/FundingBenefits';
+import { FundWhatOthersWont } from '../../custom/components/FundWhatOthersWont';
+import { NoHiddenFeesMiddlemen } from '../../custom/components/NoHiddenFeesMiddlemen';
 import { OurApproach } from '../../custom/components/OurApproach';
 import { ProcessSection } from '../../custom/components/ProcessSection';
-import { OurProcess } from '../../custom/components/OurProcess';
 import { UltraFlexibleFunding } from '../../custom/components/UltraFlexibleFunding';
-import { NoHiddenFeesMiddlemen } from '../../custom/components/NoHiddenFeesMiddlemen';
-import { FundWhatOthersWont } from '../../custom/components/FundWhatOthersWont';
-import { NoHiddenFees } from '../../custom/components/NoHiddenFees';
-import { ClockworkFAQ } from '../../custom/components/ClockworkFAQ';
-import { Footer } from '../components/Footer';
 import { ComplianceScripts } from '../components/ComplianceScripts';
+import { Footer } from '../components/Footer';
 
 export const ClockworkFundingLayout: React.FC = () => {
 
