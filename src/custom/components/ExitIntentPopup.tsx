@@ -24,34 +24,39 @@ export const ExitIntentPopup: React.FC = () => {
     };
 
     useEffect(() => {
-        // === DESKTOP: mouse leave ===
+        // === DESKTOP: detect mouse leaving the viewport ===
         const handleMouseLeave = (event: MouseEvent) => {
             if (event.clientY <= 0 && !popupAlreadyShown) {
-                setShowExitPopup(true);
-                popupAlreadyShown = true;
+                setShowExitPopup(true); // show the exit-intent popup
+                popupAlreadyShown = true; // mark that popup has been shown
             }
         };
-        document.addEventListener('mouseleave', handleMouseLeave);
+        document.addEventListener("mouseleave", handleMouseLeave);
 
-        // === MOBILE: back button / popstate ===
+        // === MOBILE: detect back button / popstate event ===
         const handlePopState = () => {
             if (!popupAlreadyShown) {
-                setShowExitPopup(true);
+                setShowExitPopup(true); // show the popup on first back attempt
                 popupAlreadyShown = true;
-                // Let's immediately put a fake state back so the user stays on the same page
-                window.history.pushState(null, '', window.location.href);
+                // immediately push a fake state so the user stays on the same page
+                window.history.pushState({ exitIntent: true }, "", window.location.href);
+            } else {
+                // if popup was already shown, allow normal back navigation
+                window.history.back();
             }
         };
 
-        // Aggiungiamo uno stato fittizio all'inizio
-        window.history.pushState(null, '', window.location.href);
-        window.addEventListener('popstate', handlePopState);
+        // Push a fake history state on page load to intercept the first back button
+        window.history.pushState({ exitIntent: true }, "", window.location.href);
+        window.addEventListener("popstate", handlePopState);
 
         return () => {
-            document.removeEventListener('mouseleave', handleMouseLeave);
-            window.removeEventListener('popstate', handlePopState);
+            // cleanup event listeners on component unmount
+            document.removeEventListener("mouseleave", handleMouseLeave);
+            window.removeEventListener("popstate", handlePopState);
         };
     }, []);
+
 
     if (!showExitPopup) return null;
 
