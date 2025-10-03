@@ -1,5 +1,5 @@
+import { X } from 'lucide-react';
 import React, { useState } from 'react';
-import { Settings, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { quizConfig } from '../../config/quiz.config';
 import { storeQuizAnswer } from '../../core/utils/session';

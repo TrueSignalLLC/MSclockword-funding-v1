@@ -9,6 +9,7 @@ import { ProcessSection } from '../../custom/components/ProcessSection';
 import { UltraFlexibleFunding } from '../../custom/components/UltraFlexibleFunding';
 import { ComplianceScripts } from '../components/ComplianceScripts';
 import { Footer } from '../components/Footer';
+import { ExitIntentPopup } from '../../custom/components/ExitIntentPopup';
 
 export const ClockworkFundingLayout: React.FC = () => {
 
@@ -31,6 +32,7 @@ export const ClockworkFundingLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <ExitIntentPopup />
       <ComplianceScripts />
       <ClockworkHero />
       <FundingBenefits onScrollToHero={handleScrollToHero} />
